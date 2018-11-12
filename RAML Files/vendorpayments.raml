@@ -1,0 +1,130 @@
+#%RAML 1.0
+title: New API
+baseUri: https://mocksvc.mulesoft.com/mocks/72ed4649-0332-468e-8e02-f52d3b22d147 # baseUri: 'https://mocksvc.mulesoft.com/mocks/72ed4649-0332-468e-8e02-f52d3b22d147'
+/vendorPayments:
+  get:
+    responses:
+      '200':
+        body:
+          application/json:
+            description: a GET to retrieve an object from the transactions table.
+            type: object
+            properties:
+              id:
+                required: true
+                minimum: 0
+                format: int
+                example: 1
+                description: Primary Key
+                type: number
+              date:
+                required: true
+                example: '2018-11-12T16:28:21.676Z'
+                format: rfc3339
+                description: Time of transaction
+                type: datetime
+              ammount:
+                required: true
+                format: double
+                example: 100.52
+                description: Property description
+                type: number
+              cardNumber:
+                required: true
+                pattern: '\d{4} \d{4} \d{4} \d{4}'
+                example: 1234 1234 1234 1238
+                description: 'Credit Card Number: must be sets of 4 digits separated by spaces.'
+                type: string
+              source:
+                required: true
+                example: Some Company
+                description: States who is requesting the payment
+                type: string
+              description:
+                required: false
+                example: This can be paragraph describing the transaction or left blank
+                description: Property description
+                type: string
+              status:
+                required: true
+                pattern: pending|complete|denied
+                example: complete
+                description: pending | complete | denied
+                type: string
+              transaction:
+                required: true
+                pattern: payment|charge
+                example: payment
+                description: payment | charge
+                type: string
+      '400':
+        description: 400 Error Page
+        body:
+          application/json:
+            description: failed request.
+            example: 'Unable to process GET request. '
+            default: 'Unable to process GET request. '
+            type: string
+  post:
+    responses:
+      '200':
+        body:
+          application/json:
+            description: a GET to retrieve an object from the transactions table.
+            type: object
+            properties:
+              id:
+                required: true
+                minimum: 0
+                format: int
+                example: 1
+                description: Primary Key
+                type: number
+              date:
+                required: true
+                example: '2018-11-12T16:28:21.676Z'
+                format: rfc3339
+                description: Time of transaction
+                type: datetime
+              ammount:
+                required: true
+                format: double
+                example: 100.52
+                description: Property description
+                type: number
+              cardNumber:
+                required: true
+                pattern: '\d{4} \d{4} \d{4} \d{4}'
+                example: 1234 1234 1234 1238
+                description: 'Credit Card Number: must be sets of 4 digits separated by spaces.'
+                type: string
+              source:
+                required: true
+                example: Some Company
+                description: States who is requesting the payment
+                type: string
+              description:
+                required: false
+                example: This can be paragraph describing the transaction or left blank
+                description: Property description
+                type: string
+              status:
+                required: true
+                pattern: pending|complete|denied
+                example: complete
+                description: pending | complete | denied
+                type: string
+              transaction:
+                required: true
+                pattern: payment|charge
+                example: payment
+                description: payment | charge
+                type: string
+      '400':
+        description: 400 Error Page
+        body:
+          application/json:
+            description: failed request.
+            example: 'Unable to process POST request. '
+            default: 'Unable to process POST request. '
+            type: string
