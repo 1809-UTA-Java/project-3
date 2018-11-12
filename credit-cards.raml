@@ -1,0 +1,144 @@
+#%RAML 1.0
+baseUri: https://mocksvc.mulesoft.com/mocks/105b4e70-51f2-4987-85f2-909fc18052a7 # 
+title: Credit Cards
+version: v1.0
+
+types:
+  creditCards:
+    properties:
+      cardNumber: number
+      balance: integer
+      status: string
+      maxCredit: number
+      expiration: date-only
+      userID: number
+      reward: number
+      CVV: number
+      interestRate: number
+  
+/creditcards:
+  /{userID}:
+    get:
+      description: retrieves the credit card(s) of the same userID
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "cardNumber": "1234 5678 9101 2345",
+                  "balance": "100.00",
+                  "status": "open",
+                  "maxCredit": "30",
+                  "expiration": "2020-12-31",
+                  "userID": "123456789",
+                  "reward": "100",
+                  "CVV": "999",
+                  "interestRate": "1.2"
+                }
+        400:
+          body: 
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "Invalid userID"
+                }
+
+    post:
+      description: adds a new card to the userID account
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "cardNumber": "1234 5678 9101 2345",
+                  "balance": "0.00",
+                  "status": "open",
+                  "maxCredit": "30",
+                  "expiration": "2020-12-31",
+                  "userID": "123456789",
+                  "reward": "0",
+                  "CVV": "999",
+                  "interestRate": "1.2"
+                }
+        400:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "Invalid credit card properties"
+                }
+ 
+    /{balance}:
+      put: 
+        description: update balance of credit card
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: |
+                  {
+                    "cardNumber": "1234 5678 9101 2345",
+                    "balance": "150.00"
+                  }
+          400:
+            body:
+              application/json:
+                properties:
+                  message: string
+                example: |
+                  {
+                    "message": "Invalid request"
+                  }
+    /{status}:
+      put: 
+        description: update status of credit card
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: |
+                  {
+                    "cardNumber": "1234 5678 9101 2345",
+                    "status": "open"
+                  }
+          400:
+            body:
+              application/json:
+                properties:
+                  message: string
+                example: |
+                  {
+                    "message": "Invalid request"
+                  }
+
+    /{reward}:
+      put: 
+        description: update reward of credit card
+        responses: 
+          200:
+            body: 
+              application/json:
+                example: |
+                  {
+                    "cardNumber": "1234 5678 9101 2345",
+                    "reward": "150.00"
+                  }
+          400:
+            body:
+              application/json:
+                properties:
+                  message: string
+                example: |
+                  {
+                    "message": "Invalid request"
+                  }
+                
+
+
+
