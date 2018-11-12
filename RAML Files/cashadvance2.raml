@@ -1,0 +1,71 @@
+#%RAML 1.0
+title: CashAdvance
+version: v1.0
+
+types:
+  cashAdvance:
+    properties:
+      loanID: number
+      type: string
+      balance: number
+      userID: number
+      interestRate: number
+      gracePeriod: date-only
+      principal: number
+
+/cashAdvance:
+  /{userID}:
+    get:
+      responses:
+        '200':
+          body:
+            application/json:
+              description: Retrieves cash advance by userID
+              example: |
+                {
+                  "loanID": "12341234",
+                  "type": "Cash Advance",
+                  "balance": "500.00",
+                  "userID": "123456123",
+                  "interestRate": "00.20",
+                  "gracePeriod": "2019-7-10",
+                  "principal": "500.00"
+                }
+        
+        '400':
+          body:
+            application/json:
+              type: object
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "Invalid UserID"
+                }
+    post:
+      responses:
+        '200':
+          body:
+            application/json:
+              description: Adds a new cash advance to the loan database
+              example: |
+                {
+                  "loanID": "12341234",
+                  "type": "Cash Advance",
+                  "balance": "500.00",
+                  "userID": "123456123",
+                  "interestRate": "00.20",
+                  "gracePeriod": "2019-7-10",
+                  "principal": "500.00"
+                }
+
+        '400':
+          body:
+            application/json:
+              type: object
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "Invalid Request"
+                }
