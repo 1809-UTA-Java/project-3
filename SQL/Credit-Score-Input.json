@@ -1,0 +1,29 @@
+{
+  "user": {
+    "customer-id": "integer",
+    "age": "integer",
+    "occupation": {
+      "job-term": "string",
+      "annual-income": "number"
+    }
+  },
+  "account-history": {
+    "credit-cards": {
+      "total-cards": "integer",
+      "total-balance": "number",
+      "payments": {
+        "total": "integer",
+        "total-late": "integer"
+      }
+    },
+    "loans": {
+      "total-loans": "integer",
+      "total-principle": "number",
+      "total-balance": "number",
+      "payments": {
+        "total": "integer",
+        "total-late": "integer"
+      }
+    }
+  }
+}
