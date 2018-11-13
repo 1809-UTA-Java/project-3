@@ -6,42 +6,42 @@ baseUri: https://api.ndf-managers.com
   /Aprove:
     /{id}:
       post:
-	queryParameters:
-	  description: Approve the loan with loanid = {id}
-	  access_token:
-	    displayName: Access Token
-	    type: string
+        queryParameters:
+          description: Approve the loan with loanid = {id}
+          access_token:
+            displayName: Access Token
+            type: string
             description: Token giving permision to make call
-	    required: True
-	responses:
+            required: True
+        responses:
           200:
-	    body:
-	      application/json:
-		example:  |
-		  {"message": "Loan approved"}
-	  404:
-	    body:
-	      application/json:
-		example:  |
-		  {"message": "Loan not found"}
+            body:
+              application/json:
+                example:  |
+                  {"message": "Loan approved"}
+          404:
+            body:
+              application/json:
+                example:  |
+                  {"message": "Loan not found"}
   /Deny:
     /{id}:
       post:
-	queryParameters:
-	  description: Deny the loan with loanid = {id}
-	  access_token:
-	    displayName: Access Token
-	    type: string
+        queryParameters:
+          description: Deny the loan with loanid = {id}
+          access_token:
+            displayName: Access Token
+            type: string
             description: Token giving permision to make call
-	    required: True
-	responses:
+            required: True
+        responses:
           200:
-	    body:
-	      application/json:
-		example:  |
-		  {"message": "Loan denied"}
-	  404:
-	    body:
-	      application/json:
-		example:  |
-		  {"message": "Loan not found"}
+            body:
+              application/json:
+                example:  |
+                  {"message": "Loan denied"}
+          404:
+            body:
+              application/json:
+                example:  |
+                  {"message": "Loan not found"}
