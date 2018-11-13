@@ -6,8 +6,8 @@ baseUri: https://api.ndf-managers.com
   /Aprove:
     /{id}:
       post:
+        description: Approve the loan with loanid = {id}
         queryParameters:
-          description: Approve the loan with loanid = {id}
           access_token:
             displayName: Access Token
             type: string
@@ -27,8 +27,8 @@ baseUri: https://api.ndf-managers.com
   /Deny:
     /{id}:
       post:
+        description: Deny the loan with loanid = {id}
         queryParameters:
-          description: Deny the loan with loanid = {id}
           access_token:
             displayName: Access Token
             type: string
