@@ -1,0 +1,1 @@
+# The managers api sql scripts
