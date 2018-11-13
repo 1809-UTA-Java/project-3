@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="riskfactor" format="json">
+      <types:shape format="weave" example="examples/mule-artifact.json"><![CDATA[%dw 2.0
+type riskfactor = {| minMuleVersion: String |} {"MetadataFormat": "json",
+"example": "{\"minMuleVersion\":\"4.1.4\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#d91b7ecc-ce53-4f36-a8d7-72c2be988133">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="riskfactor"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
