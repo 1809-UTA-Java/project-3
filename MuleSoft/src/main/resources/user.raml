@@ -1,0 +1,95 @@
+#%RAML 1.0
+title: user
+version: v1
+baseUri: /api/retail/application
+
+types:
+  user:
+    type: object
+    properties:
+      id: string
+      name: string
+      username: string
+      password: string
+      gender: string
+      ethnicity: string
+      dob: string
+      address: string
+      email: string
+      phone: string
+      occupation: string
+      salary: number
+      
+
+/user:
+  displayName: user endpoint
+  get:
+    responses: 
+      200:
+        body: 
+          application/json:
+            example: |
+              {
+              "id":"f2a8f538-e845-11e8-9f32-f2801f1b9fd1",
+              "name":"john smith",
+              "username":"jonnyS",
+              "password":"jjss123",
+              "gender":"male",
+              "ethnicity":"white",
+              "dob":"jan 5, 1991",
+              "address":"4451 lincoln dr",
+              "email":"johnsmith@gmail.com",
+              "phone":"455665454",
+              "occupation":"software engineer",
+              "salary":50000
+              }  
+      404:
+        body:
+          application/json:
+            example: |
+              {"message": "Error, 404"}
+  post:
+    description: create user
+    body:
+      application/json:
+        type: user
+        example: !include json_examples/user_example.json
+    responses: 
+      202:
+        body: 
+          application/json:
+            example: |
+              {"message":"Successfully added user"}
+  /{userId}:
+    get:
+      description: By user ID
+      queryParameters: 
+        id:
+          displayName: ID
+          example: f2a8f538-e845-11e8-9f32-f2801f1b9fd1
+          required: true
+          type: string
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                "id":"f2a8f538-e845-11e8-9f32-f2801f1b9fd1",
+                "name":"john smith",
+                "username":"jonnyS",
+                "password":"jjss123",
+                "gender":"male",
+                "ethnicity":"white",
+                "dob":"jan 5, 1991",
+                "address":"4451 lincoln dr",
+                "email":"johnsmith@gmail.com",
+                "phone":"455665454",
+                "occupation":"software engineer",
+                "salary":50000
+                }
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "Error, 404"}
