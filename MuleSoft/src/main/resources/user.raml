@@ -53,7 +53,21 @@ types:
     body:
       application/json:
         type: user
-        example: !include json_examples/user_example.json
+        example: |
+          {
+            "id":"f2a8f538-e845-11e8-9f32-f2801f1b9fd1",
+            "name":"john smith",
+            "username":"jonnyS",
+            "password":"jjss123",
+            "gender":"male",
+            "ethnicity":"white",
+            "dob":"jan 5, 1991",
+            "address":"4451 lincoln dr",
+            "email":"johnsmith@gmail.com",
+            "phone":"455665454",
+            "occupation":"software engineer",
+            "salary":50000
+          }
     responses: 
       202:
         body: 
