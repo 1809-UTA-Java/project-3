@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="json" format="json">
+      <types:shape format="weave" example="examples/loan.json.txt"><![CDATA[%dw 2.0
+type json = {|
+  userID: String, 
+  loanType: String, 
+  balance: String, 
+  interestRate: String, 
+  gracePeriodEndDate: String, 
+  principalBalance: String
+|} {"MetadataFormat": "json",
+"example": "{\"userID\":\"1\",\"loanType\":\"home\",\"balance\":\"350\",\"interestRate\":\".035\",\"gracePeriodEndDate\":\"2018-09-10\",\"principalBalance\":\"100\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#0d0d15d9-6fa8-419f-b59a-d810f9d33850">
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="value" type="json"/>
+      </types:inputs>
+    </types:operation-declaration>
+  </types:enrichment>
+</types:mule>

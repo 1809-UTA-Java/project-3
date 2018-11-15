@@ -1,0 +1,8 @@
+{
+      "userID" : "1",
+      "loanType": "home",
+      "balance": "350",
+      "interestRate": ".035",
+      "gracePeriodEndDate": "2018-09-10",
+      "principalBalance": "100"
+}
