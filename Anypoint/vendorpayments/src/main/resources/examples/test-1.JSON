@@ -1,0 +1,10 @@
+    {
+        "AMOUNT": 6500,
+        "CARD_NUMBER": "1111 1111 1111 1111",
+        "TRANS_SOURCE": "idk",
+        "TRANS_DESCRIPTION": "Here is some stuff",
+        "TRANSACTION_DATE": "2018-11-11T00:00:00",
+        "TRANS_TYPE": "charge",
+        "STATUS": "complete",
+        "TRANSACTION_ID": "a77"
+    }

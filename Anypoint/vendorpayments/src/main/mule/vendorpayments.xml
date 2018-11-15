@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+<mule xmlns:java="http://www.mulesoft.org/schema/mule/java" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/java/current/mule-java.xsd">
     <http:listener-config name="vendorpayments-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
@@ -155,9 +157,21 @@ payload]]></ee:set-payload>
     </flow>
     <flow name="post:\vendorPayments:vendorpayments-config">
 		<logger level="INFO" message="#[payload.CARD_NUMBER]]" />
-		<db:insert doc:name="Insert" doc:id="40f82d6c-16b9-4112-8f41-55b973d42270" config-ref="Database_Config">
-			<db:sql >insert into transactions values (:id, :date, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
-			<db:input-parameters ><![CDATA[#[{
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="afb904bf-a994-48e9-bc02-b68b04eede75" variableName="FirstPayload"/>
+		<set-variable value="#[payload.AMOUNT]" doc:name="Set Variable" doc:id="56fffc8b-9c94-4bc7-b7eb-b608729a845f" variableName="amount"/>
+		<db:select doc:name="Select" doc:id="7240b144-ac97-431d-bbff-a1c5faed98d5" config-ref="Database_Config">
+			<db:sql >select credit_line - balance as total from credit_cards where card_number = :number</db:sql>
+			<db:input-parameters ><![CDATA[#[{ number : payload.CARD_NUMBER }]]]></db:input-parameters>
+		</db:select>
+		<logger level="INFO" doc:name="Logger" doc:id="5a9bab99-f396-4ec7-8d51-4ea7edd3896e" message="#[payload.TOTAL]"/>
+		<choice doc:name="Choice" doc:id="d424f497-9ae5-458e-a3d2-7cf123e4d4f7" >
+			<when expression="#[vars.amount &lt;= payload.TOTAL[0]]">
+				<set-payload value="#[vars.FirstPayload]" doc:name="Set Payload" doc:id="4b041a0c-b881-4f3b-8117-fd0f2c620f97" />
+				<db:insert doc:name="Insert" doc:id="40f82d6c-16b9-4112-8f41-55b973d42270" config-ref="Database_Config">
+			<db:sql>insert into transactions values (:id, :date, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)
+
+</db:sql>
+			<db:input-parameters><![CDATA[#[{
 	id : payload.TRANSACTION_ID, 
 	date : payload.TRANSACTION_DATE as Date,
 	amount : payload.AMOUNT as Number,
@@ -168,5 +182,11 @@ payload]]></ee:set-payload>
 	trans_type : payload.TRANS_TYPE
 }]]]></db:input-parameters>
 		</db:insert>
+			</when>
+			<otherwise >
+				<set-payload value="Not enough funds" doc:name="Set Payload" doc:id="f678abf8-acf0-4c14-a9ef-582c45112581" />
+				<logger level="INFO" doc:name="Logger" doc:id="5b2b884a-360b-4927-aa6f-f2e282ce18ba" message="Payment declined"/>
+			</otherwise>
+		</choice>
     </flow>
 </mule>

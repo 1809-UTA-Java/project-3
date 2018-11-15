@@ -17,5 +17,21 @@ type test = {|
 
 ]]></types:shape>
     </types:type>
+    <types:type name="try" format="json">
+      <types:shape format="weave" example="examples/test-1.JSON"><![CDATA[%dw 2.0
+type try = {|
+  AMOUNT: Number {"typeId": "int"}, 
+  CARD_NUMBER: String, 
+  TRANS_SOURCE: String, 
+  TRANS_DESCRIPTION: String, 
+  TRANSACTION_DATE: String, 
+  TRANS_TYPE: String, 
+  STATUS: String, 
+  TRANSACTION_ID: String
+|} {"MetadataFormat": "json",
+"example": "{\"AMOUNT\":6500,\"CARD_NUMBER\":\"1111 1111 1111 1111\",\"TRANS_SOURCE\":\"idk\",\"TRANS_DESCRIPTION\":\"Here is some stuff\",\"TRANSACTION_DATE\":\"2018-11-11T00:00:00\",\"TRANS_TYPE\":\"charge\",\"STATUS\":\"complete\",\"TRANSACTION_ID\":\"a77\"}"}
+
+]]></types:shape>
+    </types:type>
   </types:catalog>
 </types:mule>
