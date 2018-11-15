@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="test" format="json">
+      <types:shape format="weave" example="examples/test.JSON"><![CDATA[%dw 2.0
+type test = {|
+  date: Array<String>, 
+  description: Array<String>, 
+  id: Array<Number {"typeId": "int"}>, 
+  source: Array<String>, 
+  ammount: Array<String>, 
+  cardNumber: Array<String>, 
+  transaction: Array<String>, 
+  status: Array<String>
+|} {"MetadataFormat": "json",
+"example": "{\"date\":[\"a2\"],\"description\":[\"2018-12-10T00:00:00\"],\"id\":[4500],\"source\":[\"1111 1111 1111 1111\"],\"ammount\":[\"idk\"],\"cardNumber\":[\"Here is some stuff\"],\"transaction\":[\"pending\"],\"status\":[\"charge\"]}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+</types:mule>

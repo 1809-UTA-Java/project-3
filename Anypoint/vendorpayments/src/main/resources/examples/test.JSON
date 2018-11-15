@@ -1,0 +1,26 @@
+{
+    "date": [
+        "a2"
+    ],
+    "description": [
+        "2018-12-10T00:00:00"
+    ],
+    "id": [
+        4500
+    ],
+    "source": [
+        "1111 1111 1111 1111"
+    ],
+    "ammount": [
+        "idk"
+    ],
+    "cardNumber": [
+        "Here is some stuff"
+    ],
+    "transaction": [
+        "pending"
+    ],
+    "status": [
+        "charge"
+    ]
+}
