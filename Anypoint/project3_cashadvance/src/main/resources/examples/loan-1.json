@@ -1,0 +1,9 @@
+{
+    "loanID": "12341234",
+    "type": "Cash Advance",
+    "balance": "500.00",
+    "userID": "123456123",
+    "interestRate": "00.20",
+    "gracePeriod": "2019-7-10",
+    "principal": "500.00"
+}

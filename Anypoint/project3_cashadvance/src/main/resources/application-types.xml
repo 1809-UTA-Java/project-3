@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="loan" format="json">
+      <types:shape format="weave" example="examples/loan-1.json"><![CDATA[%dw 2.0
+type loan = {|
+  loanID: String, 
+  "type": String, 
+  balance: String, 
+  userID: String, 
+  interestRate: String, 
+  gracePeriod: String, 
+  principal: String
+|} {"MetadataFormat": "json",
+"example": "{\"loanID\":\"12341234\",\"type\":\"Cash Advance\",\"balance\":\"500.00\",\"userID\":\"123456123\",\"interestRate\":\"00.20\",\"gracePeriod\":\"2019-7-10\",\"principal\":\"500.00\"}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="number" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: number]]></types:shape>
+    </types:type>
+    <types:type name="date" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: date-only]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#896eb641-b7b0-4178-8c6c-14e8439ce7be">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="loan"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#4f4062d2-9174-4d43-a154-b0c62925af7f">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="loan"/>
+          <types:attributes type="loan"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="loan"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>
