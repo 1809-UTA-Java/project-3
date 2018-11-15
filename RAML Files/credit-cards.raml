@@ -1,21 +1,7 @@
 #%RAML 1.0
-baseUri: https://mocksvc.mulesoft.com/mocks/105b4e70-51f2-4987-85f2-909fc18052a7 # 
 title: Credit Cards
 version: v1.0
 
-types:
-  creditCards:
-    properties:
-      cardNumber: number
-      balance: integer
-      status: string
-      maxCredit: number
-      expiration: date-only
-      userID: number
-      reward: number
-      CVV: number
-      interestRate: number
-  
 /creditcards:
   /{userID}:
     get:
@@ -24,18 +10,54 @@ types:
         200:
           body:
             application/json:
-              example: |
-                {
-                  "cardNumber": "1234 5678 9101 2345",
-                  "balance": "100.00",
-                  "status": "open",
-                  "maxCredit": "30",
-                  "expiration": "2020-12-31",
-                  "userID": "123456789",
-                  "reward": "100",
-                  "CVV": "999",
-                  "interestRate": "1.2"
-                }
+              type: object
+              properties:
+                cardNumber:
+                  required: true
+                  pattern: '\d{4} \d{4} \d{4} \d{4}'
+                  example: 1234 1234 1234 1234
+                  description: Credit Card number
+                  type: string
+                balance:
+                  required: true
+                  minimum: 0
+                  maximum: 1000000000
+                  type: number
+                status:
+                  required: true
+                  description: open, locked, expired, closed
+                  enum: [active, locked, expired, closed]
+                  type: string
+                creditLine:
+                  required: true
+                  type: number
+                expiration:
+                  required: true
+                  type: date-only
+                userID:
+                  required: true
+                  type: string 
+                reward:
+                  type: number
+                CVV:
+                  required: true
+                  type: number
+                  minimum: 000
+                  maximum: 999
+                interestRate:
+                  required: true
+                  type: number
+                  
+              example:
+                  cardNumber: 1234 5678 9101 2345
+                  balance: 100.00
+                  status: active
+                  creditLine: 30
+                  expiration: 2020-12-31
+                  userID: 1ae23456789
+                  reward: 100
+                  CVV: 999
+                  interestRate: 1.2
         400:
           body: 
             application/json:
@@ -45,24 +67,72 @@ types:
                 {
                   "message": "Invalid userID"
                 }
-
+  /newCard:
     post:
       description: adds a new card to the userID account
-      responses:
+      body:
+        application/json:
+          type: object
+          properties:
+            cardNumber:
+              required: true
+              pattern: '\d{4} \d{4} \d{4} \d{4}'
+              example: 1234 1234 1234 1234
+              description: Credit Card number
+              type: string
+            balance:
+              required: true
+              minimum: 0
+              maximum: 1000000000
+              type: number
+            status:
+              required: true
+              description: open, closed, deactivated, expired
+              enum: [active, closed, deactivated, expired]
+              type: string
+            creditLine:
+              required: true
+              type: number
+            expiration:
+              required: true
+              type: date-only
+            userID:
+              required: true
+              type: string 
+            reward:
+              type: number
+            CVV:
+              required: true
+              type: number
+              minimum: 000
+              maximum: 999
+            interestRate:
+              required: true
+              type: number
+          example: |
+            {
+              "cardNumber": "1111 1111 1111 1111",
+              "balance": 55,
+              "status": "active",
+              "creditLine": 30,
+              "expiration": "2020-12-31",
+              "userID": "eieio",
+              "reward": 0,
+              "CVV": 999,
+              "interestRate": 1.2
+            }
+        
+  /updatebalance:
+    put: 
+      description: update balance of credit card
+      responses: 
         200:
-          body:
+          body: 
             application/json:
               example: |
                 {
                   "cardNumber": "1234 5678 9101 2345",
-                  "balance": "0.00",
-                  "status": "open",
-                  "maxCredit": "30",
-                  "expiration": "2020-12-31",
-                  "userID": "123456789",
-                  "reward": "0",
-                  "CVV": "999",
-                  "interestRate": "1.2"
+                  "balance": "150.00"
                 }
         400:
           body:
@@ -71,74 +141,49 @@ types:
                 message: string
               example: |
                 {
-                  "message": "Invalid credit card properties"
+                  "message": "Invalid request"
                 }
- 
-    /{balance}:
-      put: 
-        description: update balance of credit card
-        responses: 
-          200:
-            body: 
-              application/json:
-                example: |
-                  {
-                    "cardNumber": "1234 5678 9101 2345",
-                    "balance": "150.00"
-                  }
-          400:
-            body:
-              application/json:
-                properties:
-                  message: string
-                example: |
-                  {
-                    "message": "Invalid request"
-                  }
-    /{status}:
-      put: 
-        description: update status of credit card
-        responses: 
-          200:
-            body: 
-              application/json:
-                example: |
-                  {
-                    "cardNumber": "1234 5678 9101 2345",
-                    "status": "open"
-                  }
-          400:
-            body:
-              application/json:
-                properties:
-                  message: string
-                example: |
-                  {
-                    "message": "Invalid request"
-                  }
+  /updatestatus:
+    put: 
+      description: update status of credit card
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "cardNumber": "1234 5678 9101 2345",
+                  "status": "open"
+                }
+        400:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "Invalid request"
+                }
 
-    /{reward}:
-      put: 
-        description: update reward of credit card
-        responses: 
-          200:
-            body: 
-              application/json:
-                example: |
-                  {
-                    "cardNumber": "1234 5678 9101 2345",
-                    "reward": "150.00"
-                  }
-          400:
-            body:
-              application/json:
-                properties:
-                  message: string
-                example: |
-                  {
-                    "message": "Invalid request"
-                  }
-                
-
-
-
+  /updatereward:
+    put: 
+      description: update reward of credit card
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "cardNumber": "1234 5678 9101 2345",
+                  "reward": "150.00"
+                }
+        400:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "Invalid request"
+                }
+   
