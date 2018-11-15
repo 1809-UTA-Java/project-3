@@ -149,33 +149,23 @@ output application/json
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-{
-	date: payload.TRANSACTION_DATE as String default "",
-	description: payload.TRANS_DESCRIPTION,
-	id: payload.TRANSACTION_ID,
-	source: payload.TRANS_SOURCE default "",
-	ammount: payload.AMOUNT default 0,
-	cardNumber: payload.CARD_NUMBER default "",
-	transaction: payload.TRANS_TYPE default "",
-	status: payload.STATUS default ""
-}]]></ee:set-payload>
+payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
     </flow>
     <flow name="post:\vendorPayments:vendorpayments-config">
-		<logger level="INFO" message="#[payload.cardNumber]" />
+		<logger level="INFO" message="#[payload.CARD_NUMBER]]" />
 		<db:insert doc:name="Insert" doc:id="40f82d6c-16b9-4112-8f41-55b973d42270" config-ref="Database_Config">
-			<db:sql >insert into transactions values (:id, :date, :amount, :card_number, :trans_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
+			<db:sql >insert into transactions values (:id, :date, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
 			<db:input-parameters ><![CDATA[#[{
-	id : payload.id[0], 
-	date : payload.date,
-	amount : payload.ammount[0],
-	card_number : payload.cardNumber[0],
-	trans_number : payload.transaction[0],
-	trans_source : payload.source[0],
-	trans_description : payload.description[0],
-	status : payload.status[0],
-	trans_type : payload.transaction[0]
+	id : payload.TRANSACTION_ID, 
+	date : payload.TRANSACTION_DATE as Date,
+	amount : payload.AMOUNT as Number,
+	card_number : payload.CARD_NUMBER,
+	trans_source : payload.TRANS_SOURCE,
+	trans_description : payload.TRANS_DESCRIPTION,
+	status : payload.STATUS,
+	trans_type : payload.TRANS_TYPE
 }]]]></db:input-parameters>
 		</db:insert>
     </flow>
