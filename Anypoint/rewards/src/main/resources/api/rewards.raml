@@ -1,0 +1,124 @@
+#%RAML 1.0
+baseUri: http://localhost:8081/api/operations/
+title: rewards
+
+types:
+  CreditCard:
+    type: "object"
+    properties: 
+      cardNumber:
+        type: "string"
+        required: true
+      balance:
+        type: "number"
+        multipleOf: .01
+        required: false
+      status:
+        type: "string"
+        required: false
+      creditLine:
+        type: "number"
+        required: false
+      experation:
+        type: "date-only"
+        required: false
+      userId:
+        type: "string"
+        required: false
+      rewards:
+        type: "number"
+        multipleOf: .01
+        required: false
+      cvv:
+        type: "integer"
+        required: false
+      interestRate:
+        type: "number"
+        multipleOf: .0001
+        required: false
+
+/rewards:
+  post:
+    description: Returns rewards of an existing card
+    body:
+      application/json:
+        type: "CreditCard"
+        example: |
+          {
+            "cardNumber": "0123 4567 8910 0000"
+          }
+    responses:
+      200:
+        description: "Successful!"
+        body: 
+          application/json:
+            example: |
+              {
+                "cardNumber": "0123 4567 8910 0000",
+                "reward": 100.00
+              }
+      400:
+        description: "Invalid input given. Please see RAML."
+      404:
+        description: "Card not Found!"           
+  put:
+    description: Update rewards of an existing card
+    body:
+      application/json:
+        type: "object"
+        properties: 
+          cardNumber:
+            type: "string"
+            required: true
+          reward:
+            type: "number"
+            required: true
+        example: |
+          {
+            "cardNumber": "0123 4567 8910 0000",
+            "reward": 100.00
+          } 
+    responses:
+      200:
+        description: "Successful!"
+      400:
+        description: "Invalid input given."
+      404:
+        description: "Card not found!"
+
+  /payment:
+    post:
+      description: Apply payment to customers card using ALL of its available rewards.
+      body:
+        application/json:
+          type: "CreditCard"
+      responses: 
+        200:
+          description: "Successful!"
+        400:
+          description: "Invalid input given."
+        404:
+          description: "Card not found!"
+
+/rewards/{userID}:
+  get:
+    description: Returns rewards a customer may have by their userID.
+    responses: 
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "cardNumber": "0123 4567 8910 0000",
+                "reward": 100.00
+              }
+      400:
+        body: 
+          application/json:
+            properties:
+              message: string
+            example: |
+              {"message":"Invalid Customer ID"}
+
+
+
