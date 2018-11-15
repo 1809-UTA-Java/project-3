@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="riskfactor" format="json">
+      <types:shape format="weave" example="examples/mule-artifact.json"><![CDATA[%dw 2.0
+type riskfactor = {| minMuleVersion: String |} {"MetadataFormat": "json",
+"example": "{\"minMuleVersion\":\"4.1.4\"}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="num" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: number]]></types:shape>
+    </types:type>
+    <types:type name="num2" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: number]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#d91b7ecc-ce53-4f36-a8d7-72c2be988133">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="riskfactor"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#cb8cd264-dac0-41e5-aeee-810d642743eb">
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="value" type="num"/>
+      </types:inputs>
+    </types:operation-declaration>
+  </types:enrichment>
+  <types:enrichment select="#75471df1-f073-4663-82bf-78547616925e">
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="value" type="num"/>
+      </types:inputs>
+    </types:operation-declaration>
+  </types:enrichment>
+  <types:enrichment select="#5e90ff8b-5852-4afc-890c-97db16c29192">
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="value" type="num2"/>
+      </types:inputs>
+    </types:operation-declaration>
+  </types:enrichment>
+  <types:enrichment select="#b1985334-7e31-4f67-9adf-d7f6e790e237">
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="value" type="num"/>
+      </types:inputs>
+    </types:operation-declaration>
+  </types:enrichment>
+  <types:enrichment select="#b57dbde6-858f-4675-ad30-4cbae7c04db5">
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="value" type="num"/>
+      </types:inputs>
+    </types:operation-declaration>
+  </types:enrichment>
+  <types:enrichment select="#589e0d1b-427d-4c0d-9cb0-6b788752700f">
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="value" type="num"/>
+      </types:inputs>
+    </types:operation-declaration>
+  </types:enrichment>
+  <types:enrichment select="#1f4d589f-72b2-4039-a8ff-f1b59c280b15">
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="value" type="num"/>
+      </types:inputs>
+    </types:operation-declaration>
+  </types:enrichment>
+  <types:enrichment select="#b69bca73-6c78-45b2-9dcf-f76c161e7652">
+    <types:operation-declaration>
+      <types:inputs>
+        <types:parameter name="value" type="num"/>
+      </types:inputs>
+    </types:operation-declaration>
+  </types:enrichment>
+</types:mule>
