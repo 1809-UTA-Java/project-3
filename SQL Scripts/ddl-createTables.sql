@@ -8,7 +8,7 @@ CREATE TABLE CREDIT_CARDS (
     user_Id varchar2(40),
     rewards number(7,2),
     cvv number(4),
-    interest_rate number(1,4)
+    interest_rate number
 );
 
 
@@ -18,7 +18,7 @@ CREATE TABLE LOANS (
     loan_type varchar2(40),
     balance number(*,2),
     user_Id varchar2(40),
-    interest_rate number(1,4),
+    interest_rate number,
     grace_period date,
     principal number(*,2)
 );
