@@ -23,6 +23,14 @@ CREATE TABLE LOANS (
     principal number(*,2)
 );
 
+/* Create Sequence for Loans */
+create sequence loan_sequence 
+minvalue 1
+start with 1
+increment by 1
+nocache
+nocycle;
+
 /* Create Table for Transactions */
 CREATE TABLE TRANSACTIONS (
     transaction_Id varchar2(40) primary key,
