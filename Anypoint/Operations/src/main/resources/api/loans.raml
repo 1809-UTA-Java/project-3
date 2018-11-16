@@ -48,32 +48,28 @@ resourceTypes:
               application/json:
                 type: loan[]
           
-    /updatePrincipalBalance:
-      put:
-        body: 
-          application/json:
-            type: object
-            properties: 
-              id: number
-              principalBalance: number
-            example: |
-              {
-                "id": 1,
-                "principalBalance": 100.23  
-              }
-        
     /updateBalance:
       put:
         body: 
           application/json:
             type: object
             properties: 
-              id: number
               balance: number
+              loanID: number
             example: |
              {
-              "id": 1,
-              "balance": 100.23  
+              "balance": 100.23,  
+              "loanID": 1
              }
-
-        
+    
+  /applyInterest:
+      put:
+        body: 
+          application/json:
+            type: object
+            properties: 
+              loanID: number
+            example: | 
+             {
+              "loanID": 1
+             }        
