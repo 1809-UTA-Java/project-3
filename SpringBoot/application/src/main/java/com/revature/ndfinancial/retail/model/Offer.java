@@ -3,16 +3,20 @@ package com.revature.ndfinancial.retail.model;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+
 public class Offer {
+	@Id
 	private String id;
 	private String desc;
 	private String type;
 	private double creditLimit;
 	private double interestRate;
-	private List<Special> incentives;
+	private List<String> incentives;
 	private Date startDate;
 	private Date endDate;
-	private List<Group> target;
+	private List<String> target;
+	private Boolean active;
 	public String getId() {
 		return id;
 	}
@@ -43,10 +47,10 @@ public class Offer {
 	public void setInterestRate(double interestRate) {
 		this.interestRate = interestRate;
 	}
-	public List<Special> getIncentives() {
+	public List<String> getIncentives() {
 		return incentives;
 	}
-	public void setIncentives(List<Special> incentives) {
+	public void setIncentives(List<String> incentives) {
 		this.incentives = incentives;
 	}
 	public Date getStartDate() {
@@ -61,17 +65,36 @@ public class Offer {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-	public List<Group> getTarget() {
+	public List<String> getTarget() {
 		return target;
 	}
-	public void setTarget(List<Group> target) {
+	public void setTarget(List<String> target) {
 		this.target = target;
+	}
+	public Boolean getActive() {
+		return active;
+	}
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+	public Offer(String desc, String type, double creditLimit, double interestRate, List<String> incentives,
+			Date startDate, Date endDate, List<String> target, Boolean active) {
+		super();
+		this.desc = desc;
+		this.type = type;
+		this.creditLimit = creditLimit;
+		this.interestRate = interestRate;
+		this.incentives = incentives;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.target = target;
+		this.active = active;
 	}
 	@Override
 	public String toString() {
 		return "Offer [id=" + id + ", desc=" + desc + ", type=" + type + ", creditLimit=" + creditLimit
 				+ ", interestRate=" + interestRate + ", incentives=" + incentives + ", startDate=" + startDate
-				+ ", endDate=" + endDate + ", target=" + target + "]";
+				+ ", endDate=" + endDate + ", target=" + target + ", active=" + active + "]";
 	}
 	
 	
