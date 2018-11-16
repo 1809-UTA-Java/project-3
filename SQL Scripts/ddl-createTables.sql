@@ -1,10 +1,10 @@
 /* Create Table for Credit Cards */
 CREATE TABLE CREDIT_CARDS (
-    card_number number primary key,
+    card_number varchar2(40) primary key,
     balance number(7,2),
     status varchar2(20),
     credit_line number(7),
-    experation date,
+    expiration date,
     user_Id varchar2(40),
     rewards number(7,2),
     cvv number(4),
@@ -36,7 +36,7 @@ CREATE TABLE TRANSACTIONS (
     transaction_Id varchar2(40) primary key,
     transaction_date date,
     amount number(*,2),
-    card_number number,
+    card_number varchar2(40),
     trans_source varchar2(30),
     trans_description varchar2(40),
     status varchar2(30),
