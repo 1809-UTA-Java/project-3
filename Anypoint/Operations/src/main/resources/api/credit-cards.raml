@@ -122,9 +122,30 @@ version: v1.0
               "interestRate": 1.2
             }
         
-  /updatebalance:
+  /charge:
     put: 
-      description: update balance of credit card
+      description: Add charge to credit card balance form vendor.
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: |
+                {
+                  "cardNumber": "1234 5678 9101 2345",
+                  "balance": "150.00"
+                }
+        400:
+          body:
+            application/json:
+              properties:
+                message: string
+              example: |
+                {
+                  "message": "Invalid request"
+                }
+  /payment:
+    put: 
+      description: Processes payment by user to credit card balance
       responses: 
         200:
           body: 

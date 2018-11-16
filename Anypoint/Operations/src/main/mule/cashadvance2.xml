@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
     <http:listener-config name="cashadvance2-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
     <apikit:config name="cashadvance2-config" raml="cashadvance2.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <db:config name="Database_Config" doc:name="Database Config" doc:id="5128dc6c-2fd4-40f4-a0b0-bc39f3f1b681" >
-		<db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe" />
-	</db:config>
-	<flow name="cashadvance2-main">
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="5128dc6c-2fd4-40f4-a0b0-bc39f3f1b681">
+        <db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe" />
+    </db:config>
+    <flow name="cashadvance2-main">
         <http:listener config-ref="cashadvance2-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -22,7 +20,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
         <apikit:router config-ref="cashadvance2-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -35,7 +33,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -48,7 +46,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -61,7 +59,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -74,7 +72,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -87,7 +85,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -114,7 +112,7 @@ output application/json
         <apikit:console config-ref="cashadvance2-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -129,19 +127,16 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\cashAdvance\(userID):cashadvance2-config">
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="b389f041-d81b-4ab2-b0a5-862792ced85e">
+        <ee:transform doc:id="b389f041-d81b-4ab2-b0a5-862792ced85e">
             <ee:variables>
                 <ee:set-variable variableName="userID"><![CDATA[attributes.uriParams.userID]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <db:select doc:name="Select" doc:id="4ac3c9a6-ff05-414d-a574-5f545d809072" config-ref="Database_Config">
-			<db:sql>select * from loans where user_Id = :userid and  loan_type = 'Cash Advance'</db:sql>
-			<db:input-parameters ><![CDATA[#[{userid : vars.userID}]]]></db:input-parameters>
-		</db:select>
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
-http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="10d9cd1f-9987-4d4f-b8ee-d62b58abb5f2">
+            <db:sql>select * from loans where user_Id = :userid and  loan_type = 'Cash Advance'</db:sql>
+            <db:input-parameters><![CDATA[#[{userid : vars.userID}]]]></db:input-parameters>
+        </db:select>
+        <ee:transform xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="10d9cd1f-9987-4d4f-b8ee-d62b58abb5f2">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -151,9 +146,9 @@ payload]]></ee:set-payload>
         </ee:transform>
     </flow>
     <flow name="post:\cashAdvance\(userID):cashadvance2-config">
-		<db:insert doc:name="Insert" doc:id="6d271f31-b0b9-4370-8c0a-8edf5ca97ec5" config-ref="Database_Config">
-			<db:sql >insert into loans(loan_Id, user_Id, loan_Type, balance, interest_rate,  grace_period, principal) values(:loanid, :userid, :loantype, :balance, :interestrate, :graceperiod, :principal)</db:sql>
-			<db:input-parameters ><![CDATA[#[{
+        <db:insert doc:name="Insert" doc:id="6d271f31-b0b9-4370-8c0a-8edf5ca97ec5" config-ref="Database_Config">
+            <db:sql>insert into loans(loan_Id, user_Id, loan_Type, balance, interest_rate,  grace_period, principal) values(:loanid, :userid, :loantype, :balance, :interestrate, :graceperiod, :principal)</db:sql>
+            <db:input-parameters><![CDATA[#[{
 	loanid: payload.loanID,
 	userid: message.attributes.uriParams.userID,
 	loantype: payload."type",
@@ -162,6 +157,29 @@ payload]]></ee:set-payload>
 	graceperiod: payload.gracePeriod as Date,
 	principal: payload.principal
 }]]]></db:input-parameters>
-		</db:insert>
+        </db:insert>
+    </flow>
+    <flow name="post:\cashAdvance\(userID):application\json:cashadvance2-config">
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="userID">attributes.uriParams.userID</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  loanID: "12341234",
+  "type": "Cash Advance",
+  balance: "500.00",
+  userID: "123456123",
+  interestRate: "00.20",
+  gracePeriod: "2019-7-10",
+  principal: "500.00"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
     </flow>
 </mule>

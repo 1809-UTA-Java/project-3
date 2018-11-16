@@ -11,6 +11,9 @@ http://www.mulesoft.org/schema/mule/java http://www.mulesoft.org/schema/mule/jav
     <db:config name="Database_Config5" doc:name="Database Config" doc:id="dc7ea54c-381b-45a7-9bf2-8e51991ece27" >
 		<db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe" />
 	</db:config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="665fa24e-8f44-47a5-9dba-fbe3c08de53f" >
+		<http:request-connection host="localhost" port="8082" />
+	</http:request-config>
 	<flow name="vendorpayments-main">
         <http:listener config-ref="vendorpayments-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -185,6 +188,12 @@ payload]]></ee:set-payload>
 	trans_type : payload.TRANS_TYPE
 }]]]></db:input-parameters>
 		</db:insert>
+				<http:request method="PUT" doc:name="Request" doc:id="ff298fdc-6b35-4f18-a15d-8badc484d408" config-ref="HTTP_Request_configuration" url="http://localhost:8082/api/creditcards/charge">
+					<http:body ><![CDATA[#[{
+  "cardNumber": vars.FirstPayload.CARD_NUMBER,
+  "balance": vars.amount
+}]]]></http:body>
+				</http:request>
 			</when>
 			<otherwise >
 				<set-payload value="Not enough funds" doc:name="Set Payload" doc:id="cdae6f4e-35ae-47ab-961f-f48362b2503d" />

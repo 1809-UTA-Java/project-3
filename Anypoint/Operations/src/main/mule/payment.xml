@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
     <http:listener-config name="payment-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8084" />
     </http:listener-config>
     <apikit:config name="payment-config" raml="payment.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <db:config name="Database_Config3" doc:name="Database Config" doc:id="ff26c288-26d8-441c-a3da-8d2bb4266370" >
-		<db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" serviceName="xe" />
-	</db:config>
-	<flow name="payment-main">
+    <db:config name="Database_Config3" doc:name="Database Config" doc:id="ff26c288-26d8-441c-a3da-8d2bb4266370">
+        <db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" serviceName="xe" />
+    </db:config>
+    <flow name="payment-main">
         <http:listener config-ref="payment-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -22,7 +20,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
         <apikit:router config-ref="payment-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -35,7 +33,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -48,7 +46,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -61,7 +59,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -74,7 +72,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -87,7 +85,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -114,7 +112,7 @@ output application/json
         <apikit:console config-ref="payment-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -129,38 +127,32 @@ output application/json
         </error-handler>
     </flow>
     <flow name="post:\payment\accountid:payment-config">
-		<logger level="INFO" doc:name="Logger" doc:id="bab9a24c-dace-4cff-889a-fc9d2e46ed75" message="get:\payment\cardNumber\(cNumber):payment-config"/>
-		<set-variable value="#[%dw 2.0
-output application/java
----
-payload.accountid as String]" doc:name="accountID" doc:id="219b1843-de48-43be-b9fb-da2c74bdefb1" variableName="accountID"/>
-		<db:select doc:id="a944b947-739b-4b37-8bd8-73dec4996436" config-ref="Database_Config">
-			<db:sql >select * from transactions where card_number=:accountid</db:sql>
-			<db:input-parameters ><![CDATA[#[%dw 2.0
+        <logger level="INFO" doc:name="Logger" doc:id="bab9a24c-dace-4cff-889a-fc9d2e46ed75" message="get:\payment\cardNumber\(cNumber):payment-config" />
+        <set-variable value="#[%dw 2.0 output application/java --- payload.accountid as String]" doc:name="accountID" doc:id="219b1843-de48-43be-b9fb-da2c74bdefb1" variableName="accountID" />
+        <db:select doc:id="a944b947-739b-4b37-8bd8-73dec4996436" config-ref="Database_Config">
+            <db:sql>select * from transactions where card_number=:accountid</db:sql>
+            <db:input-parameters><![CDATA[#[%dw 2.0
 output application/java
 ---
 {
 	accountid: vars.accountid
 }]]]></db:input-parameters>
-		</db:select>
-		<ee:transform doc:name="Transform Message" doc:id="b484122c-6ae4-48a7-a591-97097bcaa8ad" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+        </db:select>
+        <ee:transform doc:name="Transform Message" doc:id="b484122c-6ae4-48a7-a591-97097bcaa8ad">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 payload]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+            </ee:message>
+        </ee:transform>
     </flow>
     <flow name="get:\payment:payment-config">
-        <logger level="INFO" doc:name="Logger" doc:id="71ff07df-fb0c-4f5f-847d-0088b92d7b0c" message="get:\payment:payment-config"/>
-		<db:select doc:name="Select" doc:id="412d424f-cde9-4693-a296-eed660e8c5ef" config-ref="Database_Config">
-			<db:sql >select * from transactions</db:sql>
-		</db:select>
-		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
-http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="fca74556-78ee-436c-b3b1-6d9d9d06f8da">
+        <logger level="INFO" doc:name="Logger" doc:id="71ff07df-fb0c-4f5f-847d-0088b92d7b0c" message="get:\payment:payment-config" />
+        <db:select doc:name="Select" doc:id="412d424f-cde9-4693-a296-eed660e8c5ef" config-ref="Database_Config">
+            <db:sql>select * from transactions</db:sql>
+        </db:select>
+        <ee:transform xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="fca74556-78ee-436c-b3b1-6d9d9d06f8da">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -170,42 +162,18 @@ payload]]></ee:set-payload>
         </ee:transform>
     </flow>
     <flow name="post:\payment:payment-config">
-        <logger level="INFO" doc:name="Logger" doc:id="f96998d9-0a0f-4b23-ab79-48fc7d0a7463" message="post:\payment:payment-config"/>
-		<set-variable value="#[%dw 2.0
-output application/java
----
-payload.transactionID as Number]" doc:name="transaction_id" doc:id="39fa1b50-4fca-4231-a7d3-0a47ab59b0c0" variableName="transaction_id"/>
-		<set-variable value="#[%dw 2.0
-output application/java
----
-payload.date as Date]" doc:name="transaction_date" doc:id="aea6fb7d-99d2-457e-9994-a3d53fd98a1f" variableName="transaction_date"/>
-		<set-variable value="#[%dw 2.0
-output application/java
----
-payload.amount as Number]" doc:name="amount" doc:id="1d0d20b6-6ece-4f84-bd0e-92c6839e5b66" variableName="amount"/>
-		<set-variable value="#[%dw 2.0
-output application/java
----
-payload.cardnumber]" doc:name="card_number" doc:id="d8ec37a0-89f1-4947-92c1-b2c92ddeca32" variableName="card_number"/>
-		<set-variable value="#[%dw 2.0
-output application/java
----
-payload.source]" doc:name="trans_source" doc:id="83b48ecd-699a-4e6e-9078-38634a82483b" variableName="trans_source"/>
-		<set-variable value="#[%dw 2.0
-output application/java
----
-payload.description]" doc:name="trans_description" doc:id="c9375577-1193-4285-a57a-c85c1bdcc3b7" variableName="trans_description"/>
-		<set-variable value="#[%dw 2.0
-output application/java
----
-payload.status]" doc:name="status" doc:id="89f1cc4a-71ae-481f-a8f2-e83828b66adc" variableName="status"/>
-		<set-variable value='#[%dw 2.0
-output application/java
----
-payload."type"]' doc:name="trans_type" doc:id="29a2a3c5-9a8c-4a9f-8a46-6defbca268f6" variableName="trans_type"/>
-		<db:insert doc:name="Insert" doc:id="63fc1f73-c578-408d-9d72-31ff21693875" config-ref="Database_Config">
-			<db:sql>insert into transactions (transaction_id, transaction_date, amount, card_number, trans_source, trans_description, status, trans_type) values (:id, :tdate, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
-			<db:input-parameters><![CDATA[#[%dw 2.0
+        <logger level="INFO" doc:name="Logger" doc:id="f96998d9-0a0f-4b23-ab79-48fc7d0a7463" message="post:\payment:payment-config" />
+        <set-variable value="#[%dw 2.0 output application/java --- payload.transactionID as Number]" doc:name="transaction_id" doc:id="39fa1b50-4fca-4231-a7d3-0a47ab59b0c0" variableName="transaction_id" />
+        <set-variable value="#[%dw 2.0 output application/java --- payload.date as Date]" doc:name="transaction_date" doc:id="aea6fb7d-99d2-457e-9994-a3d53fd98a1f" variableName="transaction_date" />
+        <set-variable value="#[%dw 2.0 output application/java --- payload.amount as Number]" doc:name="amount" doc:id="1d0d20b6-6ece-4f84-bd0e-92c6839e5b66" variableName="amount" />
+        <set-variable value="#[%dw 2.0 output application/java --- payload.cardnumber]" doc:name="card_number" doc:id="d8ec37a0-89f1-4947-92c1-b2c92ddeca32" variableName="card_number" />
+        <set-variable value="#[%dw 2.0 output application/java --- payload.source]" doc:name="trans_source" doc:id="83b48ecd-699a-4e6e-9078-38634a82483b" variableName="trans_source" />
+        <set-variable value="#[%dw 2.0 output application/java --- payload.description]" doc:name="trans_description" doc:id="c9375577-1193-4285-a57a-c85c1bdcc3b7" variableName="trans_description" />
+        <set-variable value="#[%dw 2.0 output application/java --- payload.status]" doc:name="status" doc:id="89f1cc4a-71ae-481f-a8f2-e83828b66adc" variableName="status" />
+        <set-variable value="#[%dw 2.0 output application/java --- payload.&quot;type&quot;]" doc:name="trans_type" doc:id="29a2a3c5-9a8c-4a9f-8a46-6defbca268f6" variableName="trans_type" />
+        <db:insert doc:name="Insert" doc:id="63fc1f73-c578-408d-9d72-31ff21693875" config-ref="Database_Config">
+            <db:sql>insert into transactions (transaction_id, transaction_date, amount, card_number, trans_source, trans_description, status, trans_type) values (:id, :tdate, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
+            <db:input-parameters><![CDATA[#[%dw 2.0
 output application/java
 ---
 {
@@ -218,6 +186,48 @@ output application/java
 	status: vars.status,
 	trans_type: vars.trans_type
 }]]]></db:input-parameters>
-		</db:insert>
+        </db:insert>
+    </flow>
+    <flow name="post:\payment\accountid:application\json:payment-config">
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  data: {
+    transactionalID: "1",
+    date: "2018-10-15",
+    amount: "100.26",
+    cardnumber: "1111 2222 3333 4444",
+    source: "Amazon",
+    description: "A payment of \$100.26 to credit card 1111 2222 3333 4444",
+    status: "approved",
+    "type": "payment"
+  }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\payment:application\json:payment-config">
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  data: {
+    transactionalID: "1",
+    date: "2018-10-15",
+    amount: "100.26",
+    cardnumber: "1111 2222 3333 4444",
+    source: "Amazon",
+    description: "A payment of \$100.26 to credit card 1111 2222 3333 4444",
+    status: "approved",
+    "type": "payment"
+  }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
     </flow>
 </mule>
