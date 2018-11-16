@@ -1,15 +1,28 @@
 package com.revature.ndfinancial.retail.model;
 
+import java.util.List;
+
+import org.springframework.data.annotation.Id;
+
 public class Group {
+	@Id
 	private String id;
+	private String name;
 	private String desc;
-	private String groupId;
-	private String range;
+	private List<String> userId;
+	private Boolean active;
+	
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	public String getDesc() {
 		return desc;
@@ -17,21 +30,29 @@ public class Group {
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-	public String getGroupId() {
-		return groupId;
+	public List<String> getUserId() {
+		return userId;
 	}
-	public void setGroupId(String groupId) {
-		this.groupId = groupId;
+	public void setUserId(List<String> userId) {
+		this.userId = userId;
 	}
-	public String getRange() {
-		return range;
+	public Boolean getActive() {
+		return active;
 	}
-	public void setRange(String range) {
-		this.range = range;
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+	public Group(String name, String desc, List<String> userId, Boolean active) {
+		super();
+		this.name = name;
+		this.desc = desc;
+		this.userId = userId;
+		this.active = active;
 	}
 	@Override
 	public String toString() {
-		return "Group [id=" + id + ", desc=" + desc + ", groupId=" + groupId + ", range=" + range + "]";
+		return "Group [id=" + id + ", name=" + name + ", desc=" + desc + ", userId=" + userId + ", active=" + active
+				+ "]";
 	}
 	
 }
