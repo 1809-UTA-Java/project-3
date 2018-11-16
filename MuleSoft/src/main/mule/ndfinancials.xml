@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="Default" doc:name="HTTP Listener config" doc:id="89b811cf-9223-4262-9854-c982c7672afb" basePath="/" >
+		<http:listener-connection host="localhost" port="8081" />
+	</http:listener-config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9784aa03-aea1-40f9-a49a-bfc9eb196aec" basePath="/api/retail" >
+		<http:listener-connection host="localhost" port="8081" />
+	</http:listener-config>
+	<flow name="ndfinancialsFlow" doc:id="b4c35753-66bb-419e-835f-1efab12a6545" >
+		<http:listener doc:name="Listener" doc:id="e8cd8e85-3d34-4521-8cb2-f8f6fe138309" config-ref="Default" path="/"/>
+	</flow>
+	<flow name="RetailFlow" doc:id="b76e51de-3b8a-4512-b3aa-a566ac664c3c" >
+		<http:listener doc:name="Listener" doc:id="6fa38e4f-5e9a-44b4-ae4c-ff1e0b4aa8b6" config-ref="HTTP_Listener_config" path="/"/>
+		<flow-ref doc:name="Flow Reference" doc:id="a2e53487-716a-42ed-bc0a-cc4f42a1df6b" name="RetailSub_Flow" />
+	</flow>
+</mule>
