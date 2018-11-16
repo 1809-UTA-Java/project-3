@@ -9,6 +9,15 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     <db:config name="Database_Config4" doc:name="Database Config" doc:id="f6429246-cb2b-4d94-8e16-f8b8aac8c3ab" >
 		<db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe" />
 	</db:config>
+	<http:request-config name="HTTP_Request_configuration2" doc:name="HTTP Request configuration" doc:id="1af461c4-8b0f-4a15-a4f5-d83544fd4b2b" >
+		<http:request-connection host="localhost" port="8085" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration3" doc:name="HTTP Request configuration" doc:id="ed921da4-8bdf-49f6-a257-5b98343c56a1" >
+		<http:request-connection host="localhost" port="8084" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration4" doc:name="HTTP Request configuration" doc:id="8a3291bf-8215-42db-bf6d-d873c19ddc75" >
+		<http:request-connection host="localhost" port="8085" />
+	</http:request-config>
 	<flow name="rewards-main">
         <http:listener config-ref="rewards-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -156,6 +165,33 @@ output application/json
     </flow>
     <flow name="post:\rewards\payment:application\json:rewards-config">
         <logger level="INFO" message="post:\rewards\payment:application\json:rewards-config" />
+		<set-variable value="#[payload.cardNumber]" doc:name="Set CC" doc:id="2b577a1b-d5d3-49e8-b946-7c4c229e8d54" variableName="accountNum"/>
+		<http:request method="POST" doc:name="Request" doc:id="33c662b6-d065-4914-ab92-966ac514b8ff" config-ref="HTTP_Request_configuration2" path="/api/rewards" sendCorrelationId="ALWAYS">
+			<http:body ><![CDATA[#[{
+	"cardNumber" : payload.cardNumber
+}]]]></http:body>
+		</http:request>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="58800363-dfea-46b6-9894-be9d699c1be5" />
+		<logger level="INFO" doc:name="Logger" doc:id="d02a710e-772f-4c87-b430-24ba4b1e2216" message="#[payload]"/>
+		<http:request method="POST" doc:name="Request" doc:id="1afc2a89-880a-488f-bcbe-e61e4f3d3c9c" config-ref="HTTP_Request_configuration3" path="/api/payment">
+			<http:body ><![CDATA[#[{
+	"transactionID" : 53653,
+	"date" : "2018-11-16",
+	"amount" : payload.reward[0],
+	"cardnumber" : payload.cardNumber[0],
+	"source" : "rewards",
+	"description" : "Payment from rewards",
+	"status" : "approved",
+	"Type" : "payment"
+}]]]></http:body>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="07124ef3-13b4-47c1-83a8-c6e87a16c8a8" message="Payment Applied"/>
+		<http:request method="PUT" doc:name="Request" doc:id="cc44b47a-69d7-461e-a812-c3eb7da5b067" config-ref="HTTP_Request_configuration4" path="/api/rewards">
+			<http:body ><![CDATA[#[{
+	"cardNumber": vars.accountNum,
+	"reward": 0
+}]]]></http:body>
+		</http:request>
     </flow>
     <flow name="post:\rewards:application\json:rewards-config">
         <set-variable value="#[payload]" doc:name="Set Variable" doc:id="65cd8396-abbc-4ae7-89ae-0ea2da0f6634" variableName="payload"/>
