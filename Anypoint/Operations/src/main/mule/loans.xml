@@ -134,7 +134,7 @@ output application/json
         <set-variable value="#[%dw 2.0 output application/java --- payload.balance as Number]" doc:name="Set New Balance" doc:id="f94cc1ea-7228-4603-a6fd-097f4db92384" variableName="balance" />
         <logger level="INFO" message="put:\loans\(userID)\updateBalance:application\json:loans-config" />
         <db:update doc:name="Update Balance" doc:id="09593e30-69d8-41e6-bd7f-03d7ac91c60e" config-ref="Database_Config">
-            <db:sql>update loans set balance = :newBalance where loan_id = :id</db:sql>
+            <db:sql>update loans set balance = balance - :newBalance where loan_id = :id</db:sql>
             <db:input-parameters><![CDATA[#[{
 	newBalance : vars.balance,
 	id : vars.loanID	
@@ -146,7 +146,7 @@ output application/json
         <set-variable value="#[%dw 2.0 output application/java --- payload.principalBalance as Number]" doc:name="Set New Principal Balance" doc:id="c507c1cb-96c4-42e1-8f98-831cfd8237b6" variableName="principalBalance" />
         <logger level="INFO" message="put:\loans\(userID)\updatePrincipalBalance:application\json:loans-config" />
         <db:update doc:name="Update Principal Balance" doc:id="f0e52924-7323-45a6-897b-187ea2116675" config-ref="Database_Config">
-            <db:sql>update loans set principal = :newPrincipal where loan_id = :id</db:sql>
+            <db:sql>update loans set principal = principal - :newPrincipal where loan_id = :id</db:sql>
             <db:input-parameters><![CDATA[#[{
 	newPrincipal : vars.principalBalance,
 	id : vars.loanID
