@@ -1,13 +1,13 @@
 #%RAML 1.0
 title: offerAPI
 version: 1.0
-baseUri: localhost:8081/api/retail/application
+baseUri: /
 
 types:
   appForm:
     properties:
-      active: boolean
-      id: string
+      active: boolean | nil
+      id?: string | nil
       offer: string
       sentIn: datetime
       started: datetime
@@ -16,15 +16,15 @@ types:
 
   offer:
     properties: 
-      id: string
+      id?: string | nil
       desc: string
       type: string
-      creditLimit: number
-      interestRate: number
-      incentives: string[]
+      creditLimit?: number
+      interestRate?: number
+      incentives?: string[]
       startDate: datetime
       endDate: datetime
-      target: string[]
+      target?: string[]
       active: boolean
   
   offers:
@@ -33,7 +33,7 @@ types:
 
   special:
     properties:
-      id: string
+      id?: string
       desc: string
       active: boolean
   
@@ -43,9 +43,9 @@ types:
   
   group:
     properties: 
-      id: string
+      id?: string
       name: string
-      desc: string
+      desc?: string
       userId: string[]
       active: boolean
 
@@ -64,7 +64,7 @@ types:
           application/json:
             example: {"ef3a5a5c-e441-11e8-9f32-f2801f1b9fd1"}
 
-  /{id}:
+/{id}:
     uriParameters: 
       id: string
     get:
@@ -235,7 +235,7 @@ types:
   post:
     body:
       application/json:
-        type: offers
+        type: offer
     responses:
       200:
         body:

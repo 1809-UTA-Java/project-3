@@ -42,10 +42,10 @@ public class ApplicationController {
 	private SpecialRepo special_repo;
 
 	@PostMapping("/")
-	public String postApplication(@RequestBody AppForm newApp) {
+	public AppForm postApplication(@RequestBody AppForm newApp) {
 		newApp.setId(UUID.randomUUID().toString());
 		app_repo.save(newApp);
-		return newApp.getId();
+		return newApp;
 	}
 
 	@DeleteMapping("/{id}")
@@ -157,9 +157,9 @@ public class ApplicationController {
 	}
 
 	@PostMapping("/offer")
-	public String postOffer(@RequestBody Offer offer) {
+	public Offer postOffer(@RequestBody Offer offer) {
 		offer = offer_repo.save(offer);
-		return offer.getId().toString();
+		return offer;
 	}
 
 	@PutMapping("/offer/{id}")
@@ -189,10 +189,10 @@ public class ApplicationController {
 	}
 
 	@PostMapping("/special")
-	public String postSpecial(@RequestBody Special special) {
+	public Special postSpecial(@RequestBody Special special) {
 		special.setId(UUID.randomUUID().toString());
 		special_repo.save(special);
-		return (special.getId());
+		return special;
 	}
 
 	@GetMapping("/special")
