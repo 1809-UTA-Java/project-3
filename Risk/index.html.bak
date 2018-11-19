@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus®">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>index</title>
+ </head>
+ <body>
+	<a href="new-customer"><br></br>
+	<a href="new-credit-card"><br></br>
+	<a href="new-loan"><br></br>
+ </body>
+</html>
+
