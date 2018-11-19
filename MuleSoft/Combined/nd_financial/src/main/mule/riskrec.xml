@@ -167,7 +167,7 @@ vars.vScore / vars.vDebtPer]" doc:name="Rough Number" doc:id="c0c1b6bb-3923-40c7
 output application/json
 ---
 {
-	minMuleVersion: vars.vRiskFactor as Number
+	riskfactor : vars.vRiskFactor as Number
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>

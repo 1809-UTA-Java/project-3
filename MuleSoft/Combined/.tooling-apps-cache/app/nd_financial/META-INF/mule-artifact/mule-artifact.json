@@ -2,7 +2,6 @@
   "configs": [
     "listpendingapi.xml",
     "rewards.xml",
-    "freeze-account-api.xml",
     "AproveAndDenyAPI.xml",
     "credit-cards.xml",
     "riskinputapi.xml",

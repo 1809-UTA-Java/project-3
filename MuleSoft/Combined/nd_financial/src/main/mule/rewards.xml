@@ -6,18 +6,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         <http:listener-connection host="0.0.0.0" port="8011" />
     </http:listener-config>
     <apikit:config name="rewards-config" raml="rewards.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <db:config name="Database_Config4" doc:name="Database Config" doc:id="dd2b9376-4d0d-4801-ba37-8c3dc5b5fb3b" >
+    <db:config name="Database_Config_R" doc:name="Database Config" doc:id="dd2b9376-4d0d-4801-ba37-8c3dc5b5fb3b" >
 		<db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe" />
 	</db:config>
 	<http:request-config name="HTTP_Request_configuration2" doc:name="HTTP Request configuration" doc:id="fadb8e55-2c10-4683-9346-59a1255ef9d4" >
-		<http:request-connection host="localhost" port="8085" />
+		<http:request-connection host="localhost" port="8011" />
 	</http:request-config>
-	<http:request-config name="HTTP_Request_configuration3" doc:name="HTTP Request configuration" doc:id="b2daac4b-8e75-44ce-a73c-6719f89bc5af" >
-		<http:request-connection host="localhost" port="8084" />
-	</http:request-config>
-	<http:request-config name="HTTP_Request_configuration4" doc:name="HTTP Request configuration" doc:id="fc2465e0-69d1-4c45-a2bd-15312c8db3c4" >
-		<http:request-connection host="localhost" port="8085" />
-	</http:request-config>
+	
+	
 	<flow name="rewards-main">
         <http:listener config-ref="rewards-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -139,13 +135,13 @@ output application/json
     </flow>
     <flow name="put:\rewards:application\json:rewards-config">
 		<logger level="INFO" message="put:\rewards:application\json:rewards-config" />
-		<db:update doc:name="Update" doc:id="7d84a3f1-b3e5-498d-a906-cd925fe612ba" config-ref="Database_Config">
+		<db:update doc:name="Update" doc:id="7d84a3f1-b3e5-498d-a906-cd925fe612ba" config-ref="Database_Config_R">
 			<db:sql >UPDATE credit_cards SET rewards = :rewards WHERE card_number = :cc</db:sql>
 			<db:input-parameters ><![CDATA[#[{rewards : payload.reward, cc : payload.cardNumber}]]]></db:input-parameters>
 		</db:update>
     </flow>
     <flow name="get:\rewards\(userID):rewards-config">
-        <db:select doc:name="Select" doc:id="8e097c73-fc34-4c16-a229-f7a92d2bf0a0" config-ref="Database_Config">
+        <db:select doc:name="Select" doc:id="8e097c73-fc34-4c16-a229-f7a92d2bf0a0" config-ref="Database_Config_R">
 			<db:sql >SELECT * FROM credit_cards WHERE user_id = :id</db:sql>
 			<db:input-parameters ><![CDATA[#[{id : message.attributes.uriParams.userID}]]]></db:input-parameters>
 		</db:select>
@@ -163,7 +159,10 @@ output application/json
 			</ee:message>
 		</ee:transform>
     </flow>
-    <flow name="post:\rewards\payment:application\json:rewards-config">
+    <http:request-config name="HTTP_Request_configuration3" doc:name="HTTP Request configuration" doc:id="b2daac4b-8e75-44ce-a73c-6719f89bc5af">
+		<http:request-connection host="localhost" port="8010" />
+	</http:request-config>
+	<flow name="post:\rewards\payment:application\json:rewards-config">
         <logger level="INFO" message="post:\rewards\payment:application\json:rewards-config" />
 		<set-variable value="#[payload.cardNumber]" doc:name="Set CC" doc:id="549d9b3e-ea95-4701-86a3-9ad00db4c89f" variableName="accountNum"/>
 		<http:request method="POST" doc:name="Request" doc:id="1f2bc2d0-0533-43f4-96d5-c3147df4266f" config-ref="HTTP_Request_configuration2" path="/api/rewards" sendCorrelationId="ALWAYS">
@@ -173,7 +172,7 @@ output application/json
 		</http:request>
 		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="dd861f4c-816d-4864-ac46-f64da35f96c9" />
 		<logger level="INFO" doc:name="Logger" doc:id="4b396e84-df0e-4b70-8f7b-ec528cb7d0a7" message="#[payload]"/>
-		<http:request method="POST" doc:name="Request" doc:id="cecd0620-6306-4095-88d8-71110f198fbb" config-ref="HTTP_Request_configuration3" path="/api/payment">
+		<http:request method="POST" doc:name="Request" doc:id="cecd0620-6306-4095-88d8-71110f198fbb" path="/api/payment" config-ref="HTTP_Request_configuration3">
 			<http:body ><![CDATA[#[{
 	"transactionID" : 53653,
 	"date" : "2018-11-16",
@@ -186,17 +185,20 @@ output application/json
 }]]]></http:body>
 		</http:request>
 		<logger level="INFO" doc:name="Logger" doc:id="eec9b35e-3573-4b05-9cee-15da5d78c5af" message="Payment Applied"/>
-		<http:request method="PUT" doc:name="Request" doc:id="446415ee-d4d2-4890-89c8-a2b497fa9a78" config-ref="HTTP_Request_configuration4" path="/api/rewards">
+		<http:request method="PUT" doc:name="Request" doc:id="446415ee-d4d2-4890-89c8-a2b497fa9a78" path="/api/rewards" config-ref="HTTP_Request_configuration4">
 			<http:body ><![CDATA[#[{
 	"cardNumber": vars.accountNum,
 	"reward": 0
 }]]]></http:body>
 		</http:request>
     </flow>
-    <flow name="post:\rewards:application\json:rewards-config">
+    <http:request-config name="HTTP_Request_configuration4" doc:name="HTTP Request configuration" doc:id="fc2465e0-69d1-4c45-a2bd-15312c8db3c4">
+		<http:request-connection host="localhost" port="8011" />
+	</http:request-config>
+	<flow name="post:\rewards:application\json:rewards-config">
         <set-variable value="#[payload]" doc:name="Set Variable" doc:id="ca047ebb-eeea-41c1-9ca3-78a0992ede21" variableName="payload"/>
 		<logger level="INFO" doc:name="Logger" doc:id="b380b8d0-f837-479a-8c51-7c86f79ccaaf" message="#[vars.payload]"/>
-		<db:select doc:name="Select" doc:id="58de2f41-18fd-479e-bb35-9fee1a82dfa8" config-ref="Database_Config">
+		<db:select doc:name="Select" doc:id="58de2f41-18fd-479e-bb35-9fee1a82dfa8" config-ref="Database_Config_R">
 			<db:sql >SELECT * FROM credit_cards WHERE card_number = :cc</db:sql>
 			<db:input-parameters ><![CDATA[#[{cc : payload.cardNumber}]]]></db:input-parameters>
 		</db:select>

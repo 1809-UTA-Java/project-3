@@ -5,10 +5,10 @@
     </http:listener-config>
     <apikit:config name="payment-config" raml="payment.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <db:config name="Database_Config_P" doc:name="Database Config" doc:id="ab41ca15-8cff-4774-ac09-1a487f8f9937">
-        <db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" serviceName="xe" />
+        <db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe"/>
     </db:config>
     <http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="77b60221-b8c3-498a-b63f-2238672dcd32" >
-		<http:request-connection host="localhost" port="8082" />
+		<http:request-connection host="localhost" port="8004" />
 	</http:request-config>
 	<flow name="payment-main">
         <http:listener config-ref="payment-httpListenerConfig" path="/api/*">
@@ -184,7 +184,7 @@ output application/java
 	trans_type: payload.Type
 }]]]></db:input-parameters>
         </db:insert>
-		<http:request method="PUT" doc:name="Request" doc:id="ab13d947-2ad5-49d4-8788-292a1772aee1" config-ref="HTTP_Request_configuration1" url="http://localhost:8082/api/creditcards/payment">
+		<http:request method="PUT" doc:name="Request" doc:id="ab13d947-2ad5-49d4-8788-292a1772aee1" config-ref="HTTP_Request_configuration1" url="http://localhost:8004/api/creditcards/payment">
 			<http:body ><![CDATA[#[{
   "cardNumber": vars.CardNumber,
   "balance": vars.ammount
