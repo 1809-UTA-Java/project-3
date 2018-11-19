@@ -1,0 +1,79 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Login</title>
+
+</head>
+
+<body>
+    <div id="header"></div>
+    <div id="leftColumn"></div>
+    <div id="body"></div>
+    <div id="rightColumn"></div>
+    <div id="footer"></div>
+    <script>
+        const formBox = (state) => {
+            if (state.display === "user") {
+                return (
+                    `<div class = "formBox">
+                        ${usernameBox(state.user.username)}
+                    <input type = 'button' name = 'Enter Username' />
+                </div>`
+                )
+
+            } else {
+                return (`
+                    <div class = "formBox">
+                        ${passwordBox(state.user.password)}
+                    </div>
+                    <input type = 'button' name = 'Login'/>
+                `)
+            }
+
+        }
+
+        const usernameBox = (username) => {
+            return (`
+            <div>
+                <label for = "username">Username: </label>
+                <input type = "text" value = "${username}" name = "username" />
+            </div>
+        `)
+        }
+
+        const passwordBox = (password) => {
+            return (`
+            <div>
+                <label for = "username">Username: </label>
+                <input type = "text" value = "${password}" name = "username" />
+            </div>
+            `)
+        }
+
+        const checkUserName = async (username) => {
+            let response = await fetch(`${config.url}/user/${username}`);
+            let json = await response.json();
+            if (json.message == "okay") {
+
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const config = {
+                url: "http://localhost:8081/api/retail"
+            }
+            const state = {};
+
+        });
+
+
+
+
+    </script>
+</body>
+
+</html>

@@ -230,12 +230,13 @@ payload]]></ee:set-payload>
         </ee:transform>
     </flow>
     <flow name="post:\:application\json:user-config">
-        <db:insert doc:name="Insert" doc:id="efcb186d-c369-4458-bf3f-a301328d679d" config-ref="Database_Config">
+        <set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="4c0278c0-a498-4909-ab6c-b0d35f3e1c7d" variableName="userId"/>
+		<db:insert doc:name="Insert" doc:id="efcb186d-c369-4458-bf3f-a301328d679d" config-ref="Database_Config">
 			<db:sql >insert into app_user (id,gender,phone,occupation,ethnicity,address,salary,username,dob,email,name,active,password)
 values(:id,:gender,:phone,:occupation,:ethnicity,:address,:salary,:username,:dob,:email,:name,1,:password)</db:sql>
 			<db:input-parameters ><![CDATA[#[
 	{
-		'id' : uuid(),
+		'id' : vars.userId,
 		'gender': payload.gender,
 		'phone': payload.phone,
 		'occupation': payload.occupation,
@@ -255,7 +256,9 @@ values(:id,:gender,:phone,:occupation,:ethnicity,:address,:salary,:username,:dob
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-payload]]></ee:set-payload>
+{
+	"message":vars.userId
+}]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
