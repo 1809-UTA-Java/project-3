@@ -1,0 +1,134 @@
+#%RAML 1.0
+title: freeze-account-api
+baseUri: /api/retail
+version: v1
+types:
+  frozenAccount:
+    required: false
+    description: Account to be frozen and stored in a database.
+    type: object
+    properties:
+      accountId:
+        required: true
+        example: '4820 4690 4610 4490'
+        type: string
+      userId:
+        required: true
+        example: afk4qm4
+        type: string
+      timeSubmitted:
+        required: true
+        example: 10/24/18 02:37pm
+        type: string
+      author:
+        required: true
+        example: Bob
+        type: string
+      accountStatus:
+        required: false
+        example: frozen
+        type: string
+/frozenAccount:
+  displayName: /frozenAccount
+  get:
+    description: Retrieve all frozen accounts
+    displayName: get
+    responses: 
+      200:
+        body: 
+          application/json:
+            example:
+              [
+                  {
+                    "accountId": '4820 4690 4610 4490',
+                    "userId": "afk4qm4",
+                    "timeSubmitted": "10/24/18 02:37pm",
+                    "author": "Bob",
+                    "accountStatus": "unfrozen"
+                  },
+                  {
+                    "accountId": '4471 09901 234 8892',
+                    "userId": "d3AE199",
+                    "timeSubmitted": "11/07/18 04:55pm",
+                    "author": "Bob",
+                    "accountStatus": "frozen"
+                  },
+                ]
+            type: frozenAccount[]
+      404:
+          body:
+            application/json:
+              example: |
+                {"message": "<<resourcePathName|!singularize>> not found" }
+  post:
+    description: Freeze a single account from user.
+    displayName: post
+    responses: 
+      200:
+        body: 
+          application/json:
+            example: 
+              accountId: '4820 4690 4610 4490'
+              userId: 'afk4qm4'
+            type: object
+    body:
+      application/json:
+        example:
+          accountId: '4820 4690 4610 4490'
+          userId: afk4qm4
+          timeSubmitted: 10/24/18 02:37pm
+          author: Bob
+          accountStatus: unfrozen
+        type: frozenAccount
+  /{accountId}:
+    displayName: '/frozenAccount/{accountId}'
+    get:
+      description: Get frozen account based on card number.
+      displayName: get
+      responses: 
+        200:
+          body: 
+            application/json:
+              example: 
+                [
+                  {
+                    "accountId": '4820 4690 4610 4490',
+                    "userId": "afk4qm4",
+                    "timeSubmitted": "10/24/18 02:37pm",
+                    "author": "Bob",
+                    "accountStatus": "unfrozen"
+                  },
+                  {
+                    "accountId": '4471 09901 234 8892',
+                    "userId": "d3AE199",
+                    "timeSubmitted": "11/07/18 04:55pm",
+                    "author": "Bob",
+                    "accountStatus": "frozen"
+                  },
+                ]
+              type: frozenAccount[]
+        404:
+          body:
+            application/json:
+              example: |
+                {"message": "<<resourcePathName|!singularize>> not found" }
+    put:
+      description: Update a frozen account
+      displayName: put
+      responses: 
+        200: 
+          body: 
+            application/json:
+              example:
+                accountId: '4820 4690 4610 4490'
+                userId: 'afk4qm4'
+              type: object  
+      body:  
+        application/json:
+          example:
+            accountId: '4820 4690 4610 4490'
+            userId: afk4qm4
+            timeSubmitted: 10/24/18 02:37pm
+            author: Bob
+            accountStatus: unfrozen
+          type: frozenAccount
