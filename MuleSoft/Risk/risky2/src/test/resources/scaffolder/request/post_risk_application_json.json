@@ -1,0 +1,8 @@
+{
+  "borrower": {
+    "credit-score": 70,
+    "loan-amt": 10000,
+    "loan-dur": 30,
+    "curr-income": 20000
+  }
+}
