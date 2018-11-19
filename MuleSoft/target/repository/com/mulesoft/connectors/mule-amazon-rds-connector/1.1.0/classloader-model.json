@@ -1,0 +1,228 @@
+{
+  "version": "1.0.0",
+  "artifactCoordinates": {
+    "groupId": "com.mulesoft.connectors",
+    "artifactId": "mule-amazon-rds-connector",
+    "version": "1.1.0",
+    "type": "jar",
+    "classifier": "mule-plugin"
+  },
+  "dependencies": [
+    {
+      "artifactCoordinates": {
+        "groupId": "com.amazonaws",
+        "artifactId": "aws-java-sdk-rds",
+        "version": "1.11.172",
+        "type": "jar"
+      },
+      "uri": "repository/com/amazonaws/aws-java-sdk-rds/1.11.172/aws-java-sdk-rds-1.11.172.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "com.amazonaws",
+        "artifactId": "aws-java-sdk-core",
+        "version": "1.11.172",
+        "type": "jar"
+      },
+      "uri": "repository/com/amazonaws/aws-java-sdk-core/1.11.172/aws-java-sdk-core-1.11.172.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "software.amazon.ion",
+        "artifactId": "ion-java",
+        "version": "1.0.2",
+        "type": "jar"
+      },
+      "uri": "repository/software/amazon/ion/ion-java/1.0.2/ion-java-1.0.2.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "com.amazonaws",
+        "artifactId": "jmespath-java",
+        "version": "1.11.172",
+        "type": "jar"
+      },
+      "uri": "repository/com/amazonaws/jmespath-java/1.11.172/jmespath-java-1.11.172.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "com.mulesoft.connectors",
+        "artifactId": "aws-connector-commons",
+        "version": "1.2.2",
+        "type": "jar"
+      },
+      "uri": "repository/com/mulesoft/connectors/aws-connector-commons/1.2.2/aws-connector-commons-1.2.2.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "com.amazonaws",
+        "artifactId": "aws-java-sdk-sts",
+        "version": "1.11.79",
+        "type": "jar"
+      },
+      "uri": "repository/com/amazonaws/aws-java-sdk-sts/1.11.79/aws-java-sdk-sts-1.11.79.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "org.apache.httpcomponents",
+        "artifactId": "httpclient",
+        "version": "4.5.3",
+        "type": "jar"
+      },
+      "uri": "repository/org/apache/httpcomponents/httpclient/4.5.3/httpclient-4.5.3.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "org.apache.httpcomponents",
+        "artifactId": "httpcore",
+        "version": "4.4.6",
+        "type": "jar"
+      },
+      "uri": "repository/org/apache/httpcomponents/httpcore/4.4.6/httpcore-4.4.6.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "commons-codec",
+        "artifactId": "commons-codec",
+        "version": "1.9",
+        "type": "jar"
+      },
+      "uri": "repository/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "joda-time",
+        "artifactId": "joda-time",
+        "version": "2.8.2",
+        "type": "jar"
+      },
+      "uri": "repository/joda-time/joda-time/2.8.2/joda-time-2.8.2.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "com.fasterxml.jackson.core",
+        "artifactId": "jackson-core",
+        "version": "2.9.2",
+        "type": "jar"
+      },
+      "uri": "repository/com/fasterxml/jackson/core/jackson-core/2.9.2/jackson-core-2.9.2.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "com.fasterxml.jackson.core",
+        "artifactId": "jackson-annotations",
+        "version": "2.9.2",
+        "type": "jar"
+      },
+      "uri": "repository/com/fasterxml/jackson/core/jackson-annotations/2.9.2/jackson-annotations-2.9.2.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "com.fasterxml.jackson.core",
+        "artifactId": "jackson-databind",
+        "version": "2.9.2",
+        "type": "jar"
+      },
+      "uri": "repository/com/fasterxml/jackson/core/jackson-databind/2.9.2/jackson-databind-2.9.2.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "com.fasterxml.jackson.dataformat",
+        "artifactId": "jackson-dataformat-cbor",
+        "version": "2.9.2",
+        "type": "jar"
+      },
+      "uri": "repository/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.9.2/jackson-dataformat-cbor-2.9.2.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "org.hamcrest",
+        "artifactId": "hamcrest-all",
+        "version": "1.3",
+        "type": "jar"
+      },
+      "uri": "repository/org/hamcrest/hamcrest-all/1.3/hamcrest-all-1.3.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "net.sf.dozer",
+        "artifactId": "dozer",
+        "version": "5.5.1",
+        "type": "jar"
+      },
+      "uri": "repository/net/sf/dozer/dozer/5.5.1/dozer-5.5.1.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "org.apache.commons",
+        "artifactId": "commons-lang3",
+        "version": "3.2.1",
+        "type": "jar"
+      },
+      "uri": "repository/org/apache/commons/commons-lang3/3.2.1/commons-lang3-3.2.1.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "org.slf4j",
+        "artifactId": "slf4j-api",
+        "version": "1.7.5",
+        "type": "jar"
+      },
+      "uri": "repository/org/slf4j/slf4j-api/1.7.5/slf4j-api-1.7.5.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "org.slf4j",
+        "artifactId": "jcl-over-slf4j",
+        "version": "1.7.5",
+        "type": "jar"
+      },
+      "uri": "repository/org/slf4j/jcl-over-slf4j/1.7.5/jcl-over-slf4j-1.7.5.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "commons-beanutils",
+        "artifactId": "commons-beanutils",
+        "version": "1.9.3",
+        "type": "jar"
+      },
+      "uri": "repository/commons-beanutils/commons-beanutils/1.9.3/commons-beanutils-1.9.3.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "commons-logging",
+        "artifactId": "commons-logging",
+        "version": "1.2",
+        "type": "jar"
+      },
+      "uri": "repository/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "commons-collections",
+        "artifactId": "commons-collections",
+        "version": "3.2.2",
+        "type": "jar"
+      },
+      "uri": "repository/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "com.mulesoft.connectors",
+        "artifactId": "mule-connector-commons",
+        "version": "1.2.0",
+        "type": "jar"
+      },
+      "uri": "repository/com/mulesoft/connectors/mule-connector-commons/1.2.0/mule-connector-commons-1.2.0.jar"
+    },
+    {
+      "artifactCoordinates": {
+        "groupId": "org.mule.connectors",
+        "artifactId": "atlantic-commons",
+        "version": "1.1.1",
+        "type": "jar"
+      },
+      "uri": "repository/org/mule/connectors/atlantic-commons/1.1.1/atlantic-commons-1.1.1.jar"
+    }
+  ]
+}
