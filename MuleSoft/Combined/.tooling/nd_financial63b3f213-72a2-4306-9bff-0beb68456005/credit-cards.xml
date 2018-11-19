@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+    <http:listener-config name="credit-cards-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8082" />
+    </http:listener-config>
+    <apikit:config name="credit-cards-config" raml="credit-cards.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config1" doc:name="Database Config" doc:id="68c82e85-293a-433b-8050-b395c371fc43">
+        <db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe" />
+    </db:config>
+    <flow name="credit-cards-main">
+        <http:listener config-ref="credit-cards-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="credit-cards-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="credit-cards-console">
+        <http:listener config-ref="credit-cards-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="credit-cards-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\creditcards\(userID):credit-cards-config">
+        <db:select doc:name="Select" doc:id="1aa7546e-e6ca-41d5-9fd6-9cd1196a23df" config-ref="Database_Config">
+            <db:sql>SELECT * FROM CREDIT_CARDS WHERE USER_ID = :userID</db:sql>
+            <db:input-parameters><![CDATA[#[{userID : attributes.uriParams.userID}]]]></db:input-parameters>
+        </db:select>
+        <ee:transform xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="f7fbc5d9-42c9-4d53-9881-9d05c0889961">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\creditcards\newCard:application\json:credit-cards-config">
+        <logger level="INFO" message="pre insert check" />
+        <db:insert doc:name="Insert" doc:id="568983c8-b9b7-49d8-99fc-5ae773f0a617" config-ref="Database_Config">
+            <db:sql>Insert into Credit_cards (card_number, balance, status, credit_line, expiration, user_id, rewards, cvv, interest_rate) values (:cardNumber, :balance, :status, :creditLine, :expiration, :userID, :reward, :cvv, :interestRate)</db:sql>
+            <db:input-parameters><![CDATA[#[{
+	cardNumber : payload.cardNumber,
+	balance : payload.balance,
+	status : payload.status,
+	creditLine : payload.creditLine,
+	expiration : payload.expiration as Date,
+	userID : payload.userID,
+	reward : payload.reward,
+	cvv : payload.cvv,
+	interestRate : payload.interestRate
+	
+}]]]></db:input-parameters>
+        </db:insert>
+        <logger level="INFO" doc:name="Logger" doc:id="ec56e9d7-42b9-48e6-9f22-686a890517a1" message="post insert check" />
+    </flow>
+	<flow name="put:\creditcards\updatereward:credit-cards-config">
+        <db:update doc:name="Update Rewards" doc:id="1824189e-9874-455f-ab4d-042ba0581b47" config-ref="Database_Config">
+            <db:sql>UPDATE CREDIT_CARDS SET REWARDS = :reward WHERE USER_ID = :userID</db:sql>
+            <db:input-parameters><![CDATA[#[{reward : payload.reward, userID : payload.userID }]]]></db:input-parameters>
+        </db:update>
+    </flow>
+	<flow name="put:\creditcards\updatestatus:credit-cards-config">
+		<db:update doc:name="Update" doc:id="ec5ee9f7-a409-4b4a-9ece-9af2518b0b1f" config-ref="Database_Config">
+            <db:sql>UPDATE CREDIT_CARDS SET STATUS = :status WHERE USER_ID = :userID</db:sql>
+            <db:input-parameters><![CDATA[#[{status : payload.status, userID : payload.userID}]]]></db:input-parameters>
+        </db:update>
+    </flow>
+	<flow name="put:\creditcards\charge:credit-cards-config">
+		<logger level="INFO" doc:name="Logger" doc:id="292ad04c-bcc0-4f26-be43-4be2c39ab04d" message="check charge"/>
+		<db:update doc:name="Update" doc:id="37ff0c14-7d1f-4b62-a385-f8bb5163a523" config-ref="Database_Config">
+			<db:sql>UPDATE CREDIT_CARDS SET BALANCE = :balance + BALANCE WHERE CARD_NUMBER = :cardNumber</db:sql>
+			<db:input-parameters><![CDATA[#[{balance : payload.balance, cardNumber : payload.cardNumber}]]]></db:input-parameters>
+		</db:update>
+    </flow>
+	<flow name="put:\creditcards\payment:credit-cards-config">
+        <db:update doc:name="Update" doc:id="a5fdd1ee-15d8-42d4-abac-e1808e2e1365" config-ref="Database_Config">
+			<db:sql >UPDATE CREDIT_CARDS SET BALANCE = BALANCE - :balance  WHERE CARD_NUMBER = :cardNumber</db:sql>
+			<db:input-parameters ><![CDATA[#[{balance : payload.balance, cardNumber : payload.cardNumber}]]]></db:input-parameters>
+		</db:update>
+    </flow>
+</mule>

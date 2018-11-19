@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="retailFlow" doc:id="ad86739c-424a-49c1-bf3d-06b1c128a9d2" >
+		<http:listener doc:name="Listener" doc:id="c8c2106b-2875-4ec9-9752-d4839ee41846" config-ref="listener_8081" path="/"/>
+		<http:load-static-resource doc:name="Load static resource" doc:id="9c028ade-abb3-4b3e-b1ca-a8961f109242" resourceBasePath="${app.home}/web/idex.html" defaultFile="idex.html"/>
+	</flow>
+</mule>

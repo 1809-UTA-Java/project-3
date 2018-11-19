@@ -1,0 +1,75 @@
+#%RAML 1.0 
+title: loans
+
+types: 
+  loan:
+    properties: 
+      userID: number
+      loanType: 
+        enum: [home, car, comerical, business]
+      balance: number
+      interestRate: number
+      gracePeriodEndDate: date-only
+      principalBalance: number
+    example:
+      userID: 1
+      loanType: home
+      balance: 350
+      interestRate: .035
+      gracePeriodEndDate: 2018-09-10
+      principalBalance: 100
+
+resourceTypes: 
+  
+  Member: 
+    get:
+      responses: 
+        200:
+          body: 
+            application/json:
+              type: loan[]
+          
+    post: 
+      body:
+        application/json:
+          type: loan
+          description: "New loan posted" 
+
+/loans:       
+
+  /{userID}:
+    type: Member
+  
+    /{loanID}:
+      get:
+        responses:
+          200:
+            body: 
+              application/json:
+                type: loan[]
+          
+    /updateBalance:
+      put:
+        body: 
+          application/json:
+            type: object
+            properties: 
+              balance: number
+              loanID: number
+            example: |
+             {
+              "balance": 100.23,  
+              "loanID": 1
+             }
+    
+  /applyInterest:
+      put:
+        body: 
+          application/json:
+            type: object
+            properties: 
+              loanID: number
+            example: | 
+             {
+              "loanID": 1
+             }        

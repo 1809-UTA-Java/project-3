@@ -1,0 +1,35 @@
+#%RAML 1.0
+baseUri: https://mocksvc.mulesoft.com/mocks/614fd5af-93fb-48c6-94ea-fd8521c29212/LoanAmount # 
+
+title: Loan Amount
+#baseUri: https://api.ndf-managers.com/LoanAmount
+version: v1
+
+/managers:
+  /loanAmount:
+    get:
+    /{id}:
+      put:
+        queryParameters:
+          LoanDuration:
+            displayName: duration
+            type: integer
+            description: Loan duration
+            example: 60      
+            required: true
+
+          Salary:
+            displayName: Salary
+            type: integer
+            description: The amount the applicant makes in a year before tax
+            example: 45000
+            required: true
+              
+          Debts:
+            displayName: Debts
+            type: integer
+            description: The total amount of debts the applicant has prior to applying for the loan.
+            example: 18000
+            required: false
+
+      

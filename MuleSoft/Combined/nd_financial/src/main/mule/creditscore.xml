@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+    <http:listener-config name="creditscore-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="creditscore-config" raml="creditscore.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config_CS" doc:name="Database Config" doc:id="8ca82cb9-5558-4d86-959d-ad9284ad0893" >
+		<db:oracle-connection host="192.168.56.105" user="proj3risk" password="pass" instance="xe" />
+	</db:config>
+	<flow name="creditscore-main">
+        <http:listener config-ref="creditscore-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="creditscore-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="creditscore-console">
+        <http:listener config-ref="creditscore-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="creditscore-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\getcreditscore:creditscore-config">
+        <logger level="INFO" message="get:\getcreditscore:creditscore-config" />
+        <set-variable value='#[%dw 2.0
+output application/java
+---
+attributes.queryParams."customer-id" as Number]' doc:name="Customer ID" doc:id="851dc49f-e03a-4353-94af-c4ba75887593" variableName="custID"/>
+		<db:select doc:name="Select" doc:id="7ec187ae-c454-457d-8b14-32d9375a5c3d" config-ref="Database_Config_AnD">
+			<db:sql >SELECT * FROM CREDITSCORE WHERE CUSTOMER_ID = :id</db:sql>
+			<db:input-parameters ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	id: attributes.queryParams."customer-id"
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="e6edcc70-c19d-4bc6-ad39-2986c8b0b2bd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"customer-id": payload.CUSTOMER_ID[0],
+	"credit-score": payload.CREDIT_SCORE[0]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+    </flow>
+    <flow name="post:\getcreditscore:application\json:creditscore-config">
+        <logger level="INFO" message="post:\getcreditscore:application\json:creditscore-config" />
+		<set-variable value='#[%dw 2.0
+output application/java
+---
+payload.user."customer-id" as Number]' doc:name="Customer ID" doc:id="fc27e594-81c4-4bc0-ba92-b21828856518" variableName="custID"/>
+		<set-variable value="#[0]" doc:name="Credit Score" doc:id="eafd99a2-889e-4129-9589-bd6d3bf7213b" variableName="Score"/>
+		<set-variable value="#[%dw 2.0
+output application/java
+---
+payload.user.age]" doc:name="Age" doc:id="14ba6387-97a6-41e1-a81d-f40852f8d5e9" variableName="Age"/>
+		<choice doc:name="Age Choice" doc:id="d1865631-f7b9-4c19-9285-f9ba6d9e2c3e" >
+			<when expression="#[vars.Age &lt;= 18]">
+				<logger level="INFO" doc:name="Logger" doc:id="0c8ea400-daa8-4491-aae8-7ddcd868c376" message="Age is 18 or less"/>
+				<set-variable value="#[vars.Score + (20 * 0.25)]" doc:name="Credit Score" doc:id="c9a5b399-f2c0-4b72-8134-a314d88527a9" variableName="Score"/>
+			</when>
+			<when expression="#[vars.Age &gt; 18 and vars.Age &lt; 25]">
+				<logger level="INFO" doc:name="Logger" doc:id="465828e6-0b33-4695-86a6-f48b54bd1699" message="Age is between 19 and 24"/>
+				<set-variable value="#[vars.Score + (30 * 0.25)]" doc:name="Credit Score" doc:id="d35706e4-fb96-4531-bd96-5fd7070ececd" variableName="Score"/>
+			</when>
+			<when expression="#[vars.Age &gt; 24 and vars.Age &lt; 31]">
+				<logger level="INFO" doc:name="Logger" doc:id="c93095f5-4828-4901-9634-1f02658a6eaf" message="Age is between 25 and 30"/>
+				<set-variable value="#[vars.Score + (40 * 0.25)]" doc:name="Credit Score" doc:id="47d98ce5-a51b-4eb6-aabb-2f7f56892486" variableName="Score"/>
+			</when>
+			<when expression="#[vars.Age &gt; 30 and vars.Age &lt; 46]">
+				<logger level="INFO" doc:name="Logger" doc:id="ba7145e7-0e37-4d21-a651-9a4c5261fa9c" message="Age is between 30 and 45"/>
+				<set-variable value="#[vars.Score + (50 * 0.25)]" doc:name="Credit Score" doc:id="88c55646-526c-49e6-8eff-7ab375582d13" variableName="Score"/>
+			</when>
+			<when expression="#[vars.Age &gt; 45]">
+				<logger level="INFO" doc:name="Logger" doc:id="73c96d1d-c78e-409b-a12c-451c1a06a500" message="Age is 46 and above"/>
+				<set-variable value="#[vars.Score + (45 * 0.25)]" doc:name="Credit Score" doc:id="9c510744-1818-4c51-b4fa-497f69dca834" variableName="Score"/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="61ede729-241e-4087-817c-42511c7be470" message="Invalid Age"/>
+			</otherwise>
+		</choice>
+		<set-variable value='#[%dw 2.0
+output application/java
+---
+payload.user.occupation."annual-income" as String]' doc:name="Income" doc:id="6ade3708-162f-4473-9722-b878e738f154" variableName="Income"/>
+		<set-variable value='#[%dw 2.0
+output application/java
+---
+payload.user.occupation."job-term"]' doc:name="Job Term" doc:id="50c3202e-d301-4e14-a285-5a1c892b8100" variableName="Term"/>
+		<choice doc:name="Job Choice" doc:id="cabb9271-f930-4fc3-ac6e-9e409e9234cf" >
+			<when expression="#[vars.Income &lt; 30000]">
+				<logger level="INFO" doc:name="Logger" doc:id="1da854ce-3fbd-42d4-b4f4-c8c86f0bb424" message="Income less than 30,000"/>
+				<choice doc:name="Term Choice" doc:id="bb0994c8-75d4-4666-ac98-4997827ba960" >
+					<when expression='#[vars.Term == "part-time"]'>
+						<logger level="INFO" doc:name="Logger" doc:id="eca86122-22c2-4d2c-895a-e2a45a099df8" message="Part-Time Worker"/>
+						<set-variable value="#[vars.Score + (0.25 * 20)]" doc:name="Credit Score" doc:id="faaacb6f-de4b-4aac-bb0e-bbec57c9d7e4" variableName="Score"/>
+				
+					</when>
+					<when expression='#[vars.Term == "full-time"]'>
+						<logger level="INFO" doc:name="Logger" doc:id="e33319a7-0265-414d-81a9-8c17a418c2b3" message="Full-Time Worker"/>
+						<set-variable value="#[vars.Score + (0.25 * 30)]" doc:name="Credit Score" doc:id="cf5658e3-150b-4e39-a33d-8b5ba08214bf" variableName="Score"/>
+						
+					</when>
+					<otherwise >
+						<logger level="INFO" doc:name="Logger" doc:id="fbc812a3-545a-46e6-a36f-3b7f33d1ad78" message="Invalid Job Term"/>
+					</otherwise>
+				</choice>
+				
+			</when>
+			<when expression="#[vars.Income &gt;= 30000 and vars.Income &lt; 50000]">
+				<logger level="INFO" doc:name="Logger" doc:id="db462bb1-01f0-46fb-97e8-17b619da5c69" message="Income between 30k and 50k"/>
+				<choice doc:name="Term Choice" doc:id="13e593bf-05e2-4ead-b8f1-c5defe62207f" >
+					<when expression='#[vars.Term == "part-time"]'>
+						<logger level="INFO" doc:name="Logger" doc:id="9b2c6759-3ec4-4fa5-a8d1-f53418cdb552" message="Part-Time Worker"/>
+						<set-variable value="#[vars.Score + (0.25 * 40)]" doc:name="Credit Score" doc:id="1a489554-4bc2-4120-a860-0596fb762fb1" variableName="Score"/>
+					</when>
+					<when expression='#[vars.Term == "full-time"]'>
+						<logger level="INFO" doc:name="Logger" doc:id="bc898aff-6999-40c5-875d-a5b73f6d9e53" message="Full-Time Worker"/>
+						<set-variable value="#[vars.Score + (0.25 * 50)]" doc:name="Credit Score" doc:id="3b533ce0-b433-4a3f-aea4-825775fff49a" variableName="Score"/>
+				
+					</when>
+					<otherwise >
+						<logger level="INFO" doc:name="Logger" doc:id="e4cb2f76-2abb-4414-ba26-a0f5fd5b9a97" message="Invalid Job Term"/>
+					</otherwise>
+				</choice>
+			</when>
+			<when expression="#[vars.Income &gt;= 50000 and vars.Income &lt; 75000]">
+				<logger level="INFO" doc:name="Logger" doc:id="0324099c-138e-413b-bf74-de8f247da51a" message="Income between 50k and 75k"/>
+				<choice doc:name="Term Choice" doc:id="4c114a10-9f49-4511-9690-59e3fdadb8ef" >
+					<when expression='#[vars.Term == "part-time"]'>
+						<logger level="INFO" doc:name="Logger" doc:id="5c19b953-970d-4ad8-adec-294ffdc67a10" message="Part-Time Worker"/>
+						<set-variable value="#[vars.Score + (0.25 * 45)]" doc:name="Credit Score" doc:id="53d8aff4-31b4-45b4-9d5e-9007b8c4f9c1" variableName="Score"/>
+				
+					</when>
+					<when expression='#[vars.Term == "full-time"]'>
+						<logger level="INFO" doc:name="Logger" doc:id="bb93826b-7604-4314-96d6-dd4569d7275c" message="Full-Time Worker"/>
+						<set-variable value="#[vars.Score + (0.25*60)]" doc:name="Credit Score" doc:id="228db5e9-5da5-4429-8fd4-048002e49ba8" variableName="Score"/>
+				
+					</when>
+					<otherwise >
+						<logger level="INFO" doc:name="Logger" doc:id="ad19c4a7-11bd-4a57-ad4f-c5b6fc72544d" message="Invalid Job Term"/>
+					</otherwise>
+				</choice>
+			</when>
+			<when expression="#[vars.Income &gt;= 75000 and vars.Income &lt; 90000]">
+				<logger level="INFO" doc:name="Logger" doc:id="dc39e7df-4a87-4613-91aa-9e17bda7f2ff" message="Income between 75k and 90k"/>
+				<choice doc:name="Term Choice" doc:id="295b5813-42b0-42c1-9f15-01a27d24cada" >
+					<when expression='#[vars.Term == "part-time"]'>
+						<logger level="INFO" doc:name="Logger" doc:id="3c362345-1407-4509-b808-cdefbb53a8f1" message="Part-Time Worker"/>
+						<set-variable value="#[vars.Score + (0.25*55)]" doc:name="Credit Score" doc:id="9e49f712-6198-4e21-b4e1-f24b9f310228" variableName="Score"/>
+				
+					</when>
+					<when expression='#[vars.Term == "full-time"]'>
+						<logger level="INFO" doc:name="Logger" doc:id="43e68e15-8ef7-423f-a9fa-84121725945d" message="Full-Time Worker"/>
+						<set-variable value="#[vars.Score + (0.25*70)]" doc:name="Credit Score" doc:id="be2ea2e8-e461-4efe-9c46-df3caa2f762c" variableName="Score"/>
+				
+					</when>
+					<otherwise >
+						<logger level="INFO" doc:name="Logger" doc:id="c4bc8962-8082-4c0c-b05e-ed4a0304e748" message="Invalid Job Term"/>
+					</otherwise>
+				</choice>
+			</when>
+			<when expression="#[vars.Income &gt;= 90000]">
+				<logger level="INFO" doc:name="Logger" doc:id="56800413-458b-403f-b8a5-c52f5dd4ba14" message="Income greater than 90k"/>
+				<set-variable value="#[vars.Score + (0.25 * 80)]" doc:name="Credit Score" doc:id="1698f88d-52fd-4875-8781-570314247061" variableName="Score"/>
+			</when>
+			<otherwise >
+				<logger level="ERROR" doc:name="Logger" doc:id="1ccf3f0c-4bf4-445c-b606-aa2c3bf5372e" message="Invalid Income"/>
+			</otherwise>
+		</choice>
+		<set-variable value='#[%dw 2.0
+output application/java
+---
+payload."account-history"."credit-cards"."total-cards" as Number]' doc:name="Credit Card Total" doc:id="b40ab465-11de-465a-94c3-a2ac00a32133" variableName="CTotal"/>
+		<choice doc:name="Credit Existance" doc:id="1544f94c-432d-410a-a508-d11aa4f4d67a" >
+			<when expression='#[vars.CTotal &gt; 0]'>
+				<set-variable value='#[%dw 2.0
+output application/java
+---
+payload."account-history"."credit-cards"."total-balance"]' doc:name="Credit Card Balance" doc:id="5ee447b2-48e4-4c46-8489-9ff3f9c4c19e" variableName="CCBalance" />
+				<set-variable value='#[%dw 2.0
+output application/java
+---
+vars.CCBalance / payload."account-history"."credit-cards"."total-cards"]' doc:name="Credit Card Debt" doc:id="320f8a4c-05ae-4c70-9854-500fc57b407c" variableName="CCDebt" />
+				<choice doc:name="Credit Card Debt" doc:id="1c5ea8b5-773b-4871-a255-2141eb3ba1e9">
+			<when expression="#[vars.CCDebt == 0]">
+				<logger level="INFO" doc:name="Logger" doc:id="282b47b3-effd-4c57-8c61-20ad92184d33" message="0 Debt" />
+				<set-variable value="#[vars.Score + (60 * 0.20)]" doc:name="Credit Score" doc:id="b54836ec-1f13-4805-90a2-79d7a5538dbd" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.CCDebt &gt; 0 and vars.CCDebt &lt; 100]">
+				<logger level="INFO" doc:name="Logger" doc:id="690657f1-fc84-4cb9-a136-3c1ff5642619" message="Debt is between 1 and 99" />
+				<set-variable value="#[vars.Score + (80 * 0.20)]" doc:name="Credit Score" doc:id="87017237-63b7-4efb-ac39-a02750c49be1" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.CCDebt &gt; 99 and vars.CCDebt &lt; 500]">
+				<logger level="INFO" doc:name="Logger" doc:id="79783332-447f-4f2f-88cf-6a5bd2e47a37" message="Debt is between 100 and 499" />
+				<set-variable value="#[vars.Score + (70 * 0.20)]" doc:name="Credit Score" doc:id="68d1c512-c83c-4a1c-85b2-13232bda217e" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.CCDebt &gt; 499 and vars.CCDebt &lt; 750]">
+				<logger level="INFO" doc:name="Logger" doc:id="8f210653-c2b9-4df7-a351-0a48027e9da3" message="Debt is between 500 and 749" />
+				<set-variable value="#[vars.Score + (50 * 0.20)]" doc:name="Credit Score" doc:id="dd279fcc-7174-44f5-a09a-94d0d1aa4179" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.CCDebt &gt; 749 and vars.CCDebt &lt; 1000]">
+				<logger level="INFO" doc:name="Logger" doc:id="36066216-e7fa-4795-8b15-484dcb24b306" message="Debt is between 750 and 999" />
+				<set-variable value="#[vars.Score + (40 * 0.20)]" doc:name="Credit Score" doc:id="42e2ce15-0a21-40cb-92a4-f5dd7763792e" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.CCDebt &gt;= 1000]">
+				<logger level="INFO" doc:name="Logger" doc:id="d3492ffc-a238-4a81-8c13-5d7000fc446c" message="Debt is greater than 1000" />
+				<set-variable value="#[vars.Score + (20 * 0.20)]" doc:name="Credit Score" doc:id="87559e25-e083-412b-8608-dc5d2a1bb61e" variableName="Score" />
+				
+			</when>
+					<otherwise>
+				<logger level="ERROR" doc:name="Logger" doc:id="8fcca2ed-25b0-4d0a-ba3f-42eecd870822" message="Invalid Debt" />
+			</otherwise>
+		</choice>
+				<set-variable value='#[%dw 2.0
+output application/java
+---
+payload."account-history"."credit-cards".payments."total-late" / payload."account-history"."credit-cards".payments.total as Number]' doc:name="Credit Card Payments" doc:id="33b1352e-df40-4ea7-b904-1429a05ef7da" variableName="CCPayments" />
+				<choice doc:name="Credit Card Payments" doc:id="b15a929c-09a2-42b5-98a9-032b3f1f4622">
+			<when expression="#[vars.CCPayments &lt;= 0.05]">
+				<logger level="INFO" doc:name="Logger" doc:id="1177e377-4843-41ab-b5bc-4d074439c8a5" message="Payment percent is less than 5%" />
+				<set-variable value="#[vars.Score + (75 * 0.25)]" doc:name="Credit Score" doc:id="feb6cb3d-846c-4e59-baa7-de291e528c6c" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.CCPayments &gt; 0.05 and vars.CCPayments &lt;= 0.10]">
+				<logger level="INFO" doc:name="Logger" doc:id="28073a1a-29ea-456d-b702-174cf6b4ab4e" message="Payment percent is between 5% and 10%" />
+				<set-variable value="#[vars.Score + (65 * 0.25)]" doc:name="Credit Score" doc:id="dd6a1296-42d6-4af4-86b3-1c8da65e2c7f" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.CCPayments &gt; 0.10 and vars.CCPayments &lt;= 0.25]">
+				<logger level="INFO" doc:name="Logger" doc:id="49ef8180-0365-4354-bc0f-f0efda8458c2" message="Payment percent is between 10% and 25%" />
+				<set-variable value="#[vars.Score + (50 * 0.25)]" doc:name="Credit Score" doc:id="8f7e07bd-d1ec-4231-ac66-87a4378506df" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.CCPayments &gt; 0.25 and vars.CCPayments &lt;= 0.50]">
+				<logger level="INFO" doc:name="Logger" doc:id="27147cb1-7832-4d5b-ba2b-16f24329c826" message="Payment percent is between 25% and 50%" />
+				<set-variable value="#[vars.Score + (35 * 0.25)]" doc:name="Credit Score" doc:id="1919be0c-bb10-470f-b0b4-8c1bdf7973d4" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.CCPayments &gt; 0.50 and vars.CCPayments &lt;= 0.75]">
+				<logger level="INFO" doc:name="Logger" doc:id="37645c64-c43a-433a-a8c0-1a6987aa4f0c" message="Payment percent is between 50% and 75%" />
+				<set-variable value="#[vars.Score + (20 * 0.25)]" doc:name="Credit Score" doc:id="aaedfe31-91e9-4783-a226-1681c4af506b" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.CCPayments &gt; 0.75]">
+				<logger level="INFO" doc:name="Logger" doc:id="7a498b35-a322-4830-84c9-c916c093579d" message="Payment percent is above 75%" />
+				<set-variable value="#[vars.Score + (10 * 0.25)]" doc:name="Credit Score" doc:id="2f218eef-2425-48b9-9a88-9b42a46a4b2a" variableName="Score" />
+				
+			</when>
+			<otherwise>
+				<logger level="ERROR" doc:name="Logger" doc:id="e4d62a6f-61a8-49a1-a1d7-43fb45f6b487" message="Invalid payment percentage" />
+			</otherwise>
+		</choice>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="d0e3a0a3-b645-4062-954d-333bdfc517b9" message="Base value since no credit card"/>
+				<set-variable value="#[vars.Score + 20]" doc:name="Credit Score" doc:id="19d6ae7c-f5d7-4fab-9b97-9abf7837d841" variableName="Score"/>
+			</otherwise>
+		</choice>
+		<set-variable value='#[%dw 2.0
+output application/java
+---
+payload."account-history".loans."total-loans" as Number]' doc:name="Loan Total" doc:id="deb0abec-029c-4206-afa5-9006acfe4290" variableName="LTotal"/>
+		<choice doc:name="Loan Calculation" doc:id="0766014c-a9de-4a22-8442-7af662997905" >
+			<when expression="#[vars.LTotal &gt; 0]">
+				<set-variable value='#[%dw 2.0
+output application/java
+---
+payload."account-history".loans."total-principle"]' doc:name="Loan Principle" doc:id="517f67b0-3b27-41e1-8cdb-f53b15b151ff" variableName="LPrinciple" />
+				<set-variable value='#[%dw 2.0
+output application/java
+---
+payload."account-history".loans."total-balance" / vars.LPrinciple as Number]' doc:name="Loan Balance Div by Principle" doc:id="b42ad987-50d4-4a32-a58d-5d641d608015" variableName="LBalance" />
+				<set-variable value='#[%dw 2.0
+output application/java
+---
+vars.LBalance / payload."account-history".loans."total-loans" as Number]' doc:name="Loan Debt" doc:id="7e7cccd7-681d-40cb-8cd9-913692cdf7b1" variableName="LDebt" />
+				<choice doc:name="Loan Debt" doc:id="33605f9b-682a-4120-8fd7-f48e735ce3b6">
+			<when expression="#[vars.LDebt &lt;= 0.10]">
+				<logger level="INFO" doc:name="Logger" doc:id="52977355-62f9-4798-9e8c-cc92a8d932f3" message="Loan debt percentage is less than 10%" />
+				<set-variable value="#[vars.Score + (60 * 0.15)]" doc:name="Credit Score" doc:id="5abb99fa-54ad-4a95-94d3-191005715393" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.LDebt &gt; 0.10 and vars.LDebt &lt;= 0.25]">
+				<logger level="INFO" doc:name="Logger" doc:id="638fbb82-c202-4810-b24a-58ff3d0ace7c" message="Loan debt percentage is between 10% and 25%" />
+				<set-variable value="#[vars.Score + (55 * 0.15)]" doc:name="Credit Score" doc:id="5aa24688-6064-4ca9-a32e-34710bf860c2" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.LDebt &gt; 0.25 and vars.LDebt &lt;= 0.50]">
+				<logger level="INFO" doc:name="Logger" doc:id="ebcec0d4-f4ac-4bac-abe0-d4ba2a3edec4" message="Loan debt percentage is between 25% and 50%" />
+				<set-variable value="#[vars.Score + (45 * 0.15)]" doc:name="Credit Score" doc:id="8414ff41-d4c8-4b60-8755-1db13c82a891" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.LDebt &gt; 0.50 and vars.LDebt &lt;= 0.75]">
+				<logger level="INFO" doc:name="Logger" doc:id="a42289f4-717f-41d0-9df9-b33869e2764c" message="Loan debt percentage is between 50% and 75%" />
+				<set-variable value="#[vars.Score + (35 * 0.15)]" doc:name="Credit Score" doc:id="d5957453-2842-4c7c-82a9-b1a9e91c8692" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.LDebt &gt; 0.75 and vars.LDebt &lt;= 0.90]">
+				<logger level="INFO" doc:name="Logger" doc:id="f88928f8-990e-4fe5-96bb-d5527a355366" message="Loan debt percentage is between 75% and 90%" />
+				<set-variable value="#[vars.Score + (25 * 0.15)]" doc:name="Credit Score" doc:id="5f1167d7-3307-4f20-9a9d-4c85280683ad" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.LDebt &gt; 0.90]">
+				<logger level="INFO" doc:name="Logger" doc:id="23a94d6c-e494-4b9a-b037-c83c8b92cf30" message="Loan debt percentage is greater than 90%" />
+				<set-variable value="#[vars.Score + (10 * 0.15)]" doc:name="Credit Score" doc:id="abfb6489-022b-4b1a-9e45-f09c4a28f4b1" variableName="Score" />
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Logger" doc:id="cc171658-8cea-47b6-a38b-e7ad5487d392" message="Invalid Loan Debt" />
+			</otherwise>
+		</choice>
+				<set-variable value='#[%dw 2.0
+output application/java
+---
+payload."account-history".loans.payments."total-late" / payload."account-history".loans.payments.total as Number]' doc:name="Loan Payments" doc:id="55c9fb27-c407-4942-92bb-56bf5813acc4" variableName="LoanPayments" />
+				<choice doc:name="Loan Payments" doc:id="69faba3e-6587-4a82-aef7-01921c98f979">
+			<when expression="#[vars.LoanPayments &lt;= 0.05]">
+				<logger level="INFO" doc:name="Logger" doc:id="728d4ebb-6aba-4191-9da6-3df041ae1ff1" message="Payment percent is less than 5%" />
+				<set-variable value="#[vars.Score + (75 * 0.15)]" doc:name="Credit Score" doc:id="e2700101-0ced-425d-8e62-62bec011e48d" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.LoanPayments &gt; 0.05 and vars.LoanPayments &lt;= 0.10]">
+				<logger level="INFO" doc:name="Logger" doc:id="bb182ce0-df12-41c2-8887-7dd5707d31fd" message="Payment percent is between 5% and 10%" />
+				<set-variable value="#[vars.Score + (65 * 0.15)]" doc:name="Credit Score" doc:id="84de43a4-4ae7-4754-ace7-74ca19cb4a64" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.LoanPayments &gt; 0.10 and vars.LoanPayments &lt;= 0.25]">
+				<logger level="INFO" doc:name="Logger" doc:id="06c3dae4-dd05-4bdb-b7ca-c0708f5ddc4f" message="Payment percent is between 10% and 25%" />
+				<set-variable value="#[vars.Score + (50 * 0.15)]" doc:name="Credit Score" doc:id="d80e3f52-0303-4e20-8516-5bc91496706d" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.LoanPayments &gt; 0.25 and vars.LoanPayments &lt;= 0.50]">
+				<logger level="INFO" doc:name="Logger" doc:id="1af27022-9896-46e0-8c8b-f99b2e1c1d52" message="Payment percent is between 25% and 50%" />
+				<set-variable value="#[vars.Score + (35 * 0.15)]" doc:name="Credit Score" doc:id="c3e153fd-1935-44d1-be64-f43838d3bc66" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.LoanPayments &gt; 0.50 and vars.LoanPayments &lt;= 0.75]">
+				<logger level="INFO" doc:name="Logger" doc:id="b254a7f6-4d16-4e63-8d72-6817300a57bc" message="Payment percent is between 50% and 75%" />
+				<set-variable value="#[vars.Score + (20 * 0.15)]" doc:name="Credit Score" doc:id="616b9bb1-4260-41ae-b56c-3bb972e3aef2" variableName="Score" />
+				
+			</when>
+			<when expression="#[vars.LoanPayments &gt; 0.75]">
+				<logger level="INFO" doc:name="Logger" doc:id="132f9de0-1db2-4042-b6d9-e924912b8938" message="Payment percent is above 75%" />
+				<set-variable value="#[vars.Score + (10 * 0.15)]" doc:name="Credit Score" doc:id="60a17e2d-d838-4976-a2f5-e289fb56033a" variableName="Score" />
+				
+			</when>
+			<otherwise>
+				<logger level="ERROR" doc:name="Logger" doc:id="14f755bc-682f-4fbe-9039-49a900f1f26d" message="Invalid payment percentage" />
+			</otherwise>
+		</choice>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="283c9756-7948-4265-9d45-a3e5ad5b4dd2" message="No Loans made. Using default value" />
+				<set-variable value="#[vars.Score + 10]" doc:name="Credit Score" doc:id="21c3ede1-0281-4dd0-8804-0025cb6b4b2c" variableName="Score"/>
+			</otherwise>
+		</choice>
+		<set-variable value='#[%dw 2.0
+output application/json
+---
+{
+	"customer-id": payload.user."customer-id",
+	"credit-score": vars.Score
+}]' doc:name="Output" doc:id="395f52ff-7b14-485e-b7ec-76a195bee18e" variableName="Output"/>
+		<db:select doc:name="Select" doc:id="6829d763-a8cc-4b36-938e-b01072bd70df" config-ref="Database_Config_CS">
+			<db:sql >SELECT CUSTOMER_ID FROM CREDITSCORE WHERE CUSTOMER_ID = :id</db:sql>
+			<db:input-parameters ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	id: payload.user."customer-id"
+}]]]></db:input-parameters>
+		</db:select>
+		<set-variable value="#[%dw 2.0
+output application/java
+---
+payload.CUSTOMER_ID[0] as Number]" doc:name="Database CustID" doc:id="b96e0a81-05c3-410c-ad33-46bad5ec8d49" variableName="DCID"/>
+		<choice doc:name="Choice" doc:id="00a7eb73-f123-42e9-9a55-f19021205bfe" >
+			<when expression="#[vars.custID ~= vars.DCID]">
+				<logger level="INFO" doc:name="Logger" doc:id="0bfcd9cc-ddcc-4e27-baba-b2b2048459ed" message="Updating credit score..." />
+				<db:update doc:name="Update" doc:id="b46c1b5f-db89-45da-9fe5-7b75664e70a1" config-ref="Database_Config_CS">
+					<db:sql>UPDATE CREDITSCORE SET CREDIT_SCORE = :score WHERE CUSTOMER_ID = :id</db:sql>
+					<db:input-parameters><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	score: vars.Score,
+	id: vars.DCID
+}]]]></db:input-parameters>
+				</db:update>
+				<set-payload value="#[vars.Output]" doc:name="Output" doc:id="b6d63980-846e-4923-8050-08c77c8cc093" mimeType="application/json" />
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="42742056-5ebf-491a-9d84-42054e55a2e0" message="Inserting credit score... #[payload.CUSTOMER_ID] #[vars.custID]"/>
+				<db:insert doc:name="Insert" doc:id="fed7f940-2bf7-420a-a6ce-bc6a0653bf7f" config-ref="Database_Config_CS">
+					<db:sql >INSERT INTO CREDITSCORE VALUES(:id, :score)</db:sql>
+					<db:input-parameters ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	score: vars.Score,
+	id: vars.custID
+}]]]></db:input-parameters>
+				</db:insert>
+				<set-payload value="#[vars.Output]" doc:name="Output" doc:id="19c93171-20c6-42ee-b418-3c23f77c7c79" />
+			</otherwise>
+		</choice>
+		
+    </flow>
+</mule>
