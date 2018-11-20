@@ -1,0 +1,148 @@
+#%RAML 1.0
+title: DevRel-Quick Start Products API
+version: v1.0
+baseUri: /api/retail/application
+
+types:
+  application:
+    properties:
+      id?: string
+      userId: string
+      offer: string
+      started: datetime
+      status: string
+      sentIn: datetime
+/:
+  post:
+    body:
+      application/json:
+        type: application
+        properties: 
+          userId: 
+            description: "user id"
+            type: string
+            required: true
+          offer: 
+            description: "offer id"
+            type: string
+            required: true
+          started: 
+            description: "date user started application"
+            type: datetime
+          status: 
+            description: "status is submitted, pending, approved, or denied"
+            type: string
+          sentIn: 
+            type: datetime
+            description: "when the form status was changed to submitted"
+    responses: 
+      201:
+        body:
+          application/json:
+            example:
+              {
+                "id": "fc8ca441-eea2-4617-8ef3-4487fe41d5ec"
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+                "message": "Bad Request"
+              }
+      404:
+        body:
+          application/json:
+            example:
+              {
+                "message": "User not found"
+              }
+/{id}:
+  description: "Used to get one application, identified by ID"
+  uriParameters: 
+    id: string
+  get:
+    description: "This is to get single application, identified by ID"
+    responses: 
+      200:
+        body:
+          application/json:
+            type: application
+            example: 
+              {
+                "id": "ef3a5a5c-e441-11e8-9f32-f2801f1b9fd1",
+                "userId": "8bc561f1-534d-4d50-a4b5-291af937ce56",
+                "offer": "ff89a3a4-e441-11e8-9f32-f2801f1b9fd1",
+                "started": "2018-02-28T16:41:41.090Z",
+                "status": "pending",
+                "sentIn": "2018-04-28T16:41:41.090Z"
+              }
+      404:
+        body: 
+          application/json:
+            properties:
+              message: string
+            example: |
+              {
+                "message" : "Application not found"
+              }
+  put:
+    responses:
+      204:
+        body: 
+          application/json:
+            example:
+              {
+                "message": "Update Successful"
+              }
+      400:
+        body:
+          application/json:
+            example:
+              {
+                "message": "Bad request"
+              }
+  delete:
+    responses: 
+      404:
+        body:
+          application/json:
+            example:
+              {
+                "message": "application not found"
+              }
+      204:
+        body:
+          application/json:
+            example:
+              {
+                "message": "application was successfully deleted"
+              }
+/user:
+  /{id}:
+      uriParameters:
+        id: string
+      get:
+        responses: 
+          200:
+            body:
+              application/json:
+                type: application
+                example: 
+                  {
+                    "id": "ef3a5a5c-e441-11e8-9f32-f2801f1b9fd1",
+                    "userId": "8bc561f1-534d-4d50-a4b5-291af937ce56",
+                    "offer": "ff89a3a4-e441-11e8-9f32-f2801f1b9fd1",
+                    "started": "2018-02-28T16:41:41.090Z",
+                    "status": "pending",
+                    "sentIn": "2018-04-28T16:41:41.090Z"
+                  }
+          404:
+            body: 
+              application/json:
+                properties:
+                  message: string
+                example: |
+                  {
+                    "message" : "Application not found"
+                  }

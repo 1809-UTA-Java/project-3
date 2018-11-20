@@ -128,7 +128,7 @@ output application/json
             </ee:variables>
         </ee:transform>
         <logger level="INFO" doc:name="Logger" doc:id="d0e3c55c-13f2-4a9a-a617-f6757b523183" message="#[vars.userId]"/>
-		<db:update doc:name="Update" doc:id="b0ef3b5f-abd5-441f-bfc9-ba2d1efab4e8" config-ref="Database_Config_AnD">
+		<db:update doc:name="Update" doc:id="b0ef3b5f-abd5-441f-bfc9-ba2d1efab4e8" config-ref="Database_Config_U">
 			<db:sql >update app_user where id = :id
 set
 	gender = :gender,
@@ -141,8 +141,7 @@ set
 	dob = :dob,
 	email = :email,
 	name = :name</db:sql>
-			<db:input-parameters ><![CDATA[#[
-	{
+			<db:input-parameters ><![CDATA[#[{
 		'id' : vars.userId,
 		'gender': payload.GENDER,
 		'phone': payload.PHONE,
@@ -154,8 +153,7 @@ set
 		'dob': payload.DOB,
 		'email': payload.EMAIL,
 		'name': payload.NAME
-	}
-]]]></db:input-parameters>
+	}]]]></db:input-parameters>
 		</db:update>
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="12a7aecb-27d2-4317-aee6-9aa21ad97759">
             <ee:message>
