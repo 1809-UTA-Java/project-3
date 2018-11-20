@@ -49,7 +49,7 @@ minvalue 1000000
 start with 1000000
 increment by 1
 nocache
-nocycle;
+nocycle; 
 
 /* Add Foreign Key contraint to card_number in Transactions */
 ALTER TABLE TRANSACTIONS
