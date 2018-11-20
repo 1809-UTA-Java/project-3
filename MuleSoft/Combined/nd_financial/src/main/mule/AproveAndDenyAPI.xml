@@ -173,16 +173,18 @@ output application/json
 		</http:request>
 		<set-variable value="#[10000]" doc:name="LoanAmt" doc:id="26552919-98aa-43c1-9242-4f5220cd470b" variableName="Amount"/>
 		<set-variable value="" doc:name="LoanType" doc:id="c4f0f604-a7ac-49f6-a538-8c6ab8515eee" variableName="vType"/>
-		<http:request method="GET" doc:name="Request_New_Loan" doc:id="5f6a206f-a09a-4ec6-9ff7-6dff6cfc931a" config-ref="HTTP_Request_configuration3" url="http://localhost:8009/api/loans/1">
-			<http:body ><![CDATA[#[{
+		<http:request method="POST" doc:name="Request_New_Loan" doc:id="5f6a206f-a09a-4ec6-9ff7-6dff6cfc931a" url="http://localhost:8009/api/loans/1">
+			<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
 	  "userID": 1,
       "loanType": "home",
-      "balance": vars.Amount * 0.035,
+      "balance": vars.Amount,
       "interestRate": 0.035,
       "gracePeriodEndDate":"2018-09-10",
       "principalBalance": vars.Amount
-      
-      }]]]></http:body>
+}]]]></http:body>
 		</http:request>
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="488cd8f3-4dfa-4d4b-97f5-23020b9d6e95">
             <ee:message>
