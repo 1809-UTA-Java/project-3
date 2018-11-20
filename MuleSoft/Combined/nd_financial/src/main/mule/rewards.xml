@@ -174,7 +174,7 @@ output application/json
 		<logger level="INFO" doc:name="Logger" doc:id="4b396e84-df0e-4b70-8f7b-ec528cb7d0a7" message="#[payload]"/>
 		<http:request method="POST" doc:name="Request" doc:id="cecd0620-6306-4095-88d8-71110f198fbb" path="/api/payment" config-ref="HTTP_Request_configuration3">
 			<http:body ><![CDATA[#[{
-	"transactionID" : 53653,
+	"transactionID" : 745246,
 	"date" : "2018-11-16",
 	"amount" : payload.reward[0],
 	"cardnumber" : payload.cardNumber[0],
