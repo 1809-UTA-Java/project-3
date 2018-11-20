@@ -1,0 +1,35 @@
+{
+  "configs": [
+    "payment.xml",
+    "loans.xml",
+    "rewards.xml",
+    "vendorpayments.xml",
+    "credit-cards.xml",
+    "cashadvance2.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "com.mycompany:operations:1.0.0-SNAPSHOT",
+  "minMuleVersion": "4.1.4",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": [
+        "api/cashadvance2.raml",
+        "api/credit-cards.raml",
+        "api/loans.raml",
+        "api/payment.raml",
+        "api/rewards.raml",
+        "api/vendorpayments.raml",
+        "application-types.xml",
+        "log4j2.xml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

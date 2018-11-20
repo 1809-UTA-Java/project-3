@@ -43,6 +43,14 @@ CREATE TABLE TRANSACTIONS (
     trans_type varchar2(20)
 );
 
+/* Create Sequence for Transactions*/
+create sequence transaction_sequence 
+minvalue 1000000
+start with 1000000
+increment by 1
+nocache
+nocycle;
+
 /* Add Foreign Key contraint to card_number in Transactions */
 ALTER TABLE TRANSACTIONS
 ADD FOREIGN KEY (card_number) REFERENCES credit_cards(card_number);
