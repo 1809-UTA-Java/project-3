@@ -4,3 +4,4 @@ DROP TABLE Loans;
 DROP TABLE Credit_Cards;
 
 DROP SEQUENCE Loan_Sequence;
+DROP SEQUENCE transaction_sequence; 
