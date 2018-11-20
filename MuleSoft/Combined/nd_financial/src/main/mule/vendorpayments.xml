@@ -167,9 +167,8 @@ payload]]></ee:set-payload>
             <when expression="#[vars.amount &lt;= payload.TOTAL[0]]">
                 <set-payload value="#[vars.FirstPayload]" doc:name="Set Payload" doc:id="0cd0b5cb-69e8-4d8d-aabe-22d98a03bac1" />
                 <db:insert doc:name="Insert" doc:id="50ab8ced-7746-4c2a-b7f9-586d6e5c72bc" config-ref="Database_Config_VP">
-                    <db:sql>insert into transactions values (:id, :date, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
-                    <db:input-parameters><![CDATA[#[{
-	id : payload.TRANSACTION_ID, 
+                    <db:sql>insert into transactions values (transaction_sequence.nextval, :date, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
+                    <db:input-parameters><![CDATA[#[{ 
 	date : payload.TRANSACTION_DATE as Date,
 	amount : payload.AMOUNT as Number,
 	card_number : payload.CARD_NUMBER,
