@@ -159,9 +159,10 @@ payload]]></ee:set-payload>
             <db:sql>select credit_line - balance as total from credit_cards where card_number = :number</db:sql>
             <db:input-parameters><![CDATA[#[{ number : payload.CARD_NUMBER }]]]></db:input-parameters>
         </db:select>
-        <logger level="INFO" doc:name="Logger" doc:id="cbdc9a4e-6201-4498-8cb6-368b79560c65" message="#[payload.TOTAL]" />
+        <logger level="INFO" doc:name="Logger" doc:id="dc2401a4-f0f3-40b0-8fc4-7795e30459f0" message="#[vars.amount]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="cbdc9a4e-6201-4498-8cb6-368b79560c65" message="#[payload.TOTAL[0]]" />
         <choice doc:name="Choice" doc:id="319a7d95-aadc-4ab5-8ea1-440cf474d72f">
-            <when expression="#[vars.amount &lt;= payload.TOTAL[0]]">
+            <when expression="#[vars.amount as Number &lt;= payload.TOTAL[0] as Number]">
                 <set-payload value="#[vars.FirstPayload]" doc:name="Set Payload" doc:id="0cd0b5cb-69e8-4d8d-aabe-22d98a03bac1" />
                 <db:insert doc:name="Insert" doc:id="50ab8ced-7746-4c2a-b7f9-586d6e5c72bc" config-ref="Database_ndadmin">
                     <db:sql>insert into transactions values (transaction_sequence.nextval, :date, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
