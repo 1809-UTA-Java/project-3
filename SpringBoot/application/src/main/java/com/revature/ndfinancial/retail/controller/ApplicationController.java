@@ -162,31 +162,47 @@ public class ApplicationController {
 		}
 	}
 
-	/*@GetMapping("/offer/user/{id}")
+	@GetMapping("/offer/user/{id}")
 	public Offers getUserOffers(@PathVariable(value = "id") String userId) {
-		List<Group> _userGroups = group_repo.findByUserId(userId);
+		
+		//first - grab all the groups the user belongs to
+		List <Group> _userGroups = group_repo.findByUserId(userId);
 		List<Group> userGroups = new ArrayList<Group>();
+		
+		if(_userGroups.isEmpty()) {
+			return null;
+		}
+		
 		for (Group group : _userGroups) {
 			if (group.getActive() == true) {
 				userGroups.add(group);
 			}
 		}
+		
+		System.out.println(userGroups.toString());
+		
 		List<String> groupList = new ArrayList<String>();
 		List<Offer> offers = new ArrayList<Offer>();
-
+		
 		for (Group group : userGroups) {
-			groupList.add(group.getUserId().toString());
+			groupList.add(group.getId().toString());
 		}
 
 		List<Offer> _allOffers = offer_repo.findAll();
 		List<Offer> allOffers = new ArrayList<Offer>();
-
+		
+		if(_allOffers.isEmpty()) {
+			return null;
+		}
+		
 		for (Offer offer : _allOffers) {
 			if (offer.getActive() == true) {
 				allOffers.add(offer);
 			}
 		}
-
+		
+		System.out.println(allOffers.toString());
+		
 		for (Offer offer : allOffers) {
 			for (String _group : offer.getTarget()) {
 				for (String _groupId : groupList) {
@@ -202,22 +218,12 @@ public class ApplicationController {
 
 		return result;
 
-	}*/
+	}
 
 	@PostMapping("/offer")
 	public Offer postOffer(@RequestBody Offer offer) {
 		offer = offer_repo.save(offer);
 		return offer;
-	}
-	@GetMapping("/offer/{id}")
-	public Offer getOfferById(@PathVariable(value="id") String id) {
-		Optional <Offer> _offer = offer_repo.findById(id);
-		
-		if(_offer.isPresent()) {
-			return _offer.get();
-		}
-		
-		return null;
 	}
 	@PutMapping("/offer/{id}")
 	public Offer putOffer(@PathVariable(value = "id") String id, @RequestBody Offer offer) {
