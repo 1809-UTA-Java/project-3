@@ -30,4 +30,22 @@ type application_example = {|
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#12f20ad7-4c75-46bd-ba71-279917b0df6f">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="application-example"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#decd621f-9285-4bfd-b510-032fca75c542">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="application-example"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
 </types:mule>
