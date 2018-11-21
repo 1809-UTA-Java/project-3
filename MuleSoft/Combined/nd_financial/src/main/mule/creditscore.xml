@@ -6,9 +6,6 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
         <http:listener-connection host="0.0.0.0" port="8005" />
     </http:listener-config>
     <apikit:config name="creditscore-config" raml="creditscore.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <db:config name="Database_Config_CS" doc:name="Database Config" doc:id="8ca82cb9-5558-4d86-959d-ad9284ad0893" >
-		<db:oracle-connection host="192.168.56.105" user="proj3risk" password="pass" instance="xe" />
-	</db:config>
 	<flow name="creditscore-main">
         <http:listener config-ref="creditscore-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -137,7 +134,7 @@ output application/json
 output application/java
 ---
 attributes.queryParams."customer-id" as Number]' doc:name="Customer ID" doc:id="851dc49f-e03a-4353-94af-c4ba75887593" variableName="custID"/>
-		<db:select doc:name="Select" doc:id="7ec187ae-c454-457d-8b14-32d9375a5c3d" config-ref="Database_Config_AnD">
+		<db:select doc:name="Select" doc:id="7ec187ae-c454-457d-8b14-32d9375a5c3d" config-ref="Database_proj3risk">
 			<db:sql >SELECT * FROM CREDITSCORE WHERE CUSTOMER_ID = :id</db:sql>
 			<db:input-parameters ><![CDATA[#[%dw 2.0
 output application/java
@@ -481,7 +478,7 @@ output application/json
 	"customer-id": payload.user."customer-id",
 	"credit-score": vars.Score
 }]' doc:name="Output" doc:id="395f52ff-7b14-485e-b7ec-76a195bee18e" variableName="Output"/>
-		<db:select doc:name="Select" doc:id="6829d763-a8cc-4b36-938e-b01072bd70df" config-ref="Database_Config_CS">
+		<db:select doc:name="Select" doc:id="6829d763-a8cc-4b36-938e-b01072bd70df" config-ref="Database_proj3risk">
 			<db:sql >SELECT CUSTOMER_ID FROM CREDITSCORE WHERE CUSTOMER_ID = :id</db:sql>
 			<db:input-parameters ><![CDATA[#[%dw 2.0
 output application/java
@@ -497,7 +494,7 @@ payload.CUSTOMER_ID[0] as Number]" doc:name="Database CustID" doc:id="b96e0a81-0
 		<choice doc:name="Choice" doc:id="00a7eb73-f123-42e9-9a55-f19021205bfe" >
 			<when expression="#[vars.custID ~= vars.DCID]">
 				<logger level="INFO" doc:name="Logger" doc:id="0bfcd9cc-ddcc-4e27-baba-b2b2048459ed" message="Updating credit score..." />
-				<db:update doc:name="Update" doc:id="b46c1b5f-db89-45da-9fe5-7b75664e70a1" config-ref="Database_Config_CS">
+				<db:update doc:name="Update" doc:id="b46c1b5f-db89-45da-9fe5-7b75664e70a1" config-ref="Database_proj3risk">
 					<db:sql>UPDATE CREDITSCORE SET CREDIT_SCORE = :score WHERE CUSTOMER_ID = :id</db:sql>
 					<db:input-parameters><![CDATA[#[%dw 2.0
 output application/java
@@ -511,7 +508,7 @@ output application/java
 			</when>
 			<otherwise >
 				<logger level="INFO" doc:name="Logger" doc:id="42742056-5ebf-491a-9d84-42054e55a2e0" message="Inserting credit score... #[payload.CUSTOMER_ID] #[vars.custID]"/>
-				<db:insert doc:name="Insert" doc:id="fed7f940-2bf7-420a-a6ce-bc6a0653bf7f" config-ref="Database_Config_CS">
+				<db:insert doc:name="Insert" doc:id="fed7f940-2bf7-420a-a6ce-bc6a0653bf7f" config-ref="Database_proj3risk">
 					<db:sql >INSERT INTO CREDITSCORE VALUES(:id, :score)</db:sql>
 					<db:input-parameters ><![CDATA[#[%dw 2.0
 output application/java

@@ -197,7 +197,16 @@ public class ApplicationController {
 		offer = offer_repo.save(offer);
 		return offer;
 	}
-
+	@GetMapping("/offer/{id}")
+	public Offer getOfferById(@PathVariable(value="id") String id) {
+		Optional <Offer> _offer = offer_repo.findById(id);
+		
+		if(_offer.isPresent()) {
+			return _offer.get();
+		}
+		
+		return null;
+	}
 	@PutMapping("/offer/{id}")
 	public Offer putOffer(@PathVariable(value = "id") String id, @RequestBody Offer offer) {
 

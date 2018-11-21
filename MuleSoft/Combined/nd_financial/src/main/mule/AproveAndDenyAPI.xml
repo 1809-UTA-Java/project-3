@@ -6,9 +6,6 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
         <http:listener-connection host="0.0.0.0" port="8002" />
     </http:listener-config>
     <apikit:config name="AproveAndDenyAPI-config" raml="AproveAndDenyAPI.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <db:config name="Database_Config_AnD" doc:name="Database Config" doc:id="d39e4887-5f4d-4057-8890-d7fd2b50d8ca" >
-		<db:oracle-connection host="192.168.56.105" user="proj3risk" password="pass" instance="xe"/>
-	</db:config>
 	<flow name="AproveAndDenyAPI-main">
         <http:listener config-ref="AproveAndDenyAPI-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -134,7 +131,7 @@ output application/json
                 <ee:set-variable variableName="id"><![CDATA[attributes.uriParams.id]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <db:update doc:name="Update" doc:id="440c43dd-7d0c-4c85-8989-0d4957cfc43a" config-ref="Database_Config_AnD">
+        <db:update doc:name="Update" doc:id="440c43dd-7d0c-4c85-8989-0d4957cfc43a" config-ref="Database_proj3risk">
 			<db:sql >update loans set status='Approved' where id=:id</db:sql>
 			<db:input-parameters ><![CDATA[#[{
 	id : attributes.uriParams.id as Number
@@ -157,7 +154,7 @@ output application/json
                 <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <db:update doc:name="Update" doc:id="dcc6c993-fdce-4ed9-b025-6665eae8f520" config-ref="Database_Config_AnD">
+        <db:update doc:name="Update" doc:id="dcc6c993-fdce-4ed9-b025-6665eae8f520" config-ref="Database_proj3risk">
 			<db:sql >update loans set status='Denied' where id=:id</db:sql>
 			<db:input-parameters ><![CDATA[#[{
 	id : attributes.uriParams.id as Number
