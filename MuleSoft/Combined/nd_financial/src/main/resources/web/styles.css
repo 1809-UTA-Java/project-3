@@ -1,0 +1,231 @@
+body { 
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #F4F4F4;
+}
+
+header {
+    overflow: hidden;
+    background-color: #0079AF;
+    padding: 10px 10px; 
+    box-shadow: 0px 2px 13px #3c3c3c;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height:58px; /* used to be 78 */
+    z-index: 3;
+}
+
+header a {
+    float: left;
+    color: #FFF7EC;
+    text-align: center;
+    padding: 16px 12px 12px 12px;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 25px;
+    border-radius: 4px;
+}
+
+header img {
+    float: left;
+}
+
+header a.company-name {
+    font-size: 32px;
+}
+
+header div.header-left {
+    float: left;
+    border-radius: 5px;
+    transition: 0.3s;
+    margin-left: 5px;
+}
+
+header div.header-left:hover {
+    background-color: #006796;
+    transition: 0.4s;
+}
+
+header div.header-right {
+    float: right;
+    padding-right: 25px;
+}
+
+/* ***************************************************************************** */
+.hero-image {
+    margin-top: 78px;
+    background: transparent url(../img/backsplash.jpg); 
+    min-height: 500px; /* used to be 524 */
+    position: relative;
+    z-index: 2;
+
+    /* background-attachment: fixed; */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.user-info {
+    max-width: 1150px;
+    margin: 0 auto;
+}
+
+/**/
+.card-container {
+    height: 500px;
+    overflow-y: scroll;
+}
+
+.card-container::-webkit-scrollbar { 
+    /* This is the magic bit */
+    display: none;
+}
+
+.column {
+    /* border: 1px solid #ddd; */
+    margin: 32px 0.5em 2em;
+    padding: 0 0;
+}
+
+.card-info {
+    margin-right: 55px; /* used to be 55 */
+    height: 195px; /* used to be 212 */
+    width: 510px;  /* used to be min-width: 500 */
+    max-width: 590px;
+    background-image: linear-gradient(rgba(7, 59, 87, 0.897), rgba(0, 0, 0, 0.95));
+    backdrop-filter: blur(3px);
+    transition: all .2s ease-in-out;
+    /* width: 535px; */
+}
+
+.card-info:hover {
+    cursor: pointer;
+    transform: scale(1.03);
+}
+
+.card-type {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #FFF7EC;
+    font-size: 28px;
+
+    padding-left: 15px;
+    /* height: 164px; */
+}
+
+.card-name {
+    float: left;
+    margin-top: 15px;
+    margin-bottom: 12px;
+    font-weight: normal;
+    width: 380px;
+}
+
+.card-number {
+    float: right;
+    margin: 15px 0;
+    padding-right: 15px;
+    margin-top: 15px;
+}
+
+.current-balance-label {
+    margin-bottom: 16px;
+    font-size: 12px;
+}
+
+.available-credit-label {
+    font-size: 12px;
+}
+
+/*
+ * -- TRANSACTION LIST --
+ * the transaction table has a <ul> which is denoted by the .pricing-table-list class
+ */
+.transaction-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+/*
+ * -- TRANSACTION LIST ELEMENTS --
+ * Styles for the individual list elements within the transactions table
+ */
+.transaction-list li {
+    padding: 0.8em 13px;
+    background: #f7f7f7;
+    border-bottom: 1px solid #e7e7e7;
+}
+
+.transaction-list-heading {
+    font-size: 18px;
+    color: #1B1B1B;
+}
+
+.transaction-list-item {
+    color: #4A4A4A;
+    font-size: 14px;
+}
+
+.transaction-date {
+    margin-right: 20px;
+}
+
+.transaction-amount {
+    float: right;
+}
+
+/* ***************************************************************************** */
+.options {
+    height: 570px;
+}
+
+.option-icons {
+    min-height: 500px;
+    background-color: #FCFCFC;
+    margin-top: 70px;
+    text-align: center;
+}
+
+.option-icons-container {
+    max-width: 980px;
+
+    /* margin: 0 auto; */
+    margin: auto;
+}
+
+.options-icon {
+    /* border: 1px solid #ddd; */
+    margin: 0 5em 0;
+    padding: 0 0 0;
+}
+
+.option-label {
+    color: #0079AF;
+    font-weight: 600;
+}
+
+/* ***************************************************************************** */
+footer {
+    background-color: #2A3438;
+    height: 150px;
+}
+
+.footer {
+    padding-top: 68px;
+    max-width: 500px;
+    margin: auto;
+}
+
+.footer-choice {
+    color: #E2E2E2;
+    margin: 0 3.2em 0;
+    padding: 0 0 0;
+    text-decoration: none;
+}
+
+/* ***************************************************************************** */
+.fa {
+    color: #0079AF;
+}

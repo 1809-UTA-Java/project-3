@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="application-example" format="json">
+      <types:shape format="weave" example="examples/application.json.txt"><![CDATA[%dw 2.0
+type application_example = {|
+  id: String, 
+  userId: String, 
+  offer: String, 
+  started: String, 
+  status: String, 
+  sentIn: String
+|} {"MetadataFormat": "json",
+"example": "{\"id\":\"ef3a5a5c-e441-11e8-9f32-f2801f1b9fd1\",\"userId\":\"8bc561f1-534d-4d50-a4b5-291af937ce56\",\"offer\":\"ff89a3a4-e441-11e8-9f32-f2801f1b9fd1\",\"started\":\"2018-02-28T16:41:41.090Z\",\"status\":\"pending\",\"sentIn\":\"2018-04-28T16:41:41.090Z\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#4e0ee9b7-6141-4738-8af9-848113a23dd3">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="application-example"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="application-example"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

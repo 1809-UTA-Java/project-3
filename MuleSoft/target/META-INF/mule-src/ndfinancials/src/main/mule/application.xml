@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="listener_8081" basePath="/api/retail">
+        <http:listener-connection host="localhost" port="8081" />
+    </http:listener-config>
+    <apikit:config name="application-config" raml="application.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="94fd2f5f-c0f4-4f5d-836d-48cef93b8239" basePath="/api/application" >
+		<http:request-connection host="localhost" port="8980" />
+	</http:request-config>
+	<flow name="application-main">
+        <http:listener config-ref="listener_8081" path="/application/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="application-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="application-console">
+        <http:listener config-ref="listener_8081" path="/application/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="application-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="put:\offer\(id):application\json:application-config">
+        <http:request method="PUT" doc:name="Request" doc:id="3447cd24-a941-4ff7-a9ae-a48b86fe7b15" config-ref="HTTP_Request_configuration" path="/offer/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="fabd8f70-da3c-4e75-936b-27724f7eecc7">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "message":"Updated"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="put:\(id):application\json:application-config">
+        <http:request method="PUT" doc:name="Request" doc:id="48643f46-efdb-4e97-9d63-bd89b91045aa" config-ref="HTTP_Request_configuration" path="/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="72b083e9-db05-4205-aa52-e33ac9523041">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message": "Updated"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="put:\group\(id):application\json:application-config">
+        <http:request method="PUT" doc:name="Request" doc:id="1bc47ff7-a9ca-46cb-b6f0-92d800b22efa" config-ref="HTTP_Request_configuration" path="/group/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="6984d11e-6286-497b-90e5-a8062cf725f8">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "message": "Updated"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="put:\special\(id):application\json:application-config">
+        <http:request method="PUT" doc:name="Request" doc:id="57e7b804-4991-4f0b-9499-c5cf0a6a292b" config-ref="HTTP_Request_configuration" path="/special/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="6cd65903-8e2a-4fa9-9021-567498dcf55d">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "message": payload.id+" Updated"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="delete:\special\(id):application\json:application-config">
+        <http:request method="DELETE" doc:name="Request" doc:id="49cf22ad-66f0-4527-bcf0-f2ca90079460" config-ref="HTTP_Request_configuration" path="/special/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "ef3a5a5c-e441-11e8-9f32-f2801f1b9fd1 marked for deletion": null
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="delete:\(id):application\json:application-config">
+        <http:request method="DELETE" doc:name="Request" doc:id="c7a170d6-1bfe-46eb-9fbf-61844d2b393d" config-ref="HTTP_Request_configuration" path="/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "Could not resolve mapping": null
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="delete:\group\(id):application\json:application-config">
+        <http:request method="DELETE" doc:name="Request" doc:id="c4a309ee-56f0-442d-974e-052633f7bee1" config-ref="HTTP_Request_configuration" path="/group/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "group updated": null
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\group:application-config">
+        <http:request method="GET" doc:name="Request" doc:id="ff54ef3f-8c54-4e06-9178-1181482b6fb2" config-ref="HTTP_Request_configuration" path="/group"/>
+    </flow>
+    <flow name="get:\offer:application-config">
+        <http:request method="GET" doc:name="Request" doc:id="7de5c53b-eac7-4655-bd65-ce11f7fa9b12" config-ref="HTTP_Request_configuration" path="/offer"/>
+    </flow>
+    <flow name="get:\special:application-config">
+        <http:request method="GET" doc:name="Request" doc:id="7ef40d07-4a9d-4f7f-a378-1c58e7fa7386" config-ref="HTTP_Request_configuration" path="/special"/>
+    </flow>
+    <flow name="get:\offer\user\(id):application-config">
+        <http:request method="GET" doc:name="Request" doc:id="9cf4d593-f207-4d94-a067-90752c03fb76" config-ref="HTTP_Request_configuration" path="/offer/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+    </flow>
+    <flow name="get:\special\(id):application-config">
+        <http:request method="GET" doc:name="Request" doc:id="e73077fc-a428-4f23-a519-2cbab5fc084b" config-ref="HTTP_Request_configuration" path="/special/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+    </flow>
+    <flow name="get:\group\(id):application-config">
+		<http:request method="GET" doc:name="Request" doc:id="d5a4c6e3-84aa-42f8-91d9-706d7ec4cd05" config-ref="HTTP_Request_configuration" path="/group/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+    </flow>
+    <flow name="get:\(id):application-config">
+        <http:request method="GET" doc:name="Request" doc:id="ba3beb1b-3c6c-44b5-8508-045490021c24" config-ref="HTTP_Request_configuration" path="/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+    </flow>
+    <flow name="get:\offer\(id):application-config">
+        <http:request method="GET" doc:name="Request" doc:id="00e1e925-7258-4183-a54f-a2c65efcbdd4" config-ref="HTTP_Request_configuration" path="/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+    </flow>
+    <flow name="post:\:application\json:application-config">
+        <http:request method="POST" doc:name="Request" doc:id="85ea3cc0-d0cf-428d-80a9-069a4f1d928c" config-ref="HTTP_Request_configuration" path="/"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="27db07c2-20a4-4b2c-8069-9508f4bb01c3">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": payload.id
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\group:application\json:application-config">
+        <http:request method="POST" doc:name="Request" doc:id="a4062c7e-d050-4395-8dc4-28d49b3c7389" config-ref="HTTP_Request_configuration" path="/group"/>
+		<ee:transform doc:name="Transform Message" doc:id="47c64497-c7b9-4295-af96-22996b236739" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":payload.id
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+    </flow>
+    <flow name="post:\offer:application\json:application-config">
+        <http:request method="POST" doc:name="Request" doc:id="8f6e9163-7e94-4e17-88fe-b5cd66c7eb40" config-ref="HTTP_Request_configuration" path="/offer"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="01a9582b-94eb-4dcd-b6d4-1f62354be173">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message":payload.id
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\special:application\json:application-config">
+        <http:request method="POST" doc:name="Request" doc:id="4ea69647-e618-4897-abfb-9ba177ad35ce" config-ref="HTTP_Request_configuration" path="/special"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="d2246b00-1a40-43f3-9ecf-c050e629a6d8">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"message": payload.id
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+</mule>

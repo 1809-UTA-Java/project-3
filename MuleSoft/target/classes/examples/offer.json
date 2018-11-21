@@ -1,0 +1,20 @@
+{
+    "id": "string | nil",
+    "desc": "string",
+    "type": "string",
+    "creditLimit": 100,
+    "interestRate": 0.14,
+    "incentives": [
+        "abc",
+        "def",
+        "efg"
+    ],
+    "startDate": "2012-04-21 23:25:43.000Z",
+    "endDate": "2012-04-21 23:25:43.000Z",
+    "target": [
+        "abc",
+        "def",
+        "ghi"
+    ],
+    "active": true
+}

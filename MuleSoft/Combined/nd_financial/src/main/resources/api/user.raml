@@ -1,0 +1,117 @@
+#%RAML 1.0
+title: user
+version: 1.0
+
+types:
+  user:
+    type: object
+    properties:
+      id: string
+      name: string
+      username: string
+      password: string
+      gender: string
+      ethnicity: string
+      dob: string
+      address: string
+      email: string
+      phone: string
+      occupation: string
+      salary: number
+      
+  login:
+    properties:
+      username: string
+      password: string
+
+/:
+  get:
+    responses: 
+      200:
+        body: 
+          application/json:
+            example: |
+              {
+              "id":"f2a8f538-e845-11e8-9f32-f2801f1b9fd1",
+              "name":"john smith",
+              "username":"jonnyS",
+              "password":"jjss123",
+              "gender":"male",
+              "ethnicity":"white",
+              "dob":"jan 5, 1991",
+              "address":"4451 lincoln dr",
+              "email":"johnsmith@gmail.com",
+              "phone":"455665454",
+              "occupation":"software engineer",
+              "salary":50000
+              }  
+      404:
+        body:
+          application/json:
+            example: {"message": "Error, 404"}
+  post:
+    body:
+      application/json:
+        type: user
+    responses: 
+      202:
+        body: 
+          application/json:
+            example: {"message":"id"}
+  
+/{userId}:
+  uriParameters: 
+    userId: string
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+              "id":"f2a8f538-e845-11e8-9f32-f2801f1b9fd1",
+              "name":"john smith",
+              "username":"jonnyS",
+              "password":"jjss123",
+              "gender":"male",
+              "ethnicity":"white",
+              "dob":"jan 5, 1991",
+              "address":"4451 lincoln dr",
+              "email":"johnsmith@gmail.com",
+              "phone":"455665454",
+              "occupation":"software engineer",
+              "salary":50000
+              }
+      404:
+        body:
+          application/json:
+            example: {"message": "Error, 404"}
+  put:
+    body:
+      application/json:
+        type: user
+    responses:
+      204:
+        body:
+          application/json:
+            example: {"message":"Update Succeeded"}
+/login:
+  post:
+    body:
+      application/json:
+        type: login
+    responses:
+      200:
+        body:
+          application/json:
+            example: {"message": "okay"}
+          
+  /{name}:
+    uriParameters:
+      name: string
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+              example: {"message": "okay"}

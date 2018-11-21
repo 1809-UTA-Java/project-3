@@ -1,0 +1,39 @@
+#%RAML 1.0
+title: Retail Login
+
+types:
+  login:
+    properties:
+      username: string
+      password: string
+      
+/:
+  post:
+    body:
+      application/json:
+        type: login
+    responses:
+      200:
+        body:
+          application/json:
+            example: {"message": "okay"}
+      403:
+        body:
+          application/json:
+            example: {"message":"forbidden"}
+            
+/{id}:
+  uriParameters:
+    id: string
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: {"message": "okay"}
+      404:
+        body:
+          application/json:
+            example: {"message": "not found"}
+      
+        

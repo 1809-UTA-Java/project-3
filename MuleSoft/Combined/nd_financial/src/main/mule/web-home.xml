@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2b754471-5cd8-422c-9bfc-83f4d35ab28d" >
+		<http:listener-connection host="0.0.0.0" port="8016" />
+	</http:listener-config>
+	<flow name="web-homeFlow" doc:id="d91b4e2d-1e63-4bbc-8327-2e20090032d4" >
+		<http:listener doc:name="Listener" doc:id="bbbfbd33-c962-4a96-bb01-a77bcd281430" path="/home" config-ref="HTTP_Listener_config"/>
+		<set-payload value="asdf" doc:name="Set Payload" doc:id="ac3dffcc-c0f0-430a-86d2-1b7183030a24" />
+		<parse-template doc:name="Parse Template" doc:id="b8e7aba5-29e2-4dd5-8796-eb0d55656aab" location="web/index.html"/>
+	</flow>
+	<flow name="styles-flow" doc:id="194ac7db-1d7d-4818-9e2e-2d17e8b6db84" >
+		<http:listener doc:name="Listener" doc:id="0425a1ed-46f1-49de-acc7-c4735163336a" config-ref="HTTP_Listener_config" path="/styles.css"/>
+		<http:load-static-resource doc:name="Load static resource" doc:id="4ffc5ec2-deec-4b51-89a3-d6f00ce2d8cd" resourceBasePath="${app.home}/web/styles.css"/>
+	</flow>
+	<flow name="responsive-grid" doc:id="c2993a14-dd3a-4e5a-9050-db4561cbdd58" >
+		<http:listener doc:name="Listener" doc:id="1f02e977-5a2f-4800-b4e1-65b780e1751d" path="/grid.css" config-ref="HTTP_Listener_config"/>
+		<http:load-static-resource doc:name="Load static resource" doc:id="d1b68351-9f28-4267-b133-1479e771665f" resourceBasePath="${app.home}/web/grid.css"/>
+	</flow>
+	<flow name="backsplash-flow" doc:id="f6c8f365-13b0-4aa5-913e-ec917027312a" >
+		<http:listener doc:name="Listener" doc:id="3890c5aa-ccfe-469f-80e1-25e93193e2b4" path="/img/backsplash.jpg" config-ref="HTTP_Listener_config"/>
+		<http:load-static-resource doc:name="Load static resource" doc:id="3bcc2862-91ea-4909-bd18-fff294e11203" resourceBasePath="${app.home}/web/img/backsplash.jpg"/>
+	</flow>
+	<flow name="logo-flow" doc:id="edf346e3-ce67-4f17-90d2-5093c8d44268" >
+		<http:listener doc:name="Listener" doc:id="54b274a5-d9c6-478d-a32b-311ff6964ede" config-ref="HTTP_Listener_config" path="/img/icons8-museum-80.png"/>
+		<http:load-static-resource doc:name="Load static resource" doc:id="110db3c7-3752-46a4-9174-32bf09e74319" resourceBasePath="${app.home}/web/img/icons8-museum-80.png"/>
+	</flow>
+	<flow name="cards-svg-flow" doc:id="6a5e3d24-914d-4d63-865a-86a361964bc8" >
+		<http:listener doc:name="Listener" doc:id="bddb45d4-3c66-464d-9ab2-662cc2199967" config-ref="HTTP_Listener_config" path="/img/icons8-bank-cards-96.png"/>
+		<http:load-static-resource doc:name="Load static resource" doc:id="6180ea55-ed22-4ff9-bfdd-cf2b330252cf" resourceBasePath="${app.home}/web/img/icons8-bank-cards-96.png"/>
+	</flow>
+	<flow name="chart-flow" doc:id="a56a3f8a-74cb-43ae-bbc7-60ca6780c3d4" >
+		<http:listener doc:name="Listener" doc:id="348b44bd-f210-43df-a4aa-ed4931642e96" config-ref="HTTP_Listener_config" path="/img/icons8-combo-chart-96.png"/>
+		<http:load-static-resource doc:name="Load static resource" doc:id="0146df1c-1f52-47e4-8839-34e591f06546" resourceBasePath="${app.home}/web/img/icons8-combo-chart-96.png"/>
+	</flow>
+	<flow name="loans-flow" doc:id="c41fb7ba-fa20-42be-ae53-978a2e197e55" >
+		<http:listener doc:name="Listener" doc:id="f41e8ca4-bfa9-4fe4-8d76-595fa974e8d4" config-ref="HTTP_Listener_config" path="/img/icons8-cash-in-hand-filled-100.png"/>
+		<http:load-static-resource doc:name="Load static resource" doc:id="4356232a-c4f9-4bde-9125-934657c1fb26" resourceBasePath="${app.home}/web/img/icons8-cash-in-hand-filled-100.png"/>
+	</flow>
+</mule>
