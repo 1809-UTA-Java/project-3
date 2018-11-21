@@ -1,2 +1,1 @@
-# project-3
-Project 3
+﻿# project-3Project 3: ND FinancialA mock Credit Union that primarily focuses on credit cards and loans. The team of 15 is split into 4 groups: Retail, Operations, Risk, and Management.
