@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ndf-managers-api="http://www.mulesoft.org/schema/mule/ndf-managers-api" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ndf-managers-api http://www.mulesoft.org/schema/mule/ndf-managers-api/current/mule-ndf-managers-api.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<ndf-managers-api:config name="NDF___Managers_API_Config" doc:name="NDF - Managers API Config" doc:id="fe40d091-a971-4ad5-a634-3c0a113203bf"/>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="ce15f6fb-8596-49ec-b201-9a133e624400" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="0ae00a02-7e03-482e-ae17-b5f6e832bd87" >
+		<db:oracle-connection host="oracle-instance1.cplzhxlkxjj9.us-west-1.rds.amazonaws.com" user="manager" password="man" serviceName="orcl" />
+	</db:config>
+	<flow name="manapi1Flow1" doc:id="f5aa57c9-9be0-482a-bed6-dfc3e82b4056" >
+		<http:listener doc:name="Listener" doc:id="26548fb4-f477-4b03-a940-e320d886b666" config-ref="HTTP_Listener_config" path="/manager/listPendingApp" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ecd272eb-82b3-4105-9747-8cb9d1755f05" message="'New message'"/>
+		<flow-ref doc:name="Flow Reference" doc:id="80665cf1-3f13-46f4-8d0a-941bc4ef8e55" name="manapi1Flow"/>
+	</flow>
+	<flow name="manapi1Flow" doc:id="d9442cf1-51bd-4db7-81d4-13a26724a468" >
+		<ndf-managers-api:get-list-pending-apps doc:name="Get list pending apps" doc:id="fd4d8478-6737-41ec-a706-23ff63b87922" config-ref="NDF___Managers_API_Config" targetValue="payload"/>
+		<db:select doc:name="Select" doc:id="48981e9f-9a88-4f2c-a6bb-fae8819c6942" config-ref="Database_Config">
+			<db:sql >select * from loanapp2 where status = 'pending'</db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="7146e1a0-1e0a-47c0-996b-0139a3d3877c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	loan_id: payload.LOAN_ID default "",
+	firstname: payload.FIRSTNAME default "",
+	lastname: payload.LASTNAME default "",
+	address: payload.ADDRESS default "",
+	income: payload.INCOME default "",
+	debts: payload.DEBTS default "",
+	amount: payload.AMOUNT default "",
+	status: payload.STATUS default "",
+	risk: payload.RISK default "",
+	credit_score: payload.CREDIT_SCORE default "",
+	max_amount: payload.MAX_AMOUNT default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload.loan_id]" doc:name="Loan Id" doc:id="a0c77445-376b-4ca0-b94d-0be4f0ecbe98" variableName="loanId"/>
+		<set-variable value="#[payload.firstname]" doc:name="FirstName" doc:id="9b8a7ea9-add6-43cc-8eff-3988d5000bcf" variableName="firstname"/>
+		<set-variable value="#[payload.status]" doc:name="Status" doc:id="27b1b9d9-654d-4d53-a8cc-ed594a9b6c81" variableName="varStatus"/>
+		<set-variable value="#[payload.amount]" doc:name="Amount" doc:id="802bc722-78c9-4a86-a54f-59b5c1b8a12d" variableName="varAmount" />
+		<set-variable value="#[payload.income]" doc:name="Income" doc:id="4e4db7b5-f152-44b8-bdb9-b6fea64a3e54" variableName="varIncome"/>
+		<set-variable value="#[payload.debts]" doc:name="Debts" doc:id="7e6d96c7-476d-4141-988c-a5c45c6cf217" variableName="varDebts"/>
+		<set-variable value="#[payload.credit_score]" doc:name="Credit Score" doc:id="25c725b2-970a-42d1-aee0-4a13caf4b3a1" variableName="varCreditScore"/>
+		<set-variable value="#[payload.risk]" doc:name="Risk" doc:id="50fa014a-77e9-44c6-abc7-482eff428059" variableName="varRisk"/>
+		<set-variable value="#[payload.max_amount]" doc:name="Max Amount" doc:id="d4bdf328-6b0a-4a3c-b667-19023a3b8c7c" variableName="varMax"/>
+		<set-payload value="a" doc:name="Set Payload" doc:id="c610105f-a3a8-4a54-93f5-36dac596c98e" />
+		<parse-template doc:name="Parse Template" doc:id="eb9e7dc3-4df8-4f8e-8947-2788c986c6ca" location="juneTestTemplateHtml.template">
+		</parse-template>
+		<set-variable value="#[attributes.queryParams.loanId]" doc:name="Set Variable" doc:id="af0fbb17-ce9d-4ee8-aa78-b95083c5dcdf" variableName="idPassed" />
+		<logger level="INFO" doc:name="Logger" doc:id="a7ed9e8e-f5c2-4854-8197-4a040e84fd77" message="#[vars.loanId]"/>
+	</flow>
+</mule>
