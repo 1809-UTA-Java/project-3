@@ -1,0 +1,43 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Login</title>
+
+</head>
+
+<body>
+    <div id="header"></div>
+    <div id="leftColumn"></div>
+    <div id="body">
+        <input type='button' value='New User' name='btnRegister' />
+        <input type='button' value='Login Now' name='btnLogin' />
+
+    </div>
+    <div id="rightColumn"></div>
+    <div id="footer"></div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+        crossorigin="anonymous"></script>
+    <script>
+
+        const doLogin = () => {
+            window.location.replace('login.html')
+        }
+
+        const doRegistration = () => {
+            window.location.replace('registration.html')
+        }
+
+        $(document).ready(function () {
+            console.log('ready')
+            const state = {};
+            $("input[name='btnRegister']").on("click", () => doRegistration())
+            $("input[name='btnLogin']").on('click', () => doLogin())
+        });
+    </script>
+</body>
+
+</html>

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.revature.ndfinancial.retail.model.AppForm;
+import com.revature.ndfinancial.retail.model.AppForms;
 import com.revature.ndfinancial.retail.model.Group;
 import com.revature.ndfinancial.retail.model.Offer;
 import com.revature.ndfinancial.retail.model.Offers;
@@ -62,6 +63,41 @@ public class ApplicationController {
 		}
 	}
 
+	@GetMapping("/")
+	public AppForms getAllApplications() {
+		List<AppForm> _appForm = app_repo.findAll();
+		List<AppForm> appForm = new ArrayList<AppForm>();
+		
+		if(!_appForm.isEmpty()) {
+			for(AppForm form : _appForm) {
+				if(form.getActive()) {
+					appForm.add(form);
+				}
+			}
+		}
+		AppForms result = new AppForms();
+		result.setResult(appForm);
+		return result;
+	}
+	
+	@GetMapping("/user/{id}")
+	public AppForms getApplicationByUserId(@PathVariable(value = "id")String id) {
+		List<AppForm> _appForm = app_repo.findByUserId(id);
+		List<AppForm> appForm = new ArrayList<AppForm>();
+		
+		if(!_appForm.isEmpty()) {
+			for(AppForm form: _appForm) {
+				if(form.getActive()) {
+					appForm.add(form);
+				}
+			}
+		}
+		
+		AppForms result = new AppForms();
+		result.setResult(appForm);
+		return result;
+	}
+	
 	@GetMapping("/{id}")
 	public AppForm getApplicationById(@PathVariable(value = "id") String id) {
 
@@ -173,7 +209,16 @@ public class ApplicationController {
 		offer = offer_repo.save(offer);
 		return offer;
 	}
-
+	@GetMapping("/offer/{id}")
+	public Offer getOfferById(@PathVariable(value="id") String id) {
+		Optional <Offer> _offer = offer_repo.findById(id);
+		
+		if(_offer.isPresent()) {
+			return _offer.get();
+		}
+		
+		return null;
+	}
 	@PutMapping("/offer/{id}")
 	public Offer putOffer(@PathVariable(value = "id") String id, @RequestBody Offer offer) {
 

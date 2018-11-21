@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <http:listener-config name="loanAmount-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8008" />
     </http:listener-config>
@@ -18,7 +17,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         <apikit:router config-ref="loanAmount-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -31,7 +30,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -44,7 +43,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -57,7 +56,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -70,7 +69,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -83,7 +82,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -110,9 +109,7 @@ output application/json
         <apikit:console config-ref="loanAmount-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -128,26 +125,37 @@ output application/json
     </flow>
     <flow name="post:\loanAmount:application\json:loanAmount-config">
         <logger level="INFO" message="post:\loanAmount:application\json:loanAmount-config" />
-		<set-variable value='#[payload."applicant-info".salary]' doc:name="Salary" doc:id="bfeef03d-afc7-42d9-8c75-3eb7607ba55d" variableName="vSalary" />
-		<set-variable value='#[payload."applicant-info".debt]' doc:name="Debt" doc:id="fe2a6373-d513-4392-8daa-a3dbc2aa8604" variableName="vDebt"/>
-		<set-variable value="#[vars.vDebt / vars.vSalary]" doc:name="ratio" doc:id="64023bde-86b7-4c15-8c5d-7fed5961d0a2" variableName="vRatio"/>
-		<choice doc:name="Choice" doc:id="81210402-c06f-4b84-b599-37bdaf9cc48b" >
-			<when expression="#[vars.vRatio &lt;= 0.36]">
-				<set-variable value="#[vars.vSalary * 0.36 - vars.vDebt]" doc:name="max_amount" doc:id="0c16f5ac-5514-4dac-a00c-9f89571ecf41" variableName="vMax"/>
-			</when>
-			<otherwise >
-				<set-variable value="#[0]" doc:name="max_amount" doc:id="4769e2ef-cddc-42c8-8882-9f345edecedb" variableName="vMax"/>
-			</otherwise>
-		</choice>
-		<ee:transform doc:name="Transform Message" doc:id="78ef1167-170f-4b42-bbc0-20f2be4c34a0" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+        <set-variable value="#[payload.&quot;applicant-info&quot;.salary]" doc:name="Salary" doc:id="bfeef03d-afc7-42d9-8c75-3eb7607ba55d" variableName="vSalary" />
+        <set-variable value="#[payload.&quot;applicant-info&quot;.debt]" doc:name="Debt" doc:id="fe2a6373-d513-4392-8daa-a3dbc2aa8604" variableName="vDebt" />
+        <set-variable value="#[vars.vDebt / vars.vSalary]" doc:name="ratio" doc:id="64023bde-86b7-4c15-8c5d-7fed5961d0a2" variableName="vRatio" />
+        <choice doc:name="Choice" doc:id="81210402-c06f-4b84-b599-37bdaf9cc48b">
+            <when expression="#[vars.vRatio &lt;= 0.36]">
+                <set-variable value="#[vars.vSalary * 0.36 - vars.vDebt]" doc:name="max_amount" doc:id="0c16f5ac-5514-4dac-a00c-9f89571ecf41" variableName="vMax" />
+            </when>
+            <otherwise>
+                <set-variable value="#[0]" doc:name="max_amount" doc:id="4769e2ef-cddc-42c8-8882-9f345edecedb" variableName="vMax" />
+            </otherwise>
+        </choice>
+        <ee:transform doc:name="Transform Message" doc:id="78ef1167-170f-4b42-bbc0-20f2be4c34a0">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	"loan-amount": vars.vMax
 }]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="put:\managers\loanAmount\(id):loanAmount-config">
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <logger level="INFO" message="put:\managers\loanAmount\(id):loanAmount-config" />
+    </flow>
+    <flow name="get:\managers\loanAmount:loanAmount-config">
+        <logger level="INFO" message="get:\managers\loanAmount:loanAmount-config" />
     </flow>
 </mule>
