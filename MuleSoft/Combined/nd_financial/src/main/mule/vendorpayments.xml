@@ -146,7 +146,7 @@ output application/json
     <flow name="get:\vendorPayments:vendorpayments-config">
         <set-variable value="1111 1111 1111 1111" doc:name="Set Variable" doc:id="9a44ee6e-ad2c-4818-9922-52d3edfe45ce" variableName="CardNumber" />
         <logger level="INFO" message="in the get" />
-        <db:select doc:name="Select" doc:id="21dd23a2-4237-4b39-97d6-7a12f744dac5" config-ref="Database_Config_VP">
+        <db:select doc:name="Select" doc:id="21dd23a2-4237-4b39-97d6-7a12f744dac5" config-ref="Database_ndadmin">
             <db:sql>select * from transactions where card_number = :cc</db:sql>
             <db:input-parameters><![CDATA[#[{ cc : vars.CardNumber }]]]></db:input-parameters>
         </db:select>
@@ -163,7 +163,7 @@ payload]]></ee:set-payload>
         <logger level="INFO" message="#[payload.CARD_NUMBER]]" />
         <set-variable value="#[payload]" doc:name="Set Variable" doc:id="3c2ca140-7481-4c21-8b35-1d1d9f8c3bff" variableName="FirstPayload" />
         <set-variable value="#[payload.AMOUNT]" doc:name="Set Variable" doc:id="1be4b2d8-6405-4de2-81a9-d2301b2d0ede" variableName="amount" />
-        <db:select doc:name="Select" doc:id="7f7b0b71-9344-4489-8d5f-babd4caf6cf1" config-ref="Database_Config_VP">
+        <db:select doc:name="Select" doc:id="7f7b0b71-9344-4489-8d5f-babd4caf6cf1" config-ref="Database_ndadmin">
             <db:sql>select credit_line - balance as total from credit_cards where card_number = :number</db:sql>
             <db:input-parameters><![CDATA[#[{ number : payload.CARD_NUMBER }]]]></db:input-parameters>
         </db:select>
@@ -171,7 +171,7 @@ payload]]></ee:set-payload>
         <choice doc:name="Choice" doc:id="319a7d95-aadc-4ab5-8ea1-440cf474d72f">
             <when expression="#[vars.amount &lt;= payload.TOTAL[0]]">
                 <set-payload value="#[vars.FirstPayload]" doc:name="Set Payload" doc:id="0cd0b5cb-69e8-4d8d-aabe-22d98a03bac1" />
-                <db:insert doc:name="Insert" doc:id="50ab8ced-7746-4c2a-b7f9-586d6e5c72bc" config-ref="Database_Config_VP">
+                <db:insert doc:name="Insert" doc:id="50ab8ced-7746-4c2a-b7f9-586d6e5c72bc" config-ref="Database_ndadmin">
                     <db:sql>insert into transactions values (transaction_sequence.nextval, :date, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
                     <db:input-parameters><![CDATA[#[{ 
 	date : payload.TRANSACTION_DATE as Date,
@@ -197,7 +197,7 @@ payload]]></ee:set-payload>
         </choice>
     </flow>
     <flow name="get:\vendorPayments\(cardNumber):vendorpayments-config">
-        <db:select doc:name="Select" doc:id="75be78c6-c535-410a-a332-222013099b32" config-ref="Database_Config_VP">
+        <db:select doc:name="Select" doc:id="75be78c6-c535-410a-a332-222013099b32" config-ref="Database_ndadmin">
 >>>>>>> origin/dev
 			<db:sql >select * from transactions where card_number = :cc</db:sql>
 			<db:input-parameters ><![CDATA[#[{ cc : vars.CardNumber }]]]></db:input-parameters>
@@ -210,45 +210,5 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-    </flow>
-    <flow name="post:\vendorPayments:vendorpayments-config">
-		<logger level="INFO" message="#[payload.CARD_NUMBER]]" />
-		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="3c2ca140-7481-4c21-8b35-1d1d9f8c3bff" variableName="FirstPayload"/>
-		<set-variable value="#[payload.AMOUNT]" doc:name="Set Variable" doc:id="1be4b2d8-6405-4de2-81a9-d2301b2d0ede" variableName="amount"/>
-		<db:select doc:name="Select" doc:id="7f7b0b71-9344-4489-8d5f-babd4caf6cf1" config-ref="Database_ndadmin">
-			<db:sql >select credit_line - balance as total from credit_cards where card_number = :number</db:sql>
-			<db:input-parameters ><![CDATA[#[{ number : payload.CARD_NUMBER }]]]></db:input-parameters>
-		</db:select>
-		<logger level="INFO" doc:name="Logger" doc:id="cbdc9a4e-6201-4498-8cb6-368b79560c65" message="#[payload.TOTAL]"/>
-		<choice doc:name="Choice" doc:id="319a7d95-aadc-4ab5-8ea1-440cf474d72f" >
-			<when expression="#[vars.amount &lt;= payload.TOTAL[0]]">
-				<set-payload value="#[vars.FirstPayload]" doc:name="Set Payload" doc:id="0cd0b5cb-69e8-4d8d-aabe-22d98a03bac1" />
-				<db:insert doc:name="Insert" doc:id="50ab8ced-7746-4c2a-b7f9-586d6e5c72bc" config-ref="Database_ndadmin">
-			<db:sql>insert into transactions values (:id, :date, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)
-
-</db:sql>
-			<db:input-parameters><![CDATA[#[{
-	id : payload.TRANSACTION_ID, 
-	date : payload.TRANSACTION_DATE as Date,
-	amount : payload.AMOUNT as Number,
-	card_number : payload.CARD_NUMBER,
-	trans_source : payload.TRANS_SOURCE,
-	trans_description : payload.TRANS_DESCRIPTION,
-	status : payload.STATUS,
-	trans_type : payload.TRANS_TYPE
-}]]]></db:input-parameters>
-		</db:insert>
-				<http:request method="PUT" doc:name="Request" doc:id="ff3526b3-586c-4d59-98da-6a365dd9e293" config-ref="HTTP_Request_configuration" url="http://localhost:8004/api/creditcards/charge">
-					<http:body ><![CDATA[#[{
-  "cardNumber": vars.FirstPayload.CARD_NUMBER,
-  "balance": vars.amount
-}]]]></http:body>
-				</http:request>
-			</when>
-			<otherwise >
-				<set-payload value="Not enough funds" doc:name="Set Payload" doc:id="f979ad3e-1475-46e0-bd5b-2db6e62ae222" />
-				<logger level="INFO" doc:name="Logger" doc:id="550baaa1-3207-43b5-b2a1-d643d90f104d" message="Payment declined"/>
-			</otherwise>
-		</choice>
     </flow>
 </mule>
