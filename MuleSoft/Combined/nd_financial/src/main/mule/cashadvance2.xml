@@ -4,9 +4,6 @@
         <http:listener-connection host="0.0.0.0" port="8003" />
     </http:listener-config>
     <apikit:config name="cashadvance2-config" raml="cashadvance2.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <db:config name="Database_Config_CA" doc:name="Database Config" doc:id="f6fd9bea-b486-4d9e-8cfd-363a980950d4">
-        <db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe" />
-    </db:config>
     <flow name="cashadvance2-main">
         <http:listener config-ref="cashadvance2-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -132,7 +129,7 @@ output application/json
                 <ee:set-variable variableName="userID"><![CDATA[attributes.uriParams.userID]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <db:select doc:name="Select" doc:id="7207845b-0d41-40fe-b26f-0c3a2eaed602" config-ref="Database_Config_CA">
+        <db:select doc:name="Select" doc:id="7207845b-0d41-40fe-b26f-0c3a2eaed602" config-ref="Database_ndadmin">
             <db:sql>select * from loans where user_Id = :userid and  loan_type = 'Cash Advance'</db:sql>
             <db:input-parameters><![CDATA[#[{userid : vars.userID}]]]></db:input-parameters>
         </db:select>
@@ -146,7 +143,7 @@ payload]]></ee:set-payload>
         </ee:transform>
     </flow>
     <flow name="post:\cashAdvance\(userID):cashadvance2-config">
-        <db:insert doc:name="Insert" doc:id="bd9019c7-9abb-4ff9-a977-eb9f5c714430" config-ref="Database_Config_CA">
+        <db:insert doc:name="Insert" doc:id="bd9019c7-9abb-4ff9-a977-eb9f5c714430" config-ref="Database_ndadmin">
             <db:sql>insert into loans(loan_Id, user_Id, loan_Type, balance, interest_rate,  grace_period, principal) values(:loanid, :userid, :loantype, :balance, :interestrate, :graceperiod, :principal)</db:sql>
             <db:input-parameters><![CDATA[#[{
 	loanid: payload.loanID,

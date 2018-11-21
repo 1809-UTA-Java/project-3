@@ -4,13 +4,10 @@
         <http:listener-connection host="0.0.0.0" port="8010" />
     </http:listener-config>
     <apikit:config name="payment-config" raml="payment.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <db:config name="Database_Config_P" doc:name="Database Config" doc:id="ab41ca15-8cff-4774-ac09-1a487f8f9937">
-        <db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe"/>
-    </db:config>
-    <http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="77b60221-b8c3-498a-b63f-2238672dcd32" >
-		<http:request-connection host="localhost" port="8004" />
-	</http:request-config>
-	<flow name="payment-main">
+    <http:request-config name="HTTP_Request_configuration1" doc:name="HTTP Request configuration" doc:id="77b60221-b8c3-498a-b63f-2238672dcd32">
+        <http:request-connection host="localhost" port="8004" />
+    </http:request-config>
+    <flow name="payment-main">
         <http:listener config-ref="payment-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -132,7 +129,7 @@ output application/json
     <flow name="post:\payment\accountid:payment-config">
         <logger level="INFO" doc:name="Logger" doc:id="3e17994e-a0fd-4cc3-8b8c-ac1680f15d45" message="get:\payment\cardNumber\(cNumber):payment-config" />
         <set-variable value="#[%dw 2.0 output application/java --- payload.accountid as String]" doc:name="accountID" doc:id="058f0810-f6f3-4563-b6ed-d0ab4311ce73" variableName="accountID" />
-        <db:select doc:id="2d50c395-42a5-45f9-aa65-0b0a5ac49f5a" config-ref="Database_Config_P">
+        <db:select doc:id="2d50c395-42a5-45f9-aa65-0b0a5ac49f5a" config-ref="Database_ndadmin">
             <db:sql>select * from transactions where card_number=:accountid</db:sql>
             <db:input-parameters><![CDATA[#[%dw 2.0
 output application/java
@@ -152,7 +149,7 @@ payload]]></ee:set-payload>
     </flow>
     <flow name="get:\payment:payment-config">
         <logger level="INFO" doc:name="Logger" doc:id="644ea93d-7b31-4f72-a591-d7d044190adc" message="get:\payment:payment-config" />
-        <db:select doc:name="Select" doc:id="e067e206-78ce-464f-89ac-1e2ec4d6ed83" config-ref="Database_Config_P">
+        <db:select doc:name="Select" doc:id="e067e206-78ce-464f-89ac-1e2ec4d6ed83" config-ref="Database_ndadmin">
             <db:sql>select * from transactions</db:sql>
         </db:select>
         <ee:transform xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="cf052914-3cf2-432a-a2c2-44b7c1b0a3fd">
@@ -183,11 +180,53 @@ output application/java
 	trans_type: payload.Type
 }]]]></db:input-parameters>
         </db:insert>
-		<http:request method="PUT" doc:name="Request" doc:id="ab13d947-2ad5-49d4-8788-292a1772aee1" config-ref="HTTP_Request_configuration1" url="http://localhost:8004/api/creditcards/payment">
-			<http:body ><![CDATA[#[{
+        <http:request method="PUT" doc:name="Request" doc:id="ab13d947-2ad5-49d4-8788-292a1772aee1" config-ref="HTTP_Request_configuration1" url="http://localhost:8004/api/creditcards/payment">
+            <http:body><![CDATA[#[{
   "cardNumber": vars.CardNumber,
   "balance": vars.ammount
 }]]]></http:body>
-		</http:request>
+        </http:request>
+    </flow>
+    <flow name="post:\payment\accountid:application\json:payment-config">
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  data: {
+    transactionalID: "1",
+    date: "2018-10-15",
+    amount: "100.26",
+    cardnumber: "1111 2222 3333 4444",
+    source: "Amazon",
+    description: "A payment of \$100.26 to credit card 1111 2222 3333 4444",
+    status: "approved",
+    "type": "payment"
+  }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\payment:application\json:payment-config">
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  data: {
+    transactionalID: "1",
+    date: "2018-10-15",
+    amount: "100.26",
+    cardnumber: "1111 2222 3333 4444",
+    source: "Amazon",
+    description: "A payment of \$100.26 to credit card 1111 2222 3333 4444",
+    status: "approved",
+    "type": "payment"
+  }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
     </flow>
 </mule>

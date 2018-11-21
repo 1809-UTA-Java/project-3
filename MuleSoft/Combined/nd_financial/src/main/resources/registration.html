@@ -1,0 +1,55 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Login</title>
+
+</head>
+
+<body>
+    <div id="header"></div>
+    <div id="leftColumn"></div>
+    <div id="body"></div>
+    <div id="rightColumn"></div>
+    <div id="footer"></div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+        crossorigin="anonymous"></script>
+    <script>
+        state = {
+            user: {
+                username: '',
+                password: '',
+                id: '',
+                gender: '',
+                ethnicity: '',
+                dob: '',
+                address: '',
+                email: '',
+                phone: '',
+                occupation: '',
+                salary: '',
+                active: ''
+
+            }
+        }
+        const registrationForm = () => {
+
+        }
+        $(document).ready(function () {
+            console.log('ready')
+            const state = {};
+            $('#body').on("click", ".btnUsername", () => enterUsername())
+            $('#body').on('click', '.btnPassword', () => enterPassword())
+            $('#body').on('click', '.btnLogin', () => doLogin())
+        });
+
+
+
+
+    </script>
+</body>
+
+</html>
