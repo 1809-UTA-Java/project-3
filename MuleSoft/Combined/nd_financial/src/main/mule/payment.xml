@@ -164,14 +164,13 @@ payload]]></ee:set-payload>
     <flow name="post:\payment:payment-config">
         <logger level="INFO" doc:name="Logger" doc:id="9672a9ba-194c-432a-86a3-332d839a6f24" message="post:\payment:payment-config" />
         <set-variable value="#[payload.cardnumber]" doc:name="Card Number" doc:id="34f84b7e-b368-4361-94aa-3238397878fc" variableName="CardNumber" />
-        <set-variable value="#[payload.amount]" doc:name="ammount" doc:id="29873578-2715-4822-8419-7c61d5eac6a5" variableName="ammount" />
-        <db:insert doc:name="Insert" doc:id="7c90d002-3bfd-42f7-beef-c9d9c6e127e5" config-ref="Database_ndadmin">
-            <db:sql>insert into transactions (transaction_id, transaction_date, amount, card_number, trans_source, trans_description, status, trans_type) values (:id, :tdate, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
+        <set-variable value='#[payload.amount]' doc:name="ammount" doc:id="29873578-2715-4822-8419-7c61d5eac6a5" variableName="ammount" />
+        <db:insert doc:name="Insert" doc:id="7c90d002-3bfd-42f7-beef-c9d9c6e127e5" config-ref="Database_Config_P">
+            <db:sql>insert into transactions (transaction_id, transaction_date, amount, card_number, trans_source, trans_description, status, trans_type) values (transaction_sequence.nextval, :tdate, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
             <db:input-parameters><![CDATA[#[%dw 2.0
 output application/java
 ---
 {
-	id: payload.transactionID,
 	tdate: payload.date as Date,
 	amount: payload.amount as Number,
 	card_number: payload.cardnumber,

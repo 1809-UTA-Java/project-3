@@ -1,11 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <http:listener-config name="AproveAndDenyAPI-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8002" />
     </http:listener-config>
     <apikit:config name="AproveAndDenyAPI-config" raml="AproveAndDenyAPI.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config_AnD" doc:name="Database Config" doc:id="d39e4887-5f4d-4057-8890-d7fd2b50d8ca" >
+		<db:oracle-connection host="192.168.56.105" user="proj3risk" password="pass" instance="xe"/>
+	</db:config>
+	<http:request-config name="HTTP_Request_configuration_ApplicationStatus" doc:name="HTTP Request configuration" doc:id="7c36ff92-f347-41d7-8ad3-3270d191ba0c" >
+		<http:request-connection host="localhost" port="8001" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_GetOffer" doc:name="HTTP Request configuration" doc:id="24ae3c41-821d-402f-914c-05261fb68b78" >
+		<http:request-connection host="localhost" port="8001" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_NewLoan" doc:name="HTTP Request configuration" doc:id="337e2f98-e711-4732-a9c1-4fbe29e54389" >
+		<http:request-connection host="localhost" port="8008" />
+	</http:request-config>
 	<flow name="AproveAndDenyAPI-main">
         <http:listener config-ref="AproveAndDenyAPI-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -126,17 +139,53 @@ output application/json
         </error-handler>
     </flow>
     <flow name="put:\manager\Aprove\(id):AproveAndDenyAPI-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="71b30191-f495-4ba3-bfc1-36a635d6c335">
-            <ee:variables>
-                <ee:set-variable variableName="id"><![CDATA[attributes.uriParams.id]]></ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <db:update doc:name="Update" doc:id="440c43dd-7d0c-4c85-8989-0d4957cfc43a" config-ref="Database_proj3risk">
-			<db:sql >update loans set status='Approved' where id=:id</db:sql>
-			<db:input-parameters ><![CDATA[#[{
-	id : attributes.uriParams.id as Number
-}]]]></db:input-parameters>
-		</db:update>
+		<logger level="INFO" doc:name="Logger" doc:id="a4ae2861-f66e-4b09-927e-33b5dedfee73" message="A"/>
+		<set-variable value="#[attributes.queryParams.access_token]" doc:name="UID" doc:id="37bd4b47-430b-4cc8-a790-cdc0c52a4b6e" variableName="vUID"/>
+		<http:request method="GET" doc:name="Request_Update_GET" doc:id="9c538998-803f-42ea-9e0c-af70be6b852e" config-ref="HTTP_Request_configuration_ApplicationStatus" url="http://localhost:8001/api/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	id : vars.vUID
+}]]]></http:uri-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="98c24396-90b2-4265-a1cd-7e0e61f90ecd" message="B"/>
+		<ee:transform doc:name="Transform Message" doc:id="3145c80f-f7e9-4cdd-af8e-91bd07500a3d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	id: payload.id,
+	userId: payload.userId,
+	offer: payload.offer,
+	started: payload.started,
+	status: "approved",
+	sentIn: payload.sentIn
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="PUT" doc:name="Request_Update_PUT" doc:id="e5a878cc-caf9-4584-b647-e9972995fdbf" config-ref="HTTP_Request_configuration_ApplicationStatus" url="http://localhost:8001/api/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	id : vars.vUID
+}]]]></http:uri-params>
+		</http:request>
+		<set-variable value="#[10000]" doc:name="LoanAmt" doc:id="26552919-98aa-43c1-9242-4f5220cd470b" variableName="Amount"/>
+		<set-variable value="" doc:name="LoanType" doc:id="c4f0f604-a7ac-49f6-a538-8c6ab8515eee" variableName="vType"/>
+		<http:request method="POST" doc:name="Request_New_Loan" doc:id="5f6a206f-a09a-4ec6-9ff7-6dff6cfc931a" url="http://localhost:8009/api/loans/1">
+			<http:body ><![CDATA[#[%dw 2.0
+output application/json
+---
+{
+	  "userID": 1,
+      "loanType": "home",
+      "balance": vars.Amount,
+      "interestRate": 0.035,
+      "gracePeriodEndDate":"2018-09-10",
+      "principalBalance": vars.Amount
+}]]]></http:body>
+		</http:request>
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="488cd8f3-4dfa-4d4b-97f5-23020b9d6e95">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -149,17 +198,40 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="put:\manager\Deny\(id):AproveAndDenyAPI-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="364bcdf1-e582-431a-a379-848aa1bc44da">
             <ee:variables>
-                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
+                <ee:set-variable variableName="id"><![CDATA[attributes.uriParams.id]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <db:update doc:name="Update" doc:id="dcc6c993-fdce-4ed9-b025-6665eae8f520" config-ref="Database_proj3risk">
-			<db:sql >update loans set status='Denied' where id=:id</db:sql>
-			<db:input-parameters ><![CDATA[#[{
-	id : attributes.uriParams.id as Number
-}]]]></db:input-parameters>
-		</db:update>
+        <http:request method="GET" doc:name="Request_Update_Status" doc:id="101bf123-13d7-4ae8-9d71-92777163efa2" config-ref="HTTP_Request_configuration_ApplicationStatus" url="http://localhost:8001/api/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	id : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="ff9d1dc9-838e-430a-883e-25ad392842d5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	id: payload.id,
+	userId: payload.userId,
+	offer: payload.offer,
+	started: payload.started,
+	status: "denied",
+	sentIn: payload.sentIn
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="PUT" doc:name="Request_Update" doc:id="b917bc9d-44a5-4440-9780-c8f31b86c7a4" config-ref="HTTP_Request_configuration_ApplicationStatus" url="http://localhost:8001/api/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	id : attributes.uriParams.id
+}]]]></http:uri-params>
+		</http:request>
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
 http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 

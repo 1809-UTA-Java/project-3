@@ -149,8 +149,20 @@ public class ApplicationController {
 			return offers;
 		}
 	}
+	
+	@GetMapping("/offer/{id}")
+	public Offer getOfferId(@PathVariable(value = "id") String offerId) {
+		Optional<Offer> result = offer_repo.findById(offerId);
+		
+		if (result.isPresent()) {
+			return result.get();
+		}
+		else {
+			return null;
+		}
+	}
 
-	@GetMapping("/offer/user/{id}")
+	/*@GetMapping("/offer/user/{id}")
 	public Offers getUserOffers(@PathVariable(value = "id") String userId) {
 		List<Group> _userGroups = group_repo.findByUserId(userId);
 		List<Group> userGroups = new ArrayList<Group>();
@@ -190,7 +202,7 @@ public class ApplicationController {
 
 		return result;
 
-	}
+	}*/
 
 	@PostMapping("/offer")
 	public Offer postOffer(@RequestBody Offer offer) {

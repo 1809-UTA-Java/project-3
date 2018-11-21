@@ -12,7 +12,7 @@
         <apikit:router config-ref="application-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -25,7 +25,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -38,7 +38,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -51,7 +51,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -64,7 +64,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -77,7 +77,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -102,7 +102,7 @@ output application/json
         <apikit:console config-ref="application-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -134,12 +134,14 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="put:\(id):application\json:application-config">
+
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
                 <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
             </ee:variables>
         </ee:transform>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -167,6 +169,7 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
+
     <flow name="put:\offer\(id):application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
@@ -174,6 +177,7 @@ output application/json
             </ee:variables>
         </ee:transform>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -184,6 +188,7 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
+<<<<<<< HEAD
     <flow name="delete:\(id):application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
@@ -191,6 +196,7 @@ output application/json
             </ee:variables>
         </ee:transform>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -201,6 +207,7 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
+
     <flow name="delete:\group\(id):application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
@@ -208,6 +215,7 @@ output application/json
             </ee:variables>
         </ee:transform>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -218,6 +226,7 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
+
     <flow name="delete:\special\(id):application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
@@ -225,6 +234,7 @@ output application/json
             </ee:variables>
         </ee:transform>
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -330,6 +340,7 @@ output application/json
     </flow>
     <flow name="post:\:application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -345,6 +356,7 @@ output application/json
     </flow>
     <flow name="post:\offer:application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -356,6 +368,7 @@ output application/json
         </ee:transform>
     </flow>
     <flow name="post:\special:application\json:application-config">
+<<<<<<< HEAD
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -363,6 +376,62 @@ output application/json
 ---
 {
   "ef3a5a5c-e441-11e8-9f32-f2801f1b9fd1": null
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="put:\(id):application-config">
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "Update Successful"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="delete:\(id):application-config">
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: "application not found"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\user\(id):application-config">
+        <ee:transform>
+            <ee:variables>
+                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  id: "ef3a5a5c-e441-11e8-9f32-f2801f1b9fd1",
+  userId: "8bc561f1-534d-4d50-a4b5-291af937ce56",
+  offer: "ff89a3a4-e441-11e8-9f32-f2801f1b9fd1",
+  started: "2018-02-28T16:41:41.090Z",
+  status: "pending",
+  sentIn: "2018-04-28T16:41:41.090Z"
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>

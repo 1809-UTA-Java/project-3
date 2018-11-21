@@ -289,8 +289,56 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
+<<<<<<< HEAD
     <flow name="get:\login\(name):user-config">
         <ee:transform doc:id="fdde42fa-889b-46e2-9bb3-201f73bbd9ea">
+=======
+    <flow name="put:\(userId):application\json:user-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="54a4f27c-76e8-466c-8f47-b8ee2c2d8c15">
+            <ee:variables>
+                <ee:set-variable variableName="userId"><![CDATA[attributes.uriParams.userId]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <logger level="INFO" doc:name="Logger" doc:id="d0e3c55c-13f2-4a9a-a617-f6757b523183" message="#[vars.userId]"/>
+		<db:update doc:name="Update" doc:id="b0ef3b5f-abd5-441f-bfc9-ba2d1efab4e8" config-ref="Database_Config_U">
+			<db:sql >update app_user where id = :id
+set
+	gender = :gender,
+	phone = :phone,
+	occupation = :occupation,
+	ethnicity = :ethnicity,
+	address = :address,
+	salary = :salary,
+	username = :username,
+	dob = :dob,
+	email = :email,
+	name = :name</db:sql>
+			<db:input-parameters ><![CDATA[#[{
+		'id' : vars.userId,
+		'gender': payload.GENDER,
+		'phone': payload.PHONE,
+		'occupation': payload.OCCUPATION,
+		'ethnicity': payload.ETHNICITY,
+		'address': payload.ADDRESS,
+		'salary': payload.SALARY,
+		'username': payload.USERNAME,
+		'dob': payload.DOB,
+		'email': payload.EMAIL,
+		'name': payload.NAME
+	}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="12a7aecb-27d2-4317-aee6-9aa21ad97759">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="delete:\(userId):user-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="4be119c8-8726-49b6-91c7-ec4653fb5f6d">
+>>>>>>> origin/dev
             <ee:variables>
                 <ee:set-variable variableName="name"><![CDATA[attributes.uriParams.name]]></ee:set-variable>
             </ee:variables>
