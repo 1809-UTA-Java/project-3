@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:cors="http://www.mulesoft.org/schema/mule/cors"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="listener_8001" basePath="/api/retail">
+        <http:listener-connection host="localhost" port="8001" />
+        
+    </http:listener-config>
+	<db:config name="Database_proj3risk" doc:name="Database Config" doc:id="d39e4887-5f4d-4057-8890-d7fd2b50d8ca" >
+		<db:oracle-connection host="192.168.56.105" user="proj3risk" password="pass" instance="xe"/>
+	</db:config>
+
+<db:config name="Database_ndadmin" doc:name="Database Config" doc:id="f6fd9bea-b486-4d9e-8cfd-363a980950d4">
+        <db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe" />
+    </db:config>
+
+<db:config name="Database_manager" doc:name="Database Config" doc:id="70c795c6-d69b-4ddf-a2c0-e8534371faf5" >
+		<db:oracle-connection host="oracle-instance1.cplzhxlkxjj9.us-west-1.rds.amazonaws.com" user="manager" password="man" serviceName="orcl" />
+	</db:config>
+
+    <db:config name="Database_glen" doc:name="Database Config" doc:id="5af22127-ba5c-46a5-bb68-84caa24a035d" >
+		<db:oracle-connection host="oracle-instance1.cplzhxlkxjj9.us-west-1.rds.amazonaws.com" user="glen" password="glen" instance="ORCL" />
+	</db:config>
+	
+</mule>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Home Page</title>
+
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="grid.css">    
+        <link rel="stylesheet" type="text/css" href="styles.css"> 
+        
+    </head>
+    <body>
+        <header>
+            <div class="header-left">
+                <img src="img/icons8-museum-80.png" class="logo" width="58" height="58" />
+                <a href="#default" class="company-name">N.D. Financials</a>
+            </div>
+            <div class="header-right">
+                <a href="#profile" class="header-profile">Profile</a>
+                <a href="#settings" class="header-settings">Settings</a>
+                <a href="#log-out" class="header-logout">Log out</a>
+            </div>
+        </header>
+        <section class="hero-image">
+            <div class="user-info pure-g">
+                <div class="card-container">
+                    <div class="pure-u-1 pure-u-md-1-2">
+                    	<div id="card-info"></div>
+                    </div>
+                </div>
+                <div class="pure-u-1 pure-u-md-1-2">
+                    <div class="column transactions">
+                        <ul class="transaction-list">
+                            <li class="transaction-list-heading">Recent transactions</li>
+                            <div id="transaction-info"></div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="options">
+            <div class="option-icons pure-g">
+                <div class="option-icons-container">
+                        <div class="pure-u-1 pure-u-md-1-3">
+                            <div class="options-icon">
+                                <img src="img/icons8-bank-cards-96.png" class="logo" width="100" height="100" />
+                                <br>
+                                <span class="option-label">Accounts</span>
+                            </div>
+                        </div>
+                        <div class="pure-u-1 pure-u-md-1-3">
+                            <div class="options-icon">
+                                <img src="img/icons8-combo-chart-96.png" class="logo" width="100" height="100" />
+                                <br>
+                                <span class="option-label">Credit Score</span>
+                            </div>
+                        </div>
+                        <div class="pure-u-1 pure-u-md-1-3">
+                            <div class="options-icon">
+                                <img src="img/icons8-cash-in-hand-filled-100.png" class="logo" width="100" height="100" />
+                                <br>
+                                <span class="option-label">Apply for Loan</span>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </section>
+        <footer>
+            <div class="footer">
+                <a href="#products" class="footer-choice">Products</a>
+                <a href="#about" class="footer-choice">About</a>
+                <a href="#contact" class="footer-choice">Contact</a>
+            </div>
+        </footer>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            let accountsArray = [];
+            let transactionArray = [];
+
+        	const cardTemplate = (lm) => {
+        		let accountNumber = "...";
+        		accountNumber += lm.CARD_NUMBER.slice(14);
+                let divId = lm.CARD_NUMBER;
+        		return (`<div class="column card-info" >
+                        	<div class="card-type" onClick="showTransactions('${divId}');" id="${lm.CARD_NUMBER}">
+                            		<div>
+                                		<span class="card-name">Mule Card</span>
+                                		<span class="card-number">${accountNumber}</span>
+                            		</div>
+                            	<div class="current-balance-amount">${lm.BALANCE}</div> 
+                            	<div class="current-balance-label">Current Balance</div>
+                            	<div class="available-credit">${lm.CREDIT_LINE}</div>
+                            	<div class="available-credit-label">Available Credit</div>
+                        	</div>
+                   	 </div>`);
+        	};
+            const transactionTemplate = (lm) => {
+                return (`<li class="transaction-list-item">
+                            <span class="transaction-date">${lm.TRANSACTION_DATE}</span>
+                            <span class="transaction-vendor">${lm.TRANS_SOURCE}</span>
+                            <span class="transaction-amount">${lm.AMOUNT}</span>
+                        </li>`);
+            };
+        	
+        	const cardInfo = async ()=> {
+        		let result =  await fetch('http://localhost:8004/api/creditcards/tempuser');
+        		let response =  await result.json();
+        		return response;
+        	}
+            const transactionList = async ()=> {
+				console.log(accountsArray[0].CARD_NUMBER);
+                let result =  await fetch(`http://localhost:8015/api/vendorPayments/${accountsArray[0].CARD_NUMBER}`);
+        		let response =  await result.json();
+        		return response;
+            }
+        	$(document).ready(() => {
+        		cardInfo().then(response => {
+        			let data = response.map(elem=>{
+                        accountsArray.push(elem);
+        				return cardTemplate(elem)
+        			}).join('')
+        			document.getElementById("card-info").innerHTML = data;
+                    transactionList().then(response => {
+                    let data = response.map(elem=>{
+                        return transactionTemplate(elem);
+                    }).join('')
+                    document.getElementById("transaction-info").innerHTML = data;
+                    })
+        		})
+        	}) 	
+
+            function showTransactions(str) {
+                fetch(`http://localhost:8015/api/vendorPayments/${str}`)
+                .then(function(res) {
+                    return res.json();
+                })
+                .then(function(data) {
+                    let template = data.map(elem=>{
+                        return (`<li class="transaction-list-item">
+                                    <span class="transaction-date">${elem.TRANSACTION_DATE}</span>
+                                    <span class="transaction-vendor">${elem.TRANS_SOURCE}</span>
+                                    <span class="transaction-amount">${elem.AMOUNT}</span>
+                                </li>`);
+                    }).join('');
+                    document.getElementById("transaction-info").innerHTML = template;
+                });
+            }
+        </script>
+    </body>
+</html>

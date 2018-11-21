@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="webLoginFlow" doc:id="503f5ebd-215c-4968-bc04-a88044150b4b" >
+		<http:listener doc:name="Listener" doc:id="d1b7b790-8b87-4151-b277-535e56514837" config-ref="listener_8001" path="/web/login/*"/>
+		<http:load-static-resource doc:name="Load static resource" doc:id="d2b3fd2f-381f-44af-9c51-83452f4695bf" resourceBasePath="${app.home}/web" defaultFile="login.html"/>
+	</flow>
+</mule>

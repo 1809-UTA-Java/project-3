@@ -1,0 +1,208 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="user" format="json">
+      <types:shape format="weave" example="examples/user-1.json"><![CDATA[%dw 2.0
+type user = {|
+  id: String, 
+  name: String, 
+  username: String, 
+  password: String, 
+  gender: String, 
+  ethnicity: String, 
+  dob: String, 
+  address: String, 
+  email: String, 
+  phone: String, 
+  occupation: String, 
+  salary: Number {"typeId": "int"}, 
+  active: Boolean
+|} {"MetadataFormat": "json",
+"example": "{\"id\":\"f2a8f538-e845-11e8-9f32-f2801f1b9fd1\",\"name\":\"john smith\",\"username\":\"jonnyS\",\"password\":\"jjss123\",\"gender\":\"male\",\"ethnicity\":\"white\",\"dob\":\"jan 5, 1991\",\"address\":\"4451 lincoln dr\",\"email\":\"johnsmith@gmail.com\",\"phone\":\"455665454\",\"occupation\":\"software engineer\",\"salary\":50000,\"active\":true}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="userId" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
+    <types:type name="group" format="json">
+      <types:shape format="weave" example="examples/group.json"><![CDATA[%dw 2.0
+type group = {|
+  id: String, 
+  name: String, 
+  desc: String, 
+  userId: Array<String>, 
+  active: Boolean
+|} {"MetadataFormat": "json",
+"example": "{\"id\":\"1234\",\"name\":\"hello\",\"desc\":\"world\",\"userId\":[\"1234\",\"5678\",\"9012\"],\"active\":true}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="offer" format="json">
+      <types:shape format="weave" example="examples/offer.json"><![CDATA[%dw 2.0
+type offer = {|
+  id: String, 
+  desc: String, 
+  "type": String, 
+  creditLimit: Number {"typeId": "int"}, 
+  interestRate: Number {"typeId": "double"}, 
+  incentives: Array<String>, 
+  startDate: String, 
+  endDate: String, 
+  target: Array<String>, 
+  active: Boolean
+|} {"MetadataFormat": "json",
+"example": "{\"id\":\"string | nil\",\"desc\":\"string\",\"type\":\"string\",\"creditLimit\":100,\"interestRate\":0.14,\"incentives\":[\"abc\",\"def\",\"efg\"],\"startDate\":\"2012-04-21 23:25:43.000Z\",\"endDate\":\"2012-04-21 23:25:43.000Z\",\"target\":[\"abc\",\"def\",\"ghi\"],\"active\":true}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="special" format="json">
+      <types:shape format="weave" example="examples/special.json"><![CDATA[%dw 2.0
+type special = {|
+  id: String, 
+  desc: String, 
+  active: Boolean
+|} {"MetadataFormat": "json",
+"example": "{\"id\":\"string\",\"desc\":\"string\",\"active\":true}"}
+
+]]></types:shape>
+    </types:type>
+    <types:type name="appform" format="json">
+      <types:shape format="weave" example="examples/appform.json"><![CDATA[%dw 2.0
+type appform = {|
+  active: Boolean, 
+  id: String, 
+  offer: String, 
+  sentIn: String, 
+  started: String, 
+  status: String, 
+  userId: String
+|} {"MetadataFormat": "json",
+"example": "{\"active\":true,\"id\":\"string | nil\",\"offer\":\"string\",\"sentIn\":\"2002-10-02T10:00:00-05:00\",\"started\":\"2002-10-02T10:00:00-05:00\",\"status\":\"string\",\"userId\":\"string\"}"}
+
+]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#0a070923-3665-423c-906b-827c05a969ae">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="user[]"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="user"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#d673dc76-e41e-4029-a20a-b4387d932b96">
+    <types:processor-declaration/>
+  </types:enrichment>
+  <types:enrichment select="#47c64497-c7b9-4295-af96-22996b236739">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="group"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#01a9582b-94eb-4dcd-b6d4-1f62354be173">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="offer"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#4ea69647-e618-4897-abfb-9ba177ad35ce">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="special"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#a4062c7e-d050-4395-8dc4-28d49b3c7389">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="group"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#d2246b00-1a40-43f3-9ecf-c050e629a6d8">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="special"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="special"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#27db07c2-20a4-4b2c-8069-9508f4bb01c3">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="appform"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#85ea3cc0-d0cf-428d-80a9-069a4f1d928c">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="appform"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#b9957a4d-978e-4f51-a4a5-2f1829cc0e03">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="user"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#8f6e9163-7e94-4e17-88fe-b5cd66c7eb40">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="offer"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#e7e1f3d2-c4fc-43ca-b767-3ea570a036f4">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="user"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#88052231-155e-46bc-9ec9-0490d4c31a6f">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="user"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

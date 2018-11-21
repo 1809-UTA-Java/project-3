@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xml-module="http://www.mulesoft.org/schema/mule/xml-module" xmlns:java="http://www.mulesoft.org/schema/mule/java"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/xml-module http://www.mulesoft.org/schema/mule/xml-module/current/mule-xml-module.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b78ecb13-dde3-4101-a866-186af1ac489a" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="12dbf84d-d2e8-483f-bbd9-c4d2836bcced" >
+		<db:oracle-connection host="192.168.56.105" user="bread" password="bread" serviceName="xe" />
+	</db:config>
+	<xml-module:config name="XML_Config" doc:name="XML Config" doc:id="b57be3f6-3130-4db6-b3f9-4aa3d7a425f7" />
+	<db:config name="Database_Config1" doc:name="Database Config" doc:id="a473c928-34af-4e9e-bd63-7913624dc6e0" >
+		<db:oracle-connection host="192.168.56.105" user="bread" password="bread" serviceName="xe" />
+	</db:config>
+	<flow name="manager_demoFlow" doc:id="edd9ce1f-9e31-4d36-833d-0a8bef04cf8d" >
+		<http:listener doc:name="Listener" doc:id="c8a1cdde-c6dc-4bc6-993c-3ed597be188b" config-ref="HTTP_Listener_config" path="/login"/>
+		<logger level="INFO" doc:name="Logger" doc:id="34e83b3d-97fc-4566-9ad7-019c6c8ef119" message="Mule application Started"/>
+		<choice doc:name="Choice" doc:id="9eeed72a-8125-40ae-b92e-99f38305b728" >
+			<when expression="#[payload.username == 'mule' and payload.password == 'mule']">
+				<logger level="INFO" doc:name="Logger" doc:id="89794f4b-3349-4e01-8c41-c00721d1b2a4" message="Succesful Login"/>
+				<set-payload doc:name="Set Payload" doc:id="d7d1fa95-a92f-4bf6-b65c-2a2bd8ec00ee" value="A"/>
+				<parse-template doc:name="ManagerHome Page" doc:id="056d6d77-2108-4d19-a478-d6bb710bac92" location="C:\Users\Owner\Desktop\mule folder\AnypointStudio\html\loginSuccessful.html"/>
+			</when>
+			<otherwise >
+				<logger level="INFO" doc:name="Logger" doc:id="d222f7b5-9aa5-48da-a084-27d6afe50960" message="Unsucessful Login"/>
+				<set-payload doc:name="Set Payload" doc:id="db463e74-d1a4-4460-87ed-d4032b1c4c3e" value="B"/>
+				<parse-template doc:name="Invalid username or password" doc:id="87c166f5-d140-4e86-a403-9b5e120b142d" location="C:\Users\Owner\Desktop\mule folder\AnypointStudio\html\loginFailure.html"/>
+			</otherwise>
+		</choice>
+	</flow>
+	<flow name="manager_demoFlow1" doc:id="8ccc1f96-4f50-4ade-8e4a-7550a7b666de" >
+		<http:listener doc:name="Listener" doc:id="51688292-12e8-4dc0-9aed-9c6d4cdb8b8d" config-ref="HTTP_Listener_config" path="/pending"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ac7b7a4c-2285-4e91-bcd6-6b59806a3ba4" message="pending"/>
+		<db:select doc:name="Select" doc:id="a706aa0d-91be-4b0f-939c-95aaedbcb19d" config-ref="Database_Config1">
+			<db:sql >SELECT * FROM BREADS</db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="e78d508e-b378-49bd-910b-6fc162d88b9d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	ID: payload.ID,
+	Type: payload.TYPE,
+	calories: payload.CALORIES,
+	Stock: payload.STOCK default 0
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-variable value="#[payload.Type]" doc:name="Set Variable" doc:id="82649b28-be75-4800-a7e7-279b7475d82f" variableName="types"/>
+		<set-payload value="C" doc:name="Set Payload" doc:id="9ce6c737-6d61-452e-95e2-93830c9e28e9" />
+		<parse-template doc:name="Parse Template" doc:id="9e61b58d-2828-428a-ae21-8502673a6080" location="C:\Users\Owner\Desktop\mule folder\AnypointStudio\html\anchorExample.html"/>
+	</flow>
+</mule>
