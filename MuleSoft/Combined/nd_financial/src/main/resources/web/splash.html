@@ -10,32 +10,47 @@
 </head>
 
 <body>
-    <div id="header"></div>
-    <div id="leftColumn"></div>
-    <div id="body">
+    <div id="header">
+        <div>Welcome to ND Financials</div>
+        <div>Make a Selection:</div>
         <input type='button' value='New User' name='btnRegister' />
         <input type='button' value='Login Now' name='btnLogin' />
+    </div>
+    <div id="leftColumn"></div>
+    <div id="body">
+
 
     </div>
     <div id="rightColumn"></div>
     <div id="footer"></div>
+    <script src="state.js"></script>
+    <script src="login.js"></script>
+    <script src="registration.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
         crossorigin="anonymous"></script>
     <script>
 
-        const doLogin = () => {
-            window.location.replace('login.html')
+        const login = (e) => {
+            e.stopPropagation();
+            $('#body').on("click", ".btnUsername", () => enterUsername());
+            $('#body').on('click', '.btnPassword', () => enterPassword());
+            $('#body').on('click', '.btnLogin', () => doLogin());
+
+            enterUsername();
         }
 
-        const doRegistration = () => {
-            window.location.replace('registration.html')
+        const registration = (e) => {
+            e.stopPropagation();
+            loadForm();
+            $('#body').on("click", $('#btnSubmit'), () => submitForm())
+            $('#body').on('click', $('#btnClear'), () => clearUser())
         }
 
         $(document).ready(function () {
             console.log('ready')
             const state = {};
-            $("input[name='btnRegister']").on("click", () => doRegistration())
-            $("input[name='btnLogin']").on('click', () => doLogin())
+            $("input[name='btnRegister']").on("click", (e) => registration(e))
+            $("input[name='btnLogin']").on('click', (e) => login(e))
         });
     </script>
 </body>
