@@ -1,0 +1,104 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Application</title>
+
+</head>
+
+<body>
+    <div id="header"></div>
+    <div id="leftColumn"></div>
+    <div id="body"></div>
+    <div id="rightColumn"></div>
+    <div id="footer"></div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+        crossorigin="anonymous"></script>
+
+    <script src="state.js"></script>
+    <script src="login.js"></script>
+    <script src="registration.js"></script>
+    <script>
+
+        const loadUserInfo = async (userId) => {
+            let response = await fetch(`${url}/user/${userId}`);
+            let result = await response.json();
+            if (result) {
+                state.user = {
+                    id: result.id,
+                    name: result.name,
+                    username: result.username,
+                    password: result.password,
+                    gender: result.gender,
+                    ethnicity: result.ethnicity,
+                    dob: result.dob,
+                    address: result.address,
+                    email: result.email,
+                    phone: result.phone,
+                    occupation: result.occupation,
+                    salary: result.salary,
+                    active: result.active
+                }
+                return true
+            }
+            return false
+        }
+
+        applicationStatus = async = (userId) => {
+            let response = await fetch(`${url}/application/user/${userId}`);
+            let result = await response.json();
+            if (result) {
+                state.application = result;
+            } else {
+                state.application = ['No applications']
+            }
+        }
+
+        availableOffers = async = (userId) => {
+            let response = await fetch(`${url}/application/offer/${userId}`);
+            let result = await response.json();
+
+            if (result) {
+                for (appForm in state.application) {
+                    let OfferResponse = await fetch(`${url}/application/offer`)
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            console.log('ready')
+            let userId = window.location.pathname.split('/');
+            userId = userId[userId.length - 1]
+
+            loadUserInfo(userId).then(result => {
+                if (result) {
+                    applicationStatus(userId);
+                    availableOffers(userId);
+
+                } else {
+                    $("#body").html('<h1>User ID not found</h1>')
+                }
+
+                state.application = applicationStatus(userId);
+                state.offers = availableOffers(userId);
+
+            })
+
+
+
+
+            $('#body').on("click", ".btnUsername", () => enterUsername())
+            $('#body').on('click', '.btnPassword', () => enterPassword())
+            $('#body').on('click', '.btnLogin', () => doLogin())
+        });
+
+
+
+
+    </script>
+</body>
+
+</html>

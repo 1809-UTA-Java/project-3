@@ -1,190 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:cors="http://www.mulesoft.org/schema/mule/cors"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-    <flow name="put:\(userId):application\json:user-config">
-        <ee:transform doc:id="54a4f27c-76e8-466c-8f47-b8ee2c2d8c15">
-            <ee:variables>
-                <ee:set-variable variableName="userId"><![CDATA[attributes.uriParams.userId]]></ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" doc:name="Logger" doc:id="d0e3c55c-13f2-4a9a-a617-f6757b523183" message="#[vars.userId]" />
-        <db:update doc:name="Update" doc:id="b0ef3b5f-abd5-441f-bfc9-ba2d1efab4e8" config-ref="Database_glen">
-            <db:sql>update app_user where id = :id
-set
-	gender = :gender,
-	phone = :phone,
-	occupation = :occupation,
-	ethnicity = :ethnicity,
-	address = :address,
-	salary = :salary,
-	username = :username,
-	dob = :dob,
-	email = :email,
-	name = :name</db:sql>
-            <db:input-parameters><![CDATA[#[
-	{
-		'id' : vars.userId,
-		'gender': payload.GENDER,
-		'phone': payload.PHONE,
-		'occupation': payload.OCCUPATION,
-		'ethnicity': payload.ETHNICITY,
-		'address': payload.ADDRESS,
-		'salary': payload.SALARY,
-		'username': payload.USERNAME,
-		'dob': payload.DOB,
-		'email': payload.EMAIL,
-		'name': payload.NAME
-	}
-]]]></db:input-parameters>
-        </db:update>
-        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="12a7aecb-27d2-4317-aee6-9aa21ad97759">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    <flow name="delete:\(userId):user-config">
-        <ee:transform doc:id="4be119c8-8726-49b6-91c7-ec4653fb5f6d">
-            <ee:variables>
-                <ee:set-variable variableName="userId"><![CDATA[attributes.uriParams.userId]]></ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <db:update doc:name="Delete" doc:id="98927aa5-ecd5-4b70-9c4c-1a40b532d87e" config-ref="Database_glen">
-            <db:sql>update app_user where id = :id
-set active = 0</db:sql>
-            <db:input-parameters><![CDATA[#[{
-		'id': vars.userid
-	}]]]></db:input-parameters>
-        </db:update>
-        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="35c8ae35-c39a-4524-a54c-34e0bdee129d">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  message: "delete successful"
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    <flow name="get:\username\(name):user-config" doc:id="85e21137-da74-4d52-b70d-3c5edc37347b">
-        <ee:transform doc:name="Transform Message" doc:id="9b224409-8570-46d1-9154-4ee868e7f71a">
-            <ee:message>
-                <ee:set-payload><![CDATA[attributes.uriParams.name]]></ee:set-payload>
-            </ee:message>
-            <ee:variables>
-                <ee:set-variable variableName="name"><![CDATA[%dw 2.0
-output application/java
----
-{
-}]]></ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <db:select doc:name="Select" doc:id="d88819d3-beb4-4389-b341-5b75a35962be" config-ref="Database_glen">
-            <db:sql>select * from app_user where username = :name</db:sql>
-            <db:input-parameters><![CDATA[#[#[
-	{
-		name: vars.name
-	}
-]]]]></db:input-parameters>
-        </db:select>
-        <ee:transform doc:name="Transform Message" doc:id="6d42cb9d-a2e1-4732-84cc-bdc5b0185b92">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/java
----
-{
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-        <choice doc:name="Choice" doc:id="c6e869f4-c11a-4b64-985e-a4180fa8d864">
-            <when expression="#[payload.username[0] == vars.name]">
-                <set-payload value="{&quot;message&quot;:&quot;okay&quot;}" doc:name="Set Payload" doc:id="bc7a7611-4475-46ef-8565-ac8a63e05e7e" />
-            </when>
-            <otherwise>
-                <set-payload value="{&quot;message&quot;: &quot;fail&quot;}" doc:name="Set Payload" doc:id="a66c4ab6-84f8-4279-8d4a-fa1739f95f7f" />
-            </otherwise>
-        </choice>
-    </flow>
-    <flow name="get:\(userId):user-config">
-        <ee:transform doc:id="ee45cdb0-d4de-4203-a680-cbe77a18b421">
-            <ee:variables>
-                <ee:set-variable variableName="userId"><![CDATA[attributes.uriParams.userId]]></ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" doc:name="Logger" doc:id="7874f3e7-eee1-4c3a-b4b0-eb6fa4566098" message="#[vars.userId]" />
-        <db:select doc:name="Select" doc:id="1f6887e1-73a9-4c7a-8f12-384dfeaf5866" config-ref="Database_glen">
-            <db:sql>select * from app_user where id = :id</db:sql>
-            <db:input-parameters><![CDATA[#[
-	{
-		'id' : vars.userId
-	}
-]]]></db:input-parameters>
-        </db:select>
-    </flow>
-    <flow name="get:\:user-config">
-        <db:select doc:name="Select" doc:id="b187e425-948b-4ca2-bd3a-bc884fdf2901" config-ref="Database_glen">
-            <db:sql>select * from app_user where active = 1</db:sql>
-        </db:select>
-        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="a06cd8ec-87b5-42a6-9963-3b2f91ab1e25">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    <flow name="post:\:application\json:user-config">
-        <set-variable value="#[uuid()]" doc:name="Set Variable" doc:id="7dae79f0-9db9-4a6a-a724-f7b0f3b364f3" variableName="userId" />
-        <db:insert doc:name="Insert" doc:id="a48f9dd5-d8ae-44e0-8b72-bb027c28bcda" config-ref="Database_glen">
-            <db:sql>insert into app_user (id,gender,phone,occupation,ethnicity,address,salary,username,dob,email,name,active,password)
-values(:id,:gender,:phone,:occupation,:ethnicity,:address,:salary,:username,:dob,:email,:name,1,:password)</db:sql>
-            <db:input-parameters><![CDATA[#[
-	{
-		'id' : vars.userId,
-		'gender': payload.gender,
-		'phone': payload.phone,
-		'occupation': payload.occupation,
-		'ethnicity': payload.ethnicity,
-		'address': payload.address,
-		'salary': payload.salary,
-		'username': payload.username,
-		'dob': payload.dob,
-		'email': payload.email,
-		'name': payload.name,
-		'password':payload.password
-	}
-]]]></db:input-parameters>
-        </db:insert>
-        <ee:transform xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e929f987-5fe2-4498-966c-493fdd18c74f">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"message":vars.userId
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    <apikit:config name="user-config" raml="user.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" disableValidations="true" headersStrictValidation="true"/>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <apikit:config name="user-config" raml="user.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="user-main">
         <http:listener path="/user/*" config-ref="listener_8001">
-        	
             <http:response statusCode="#[vars.httpStatus default 200]">
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
                 <http:body><![CDATA[#[payload]]]></http:body>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="user-config"/>
+        <apikit:router config-ref="user-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -197,7 +27,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="d625717f-5c46-4f38-a5c3-c90a89b88182">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -205,12 +35,12 @@ output application/json
 {message: "Resource not found"}]]></ee:set-payload>
                     </ee:message>
                     <ee:variables>
-                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -223,7 +53,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -236,7 +66,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -249,7 +79,7 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -271,11 +101,10 @@ output application/json
                 <http:body><![CDATA[#[payload]]]></http:body>
             </http:error-response>
         </http:listener>
-        <apikit:console config-ref="user-config"/>
+        <apikit:console config-ref="user-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -289,48 +118,100 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
+    <flow name="put:\(userId):application\json:user-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="259bc34f-daf4-48b5-abcc-ab6f80b8a43a">
+            <ee:variables>
+                <ee:set-variable variableName="userId"><![CDATA[attributes.uriParams.userId]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <db:update doc:name="Update" doc:id="f1771bbf-ff91-4b57-970e-fb065fbeeb44" config-ref="Database_glen">
+			<db:sql >update app_user set 
+
+'id' = :id,
+'gender' = :gender,
+'phone' = :phone,
+'occupation' = :occupation,
+'ethnicity' = :ethnicity,
+'address' = :address,
+'salary' = :salary,
+'username' = :username,
+'dob' = :dob,
+'email' = :email,
+'name' = :name,
+'password' =:password
+
+ where id = :id</db:sql>
+			<db:input-parameters ><![CDATA[#[{
+		'id' : vars.userId,
+		'gender': payload.gender,
+		'phone': payload.phone,
+		'occupation': payload.occupation,
+		'ethnicity': payload.ethnicity,
+		'address': payload.address,
+		'salary': payload.salary,
+		'username': payload.username,
+		'dob': payload.dob,
+		'email': payload.email,
+		'name': payload.name,
+		'password':payload.password
+	}]]]></db:input-parameters>
+		</db:update>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="c8369853-2f5a-4fff-a63a-4af53d339840">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\:user-config">
+        <db:select doc:name="Select" doc:id="1ddef771-2866-4bfd-a23f-6e6fb513ff2e" config-ref="Database_glen">
+			<db:sql >select * from app_user</db:sql>
+		</db:select>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="63d9ca0d-f4cd-4d96-a2a7-07cba432b281">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
     <flow name="get:\login\(name):user-config">
-        <ee:transform doc:id="fdde42fa-889b-46e2-9bb3-201f73bbd9ea">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="1155aa8d-9042-466d-83d0-ba474debe460">
             <ee:variables>
                 <ee:set-variable variableName="name"><![CDATA[attributes.uriParams.name]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <db:select doc:name="Select" doc:id="31486b0b-b24d-4994-9ad0-5245f7f800b8" config-ref="Database_glen">
+        <db:select doc:name="Select" doc:id="e55e9905-e1d7-4da8-8499-593ee7f659b1" config-ref="Database_glen">
 			<db:sql >select * from app_user where username = :username</db:sql>
 			<db:input-parameters ><![CDATA[#[{
-		'username': vars.name
-	}]]]></db:input-parameters>
+	'username': vars.name
+}]]]></db:input-parameters>
 		</db:select>
-		<choice doc:name="Choice" doc:id="11e851b2-8f98-49b4-af71-e2a1a06dbcb8" >
-			<when expression="#[payload[0].USERNAME == vars.name]">
-				<set-payload value='{"message":"okay"}' doc:name="Set Payload" doc:id="39514347-7547-4c09-96d9-4342fada59af" />
+		<choice doc:name="Choice" doc:id="edeae2f3-dffa-4d65-a53d-291f94cbb8a0" >
+			<when expression="#[payload[0].USERNAME != null]" >
+				<set-payload value='{"message": "okay"}' doc:name="Set Payload" doc:id="701e6df2-b095-4861-a7f6-d633a2983733" />
 			</when>
 			<otherwise >
-				<set-payload value='{"message": "failed"}' doc:name="Set Payload" doc:id="50f3825a-2f4f-4ce3-a17d-000e63ac8a95" />
+				<set-payload value='{"message":"failed"}' doc:name="Set Payload" doc:id="6fc4df4b-50d8-4a53-8106-7a94aac8d6c3" />
 			</otherwise>
 		</choice>
     </flow>
-    <flow name="post:\login:application\json:user-config">
-		<ee:transform doc:name="Transform Message" doc:id="b504ffa6-bf60-46e5-a657-866a002aa652" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="login" ><![CDATA[{
-	'username': payload.username,
-	'password': payload.password
-}
-]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="1b4e2e92-bdc6-4682-b9fc-22529272c42a" message="#[payload]"/>
-		<db:select doc:name="Select" doc:id="e9124319-c310-4228-9e43-e28b445f6109" config-ref="Database_glen">
-			<db:sql >select * from app_user where username = :username and password = :password</db:sql>
+    <flow name="get:\(userId):user-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="a0e720ed-182a-4798-b2f3-2ce05ba51d86">
+            <ee:variables>
+                <ee:set-variable variableName="userId"><![CDATA[attributes.uriParams.userId]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <db:select doc:name="Select" doc:id="7611b14f-648d-46f4-94c4-e5a1f32c6199" config-ref="Database_glen">
+			<db:sql >select * from app_user where id = :id</db:sql>
 			<db:input-parameters ><![CDATA[#[{
-		'username': vars.login.username,
-		'password': vars.login.password
-	}]]]></db:input-parameters>
+	'id':vars.userId
+}]]]></db:input-parameters>
 		</db:select>
-		<ee:transform doc:name="Transform Message" doc:id="36500b61-f10d-4012-b63b-27aba09bbbd7" >
+		<ee:transform doc:name="Transform Message" doc:id="fa9cea22-9562-4ec6-bf10-48233fa2d840" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -338,13 +219,72 @@ output application/json
 payload]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="12c48fcc-bab4-4b1b-98a4-cf08fa7e7bc7" message="#[payload]" />
-		<choice doc:name="Choice" doc:id="231845ae-7857-4911-a884-df27c08ecf8f" >
-			<when expression="#[payload[0].USERNAME == vars.login.username and payload[0].PASSWORD == vars.login.password]" >
-				<set-payload value='{"message":"okay"}' doc:name="Set Payload" doc:id="c5212fbc-441d-481f-add8-e38db66f40cc" />
+    </flow>
+    <flow name="post:\:application\json:user-config">
+        <ee:transform doc:name="Transform Message" doc:id="3ef4c78c-4bdd-4607-b751-6c15ecff5641" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="id" ><![CDATA[%dw 2.0
+output application/json
+---
+uuid()]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:insert doc:name="Insert" doc:id="cd8a9d77-adfe-4caf-a304-9524fc6d7f21" config-ref="Database_glen">
+			<db:sql >insert into app_user 
+           (id, gender, phone,occupation, ethnicity, address,salary, username, dob, email, name,active,password)
+values(:id,:gender,:phone,:occupation,:ethnicity,:address,:salary,:username,:dob,:email,:name, 1,      :password)</db:sql>
+			<db:input-parameters ><![CDATA[#[{
+		'id' : vars.id,
+		'gender': payload.gender,
+		'phone': payload.phone,
+		'occupation': payload.occupation,
+		'ethnicity': payload.ethnicity,
+		'address': payload.address,
+		'salary': payload.salary,
+		'username': payload.username,
+		'dob': payload.dob,
+		'email': payload.email,
+		'name': payload.name,
+		'password':payload.password,
+	}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e699899c-11fc-4800-98dd-7923402fd408">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  message: vars.id
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\login:application\json:user-config">
+		<ee:transform doc:name="Transform Message" doc:id="5d8acb9c-cc50-4b44-af93-815c84a40f6c" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="login" ><![CDATA[{
+	username:payload.username,
+	password:payload.password
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<db:select doc:name="Select" doc:id="d14bb4a5-8d65-4fea-ad35-47692461710d" config-ref="Database_glen">
+			<db:sql >select * from app_user where password = :password and username = :username</db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	'username': payload.username,
+	'password': payload.password
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice" doc:id="d9f0dfd2-5ff9-4d5e-bf44-21af22b174d9" >
+			<when expression="#[payload[0].USERNAME == vars.login.username and payload[0].PASSWORD == vars.login.password]">
+				<set-payload value='{"message": "okay"}' doc:name="Set Payload" doc:id="b2b07179-1f6e-44a0-964e-78674ddfd5e1" />
 			</when>
 			<otherwise >
-				<set-payload value='{"message": "failed"}' doc:name="Set Payload" doc:id="7527bdac-2d27-4129-9451-f89816984b82" />
+				<set-payload value='{"message":"failed"}' doc:name="Set Payload" doc:id="f3e37710-83a1-4bca-8f51-7ee577e7eed2" />
 			</otherwise>
 		</choice>
     </flow>
