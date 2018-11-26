@@ -1,0 +1,77 @@
+#%RAML 1.0
+version: v1
+title: LoanApplicationAPI
+
+types: 
+  PendingLoanInsert:
+    type: object
+    properties:
+      user-id:
+        required: true
+        maxLength: 50
+        type: string
+      principle:
+        required: true
+        format: float
+        type: number
+      loan-type:
+        required: true
+        maxLength: 25
+        type: string
+      income:
+        required: true
+        format: int32
+        type: integer
+
+  PendingLoanSelect:
+    type: object
+    properties:
+      pending-id:
+        required: true
+        format: int32
+        type: integer
+      user-id:
+        required: true
+        maxLength: 50
+        type: string
+      principle:
+        required: true
+        format: float
+        type: number
+      loan-type:
+        required: true
+        maxLength: 25
+        type: string
+      income:
+        required: true
+        format: int32
+        type: integer
+
+/pending:
+  get:
+    responses: 
+      200:
+        description: gets all pending loan applications
+        body:
+          application/json:
+            type: PendingLoanSelect[]
+  post:
+    body:
+      application/json:
+        type: PendingLoanInsert
+        
+  /{id}:
+    get:
+      responses: 
+        200:
+          description: gets a pending loan by pending loan id
+          body:
+            application/json:
+              type: PendingLoanSelect
+
+
+
+    delete:
+      responses: 
+        204:
+          description: deletes a pending loan
