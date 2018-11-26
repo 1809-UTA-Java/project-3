@@ -4,7 +4,7 @@
         <http:listener-connection host="0.0.0.0" port="8082" />
     </http:listener-config>
     <apikit:config name="credit-cards-config" raml="credit-cards.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <db:config name="Database_Config1" doc:name="Database Config" doc:id="d491d92c-68d4-4d49-a2ee-3d13d0e69d14">
+    <db:config name="Database_Config1" doc:name="Database_Config1" doc:id="d491d92c-68d4-4d49-a2ee-3d13d0e69d14">
         <db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe" />
     </db:config>
     <flow name="credit-cards-main">
@@ -141,23 +141,12 @@ payload]]></ee:set-payload>
         </ee:transform>
     </flow>
     <flow name="post:\creditcards\newCard:application\json:credit-cards-config">
-        <logger level="INFO" message="pre insert check" />
-        <db:insert doc:name="Insert" doc:id="036b9b72-b23c-4d99-8a3d-558d82b1f833" config-ref="Database_Config">
-            <db:sql>Insert into Credit_cards (card_number, balance, status, credit_line, expiration, user_id, rewards, cvv, interest_rate) values (:cardNumber, :balance, :status, :creditLine, :expiration, :userID, :reward, :cvv, :interestRate)</db:sql>
-            <db:input-parameters><![CDATA[#[{
-	cardNumber : payload.cardNumber,
-	balance : payload.balance,
-	status : payload.status,
-	creditLine : payload.creditLine,
-	expiration : payload.expiration as Date,
-	userID : payload.userID,
-	reward : payload.reward,
-	cvv : payload.cvv,
-	interestRate : payload.interestRate
-	
-}]]]></db:input-parameters>
-        </db:insert>
-        <logger level="INFO" doc:name="Logger" doc:id="6f082643-114d-4618-b719-ebb7b1164418" message="post insert check" />
+        <db:stored-procedure doc:name="Stored procedure" doc:id="fa419f28-bee1-40fc-bd61-847c5db22553" config-ref="Database_Config1">
+			<db:sql >call cc_app_sp2(:userid)</db:sql>
+			<db:input-parameters ><![CDATA[#[{userid : payload.userID}]]]></db:input-parameters>
+		</db:stored-procedure>
+		<logger level="INFO" message="pre insert check" />
+		<logger level="INFO" doc:name="Logger" doc:id="6f082643-114d-4618-b719-ebb7b1164418" message="post insert check" />
     </flow>
 	<flow name="put:\creditcards\updatereward:credit-cards-config">
         <db:update doc:name="Update Rewards" doc:id="0435ff8b-2e5d-4aac-af34-813a96e8bf6b" config-ref="Database_Config">

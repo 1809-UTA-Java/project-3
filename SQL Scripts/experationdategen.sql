@@ -1,0 +1,1 @@
+select format(DateAdd(yy, 2, GetDate()), 'dd-MM-yyyy');

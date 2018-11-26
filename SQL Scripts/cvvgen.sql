@@ -1,0 +1,1 @@
+select format(cast(floor(RAND()*(999-0+1)+10) as int), '000');
