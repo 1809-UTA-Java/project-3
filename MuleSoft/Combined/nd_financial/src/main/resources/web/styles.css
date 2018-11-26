@@ -55,7 +55,7 @@ header div.header-right {
 /* ***************************************************************************** */
 .hero-image {
     margin-top: 78px;
-    background: transparent url(../img/backsplash.jpg); 
+    background: transparent url(img/backsplash.jpg); 
     min-height: 500px; /* used to be 524 */
     position: relative;
     z-index: 2;
