@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
     <http:listener-config name="credit-cards-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="8004" />
+        <http:listener-connection host="0.0.0.0" port="8082" />
     </http:listener-config>
     <apikit:config name="credit-cards-config" raml="credit-cards.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config1" doc:name="Database_Config1" doc:id="d491d92c-68d4-4d49-a2ee-3d13d0e69d14">
+        <db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" instance="xe" />
+    </db:config>
     <flow name="credit-cards-main">
         <http:listener config-ref="credit-cards-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -124,11 +127,11 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\creditcards\(userID):credit-cards-config">
-        <db:select doc:name="Select" doc:id="1aa7546e-e6ca-41d5-9fd6-9cd1196a23df" config-ref="Database_ndadmin">
+        <db:select doc:name="Select" doc:id="35b8912a-c780-4302-9be6-ca77b6e6fef4" config-ref="Database_ndadmin">
             <db:sql>SELECT * FROM CREDIT_CARDS WHERE USER_ID = :userID</db:sql>
             <db:input-parameters><![CDATA[#[{userID : attributes.uriParams.userID}]]]></db:input-parameters>
         </db:select>
-        <ee:transform xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="f7fbc5d9-42c9-4d53-9881-9d05c0889961">
+        <ee:transform xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd  http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="b7bdd756-8263-486a-bb79-a819e8f98b6f">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -138,45 +141,34 @@ payload]]></ee:set-payload>
         </ee:transform>
     </flow>
     <flow name="post:\creditcards\newCard:application\json:credit-cards-config">
-        <logger level="INFO" message="pre insert check" />
-        <db:insert doc:name="Insert" doc:id="568983c8-b9b7-49d8-99fc-5ae773f0a617" config-ref="Database_ndadmin">
-            <db:sql>Insert into Credit_cards (card_number, balance, status, credit_line, expiration, user_id, rewards, cvv, interest_rate) values (:cardNumber, :balance, :status, :creditLine, :expiration, :userID, :reward, :cvv, :interestRate)</db:sql>
-            <db:input-parameters><![CDATA[#[{
-	cardNumber : payload.cardNumber,
-	balance : payload.balance,
-	status : payload.status,
-	creditLine : payload.creditLine,
-	expiration : payload.expiration as Date,
-	userID : payload.userID,
-	reward : payload.reward,
-	cvv : payload.cvv,
-	interestRate : payload.interestRate
-	
-}]]]></db:input-parameters>
-        </db:insert>
-        <logger level="INFO" doc:name="Logger" doc:id="ec56e9d7-42b9-48e6-9f22-686a890517a1" message="post insert check" />
+        <db:stored-procedure doc:name="Stored procedure" doc:id="fa419f28-bee1-40fc-bd61-847c5db22553" config-ref="Database_Config1">
+			<db:sql >call cc_app_sp2(:userid)</db:sql>
+			<db:input-parameters ><![CDATA[#[{userid : payload.userID}]]]></db:input-parameters>
+		</db:stored-procedure>
+		<logger level="INFO" message="pre insert check" />
+		<logger level="INFO" doc:name="Logger" doc:id="6f082643-114d-4618-b719-ebb7b1164418" message="post insert check" />
     </flow>
 	<flow name="put:\creditcards\updatereward:credit-cards-config">
-        <db:update doc:name="Update Rewards" doc:id="1824189e-9874-455f-ab4d-042ba0581b47" config-ref="Database_ndadmin">
+        <db:update doc:name="Update Rewards" doc:id="0435ff8b-2e5d-4aac-af34-813a96e8bf6b" config-ref="Database_ndadmin">
             <db:sql>UPDATE CREDIT_CARDS SET REWARDS = :reward WHERE USER_ID = :userID</db:sql>
             <db:input-parameters><![CDATA[#[{reward : payload.reward, userID : payload.userID }]]]></db:input-parameters>
         </db:update>
     </flow>
 	<flow name="put:\creditcards\updatestatus:credit-cards-config">
-		<db:update doc:name="Update" doc:id="ec5ee9f7-a409-4b4a-9ece-9af2518b0b1f" config-ref="Database_ndadmin">
+		<db:update doc:name="Update" doc:id="fbe1a855-1148-4666-8c7f-9d19c608f6b6" config-ref="Database_ndadmin">
             <db:sql>UPDATE CREDIT_CARDS SET STATUS = :status WHERE USER_ID = :userID</db:sql>
             <db:input-parameters><![CDATA[#[{status : payload.status, userID : payload.userID}]]]></db:input-parameters>
         </db:update>
     </flow>
 	<flow name="put:\creditcards\charge:credit-cards-config">
-		<logger level="INFO" doc:name="Logger" doc:id="292ad04c-bcc0-4f26-be43-4be2c39ab04d" message="check charge"/>
-		<db:update doc:name="Update" doc:id="37ff0c14-7d1f-4b62-a385-f8bb5163a523" config-ref="Database_ndadmin">
+		<logger level="INFO" doc:name="Logger" doc:id="924dc4d0-8390-43bb-8446-64cac984b766" message="check charge"/>
+		<db:update doc:name="Update" doc:id="24c6fb91-1380-4b1f-98ef-56f16e2c7246" config-ref="Database_ndadmin">
 			<db:sql>UPDATE CREDIT_CARDS SET BALANCE = :balance + BALANCE WHERE CARD_NUMBER = :cardNumber</db:sql>
 			<db:input-parameters><![CDATA[#[{balance : payload.balance, cardNumber : payload.cardNumber}]]]></db:input-parameters>
 		</db:update>
     </flow>
 	<flow name="put:\creditcards\payment:credit-cards-config">
-        <db:update doc:name="Update" doc:id="a5fdd1ee-15d8-42d4-abac-e1808e2e1365" config-ref="Database_ndadmin">
+        <db:update doc:name="Update" doc:id="3952a847-d7ab-479a-945a-1cf973fd6906" config-ref="Database_ndadmin">
 			<db:sql >UPDATE CREDIT_CARDS SET BALANCE = BALANCE - :balance  WHERE CARD_NUMBER = :cardNumber</db:sql>
 			<db:input-parameters ><![CDATA[#[{balance : payload.balance, cardNumber : payload.cardNumber}]]]></db:input-parameters>
 		</db:update>
