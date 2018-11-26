@@ -214,7 +214,7 @@ payload]]></ee:set-payload>
 		<ee:transform doc:name="Transform Message" doc:id="fa9cea22-9562-4ec6-bf10-48233fa2d840" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
-output application/java
+output application/json
 ---
 payload]]></ee:set-payload>
 			</ee:message>
@@ -225,13 +225,16 @@ payload]]></ee:set-payload>
 			<ee:message >
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="id" ><![CDATA[function:uuid]]></ee:set-variable>
+				<ee:set-variable variableName="id" ><![CDATA[%dw 2.0
+output application/json
+---
+uuid()]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<db:insert doc:name="Insert" doc:id="cd8a9d77-adfe-4caf-a304-9524fc6d7f21" config-ref="Database_glen">
 			<db:sql >insert into app_user 
-(id,gender,phone,occupation,ethnicity,address,salary,username,dob,email,name,active,password)
-values(:id,:gender,:phone,:occupation,:ethnicity,:address,:salary,:username,:dob,:email,:name,1,:password)</db:sql>
+           (id, gender, phone,occupation, ethnicity, address,salary, username, dob, email, name,active,password)
+values(:id,:gender,:phone,:occupation,:ethnicity,:address,:salary,:username,:dob,:email,:name, 1,      :password)</db:sql>
 			<db:input-parameters ><![CDATA[#[{
 		'id' : vars.id,
 		'gender': payload.gender,
@@ -244,7 +247,7 @@ values(:id,:gender,:phone,:occupation,:ethnicity,:address,:salary,:username,:dob
 		'dob': payload.dob,
 		'email': payload.email,
 		'name': payload.name,
-		'password':payload.password
+		'password':payload.password,
 	}]]]></db:input-parameters>
 		</db:insert>
 		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="e699899c-11fc-4800-98dd-7923402fd408">

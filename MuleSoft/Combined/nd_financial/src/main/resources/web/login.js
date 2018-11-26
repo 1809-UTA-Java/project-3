@@ -117,7 +117,7 @@ const doLogin = async () => {
         let data = await response.json();
         //login successful change code here for redirect
         if (data.message === 'okay') {
-            window.location.replace('home.html')
+            window.location.replace(`http://localhost:5500/index.html/${state.user.username}`)
         } else {
             state.login.msg = 'wrong password';
             state.login.display = 'password';

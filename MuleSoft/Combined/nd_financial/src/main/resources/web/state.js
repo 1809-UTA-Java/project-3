@@ -19,6 +19,18 @@ const state = {
         password: '',
         display: '',
         msg: ''
+    },
+    offer: {
+
+    },
+    application: {
+
+    },
+    special: {
+
+    },
+    group: {
+
     }
 }
 

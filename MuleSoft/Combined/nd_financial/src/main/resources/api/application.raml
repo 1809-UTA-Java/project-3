@@ -301,3 +301,12 @@ types:
           body:
             application/json:
               example: {"Id not found"}
+/user/{id}:
+  uriParameters:
+    id: string
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: appForm

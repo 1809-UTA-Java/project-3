@@ -43,7 +43,8 @@ const regForm = () => {
     `);
 }
 
-const clearUser = () => {
+const clearUser = (e) => {
+    event.stopPropagation();
     state.user = {
         id: '',
         name: '',
@@ -67,6 +68,7 @@ const clearUser = () => {
     $("input[name='dob']").val('');
     $("input[name='address']").val('');
     $("input[name='email']").val('');
+    $("input[name='phone']").val('');
     $("input[name='name']").val('');
     $("input[name='occupation']").val('');
     $("input[name='salary']").val('');
@@ -85,6 +87,7 @@ const loadUser = () => {
     $("input[name='email']").val(state.user.email);
     $("input[name='name']").val(state.user.name);
     $("input[name='occupation']").val(state.user.occupation);
+    $("input[name='phone']").val(state.user.phone);
     $("input[name='salary']").val(state.user.salary);
 }
 
@@ -99,7 +102,7 @@ const setPayload = () => {
         dob: $("input[name='dob']").val(),
         address: $("input[name='address']").val(),
         email: $("input[name='email']").val(),
-        phone: $("input[name='name']").val(),
+        phone: $("input[name='phone']").val(),
         occupation: $("input[name='occupation']").val(),
         salary: $("input[name='salary']").val(),
         active: true
@@ -112,7 +115,7 @@ const getUser = async () => {
 }
 
 const submitForm = async () => {
-
+    event.stopImmediatePropagation();
     if (!$('#regForm')[0].checkValidity()) {
 
         $('#error').html('Please Fill out the Form Completely!')
@@ -136,7 +139,7 @@ const submitForm = async () => {
         if (!data.message) {
             $('#error').html('An Error Has Occured')
         } else {
-            window.location.replace(`home.html/?id=${data.message}`)
+            window.location.replace(`http://localhost:5500/index.html/${data.message}`)
         }
     } catch (e) {
         console.log(e);

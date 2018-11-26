@@ -42,8 +42,8 @@
         const registration = (e) => {
             e.stopPropagation();
             loadForm();
-            $('#body').on("click", $('#btnSubmit'), () => submitForm())
-            $('#body').on('click', $('#btnClear'), () => clearUser())
+            $('#btnSubmit').on("click", () => submitForm(e))
+            $('#btnClear').on('click', () => clearUser(e))
         }
 
         $(document).ready(function () {

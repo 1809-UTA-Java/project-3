@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <apikit:config name="application-config" raml="application.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <http:request-config name="HTTP_Request_application" doc:name="HTTP Request configuration" doc:id="30735fe8-5b25-478e-bb6d-d0e8b87e6287" basePath="/api/application" >
 		<http:request-connection host="localhost" port="8980" />
@@ -132,6 +133,14 @@ output application/json
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="6749f4dc-dc80-409a-92b1-e97f5b57dc64" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="put:\(id):application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
@@ -146,6 +155,14 @@ output application/json
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="ae6f4ce1-94fb-4468-ae35-cc5bdd386b24" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="put:\group\(id):application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
@@ -160,6 +177,14 @@ output application/json
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="476ed17c-0e8f-427e-a7b8-cb66394ffc18" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="put:\offer\(id):application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
@@ -174,6 +199,14 @@ output application/json
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="3ddfa32e-8d8e-4208-846c-26c622f416a5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="delete:\(id):application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
@@ -188,6 +221,14 @@ output application/json
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="891af854-3975-43e4-b84b-f4c8c86c477e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="delete:\group\(id):application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
@@ -202,6 +243,14 @@ output application/json
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="d86f153b-39d2-46ee-8227-e34cb7d38ac4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="delete:\special\(id):application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
@@ -216,18 +265,58 @@ output application/json
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="2d397d94-991b-475e-b24e-5a5ef7db5720" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\:application-config">
         <http:request method="GET" doc:name="Request" doc:id="2a31066b-e6f0-4615-a279-fbe20319b327" config-ref="HTTP_Request_application" path="/"/>
+		<ee:transform doc:name="Transform Message" doc:id="28362a15-08eb-436d-b867-84cdfccd04f8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\group:application-config">
 		<http:request method="GET" doc:name="Request" doc:id="633f18a4-ae75-493d-852e-2c75f0b50ada" config-ref="HTTP_Request_application" path="/group"/>
+		<ee:transform doc:name="Transform Message" doc:id="44d98122-40f2-4fb7-84aa-7e673df8ef05" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\offer:application-config">
 		<http:request method="GET" doc:name="Request" doc:id="40ecfd76-3e43-41fb-a9fd-00e0106266a0" config-ref="HTTP_Request_application" path="/offer"/>
+		<ee:transform doc:name="Transform Message" doc:id="4133cf21-bd3d-42fb-bd50-894467ce6944" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\special:application-config">
 		<http:request method="GET" doc:name="Request" doc:id="e2d7bdb9-a255-4d53-a37a-5cfb5aa2dd6a" config-ref="HTTP_Request_application" path="/special"/>
+		<ee:transform doc:name="Transform Message" doc:id="fa200401-9a5a-4384-acde-631b6d9def4d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\offer\user\(id):application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="e03fe720-ce47-412f-9757-968cb0fe1e56">
@@ -242,20 +331,36 @@ output application/json
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="6edb9a9a-3024-4e75-a700-b93dc2616cf6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\special\(id):application-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="78cfb041-25ae-46a5-878a-5ddd27db52b5">
             <ee:variables>
-                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
+                <ee:set-variable variableName="id"><![CDATA[attributes.uriParams.id]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<http:request method="GET" doc:name="Request" doc:id="076a64ba-6c04-47ec-a62d-b9195752963f" path="/special/{id}">
+		<http:request method="GET" doc:name="Request" doc:id="076a64ba-6c04-47ec-a62d-b9195752963f" path="/special/{id}" config-ref="HTTP_Request_application">
 			<http:uri-params ><![CDATA[#[output application/java
 ---
 {
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="acd93635-57a1-44eb-a788-0c4844832b4d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\(id):application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="30316ff0-9ba0-47d6-85e1-2f887aafdfc3">
@@ -270,6 +375,14 @@ output application/json
 	id : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="154eb23a-2e53-4cdb-8b77-ec4a6fa2f129" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\offer\(id):application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
@@ -284,6 +397,14 @@ output application/json
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="7388cea5-3a31-446e-ab4b-bd9958c6e1ca" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="get:\group\(id):application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:id="39c80e38-87d5-4a75-a066-043c8ccddcb0">
@@ -298,6 +419,14 @@ output application/json
 	'id' : vars.id
 }]]]></http:uri-params>
 		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="a82ef286-6733-444b-9a12-198b1711a667" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="post:\:application\json:application-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -311,14 +440,68 @@ output application/json
             </ee:message>
         </ee:transform>
 		<http:request method="POST" doc:name="Request" doc:id="b4a88101-6c5c-4dff-be81-f98d833a4d1e" config-ref="HTTP_Request_application" path="/"/>
+		<ee:transform doc:name="Transform Message" doc:id="193e6458-497e-4d46-b248-55c80f545f3a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="post:\group:application\json:application-config">
 		<http:request method="POST" doc:name="Request" doc:id="990a83ce-dc7f-4dd7-9a32-12122b18b48d" config-ref="HTTP_Request_application" path="/group"/>
+		<ee:transform doc:name="Transform Message" doc:id="26410d11-c2ae-4939-8890-b04637301b81" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="post:\offer:application\json:application-config">
         <http:request method="POST" doc:name="Request" doc:id="cf3f08a0-7eae-4948-a4e0-6580b6230584" config-ref="HTTP_Request_application" path="/offer"/>
+		<ee:transform doc:name="Transform Message" doc:id="dc673ca6-ac5d-4fdd-ad71-bc46fef42e3a" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
     <flow name="post:\special:application\json:application-config">
 		<http:request method="POST" doc:name="Request" doc:id="6a6f2b8b-f680-46a7-994c-58710369db9d" config-ref="HTTP_Request_application" path="/special"/>
+		<ee:transform doc:name="Transform Message" doc:id="53f17a6c-6e36-4b63-8aa4-6dca679f6cb9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
     </flow>
+	<flow name="get:\user\(id):application-config" doc:id="4224fe5e-1875-46d0-9bc1-8f1d41ba4b55" >
+		<ee:transform doc:name="Transform Message" doc:id="583ad7e6-494f-4e8f-84ef-0337b1d25c72" >
+			<ee:variables >
+				<ee:set-variable variableName="id" ><![CDATA[attributes.uriParams.id]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="GET" doc:name="Request" doc:id="57cdaeb3-9b6f-4dab-8632-081c0dbacbbf" config-ref="HTTP_Request_application" path="/user/{id}" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	'id' : vars.id
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="14660115-37a9-431e-8111-8301a8e834fc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
 </mule>
