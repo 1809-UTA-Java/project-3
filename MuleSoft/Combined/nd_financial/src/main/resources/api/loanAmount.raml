@@ -1,35 +1,40 @@
 #%RAML 1.0
-baseUri: https://mocksvc.mulesoft.com/mocks/614fd5af-93fb-48c6-94ea-fd8521c29212/LoanAmount # 
-
-title: Loan Amount
-#baseUri: https://api.ndf-managers.com/LoanAmount
+baseUri: https://mocksvc.mulesoft.com/mocks/56b99a12-d3cc-4f01-a1b1-392a5521fb25 # 
+title: DTIR
 version: v1
-
-/managers:
-  /loanAmount:
-    get:
-    /{id}:
-      put:
-        queryParameters:
-          LoanDuration:
-            displayName: duration
-            type: integer
-            description: Loan duration
-            example: 60      
+description: This API recieves the salary, debt, and duration for a loan and returns debt to income ratio
+types:
+  DTRI-MODEL:
+    type: object
+    properties:
+      loan-amount:
+        required: true
+        type: number
+        example: 200000
+        minimum: 1
+/dtir:
+  post:
+    responses:
+      '200':
+        body:
+          application/json:
+            description: calculates the loan amount based on salary, debt, and duration.
+            type: DTRI-MODEL
+    body:
+      application/json:
+        type: object
+        properties: 
+          applicant-info:
             required: true
-
-          Salary:
-            displayName: Salary
-            type: integer
-            description: The amount the applicant makes in a year before tax
-            example: 45000
-            required: true
-              
-          Debts:
-            displayName: Debts
-            type: integer
-            description: The total amount of debts the applicant has prior to applying for the loan.
-            example: 18000
-            required: false
-
-      
+            type: object
+            properties:
+              salary:
+                required: true
+                type: number
+                minimum: 0
+              debt:
+                required: true
+                type: number
+                minimum: 1
+        
+            

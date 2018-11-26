@@ -6,6 +6,24 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         <http:listener-connection host="0.0.0.0" port="8007" />
     </http:listener-config>
     <apikit:config name="listpendingapi-config" raml="listpendingapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<http:request-config name="HTTP_Request_configuration_getCreditScore" doc:name="HTTP Request configuration" doc:id="8f705d64-2bba-4066-ae1c-619dc9c84048" >
+		<http:request-connection host="localhost" port="8005" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_getUserId" doc:name="HTTP Request configuration" doc:id="8979ec02-baee-46c8-be90-342a243446de" >
+		<http:request-connection host="localhost" port="8050" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_getName" doc:name="HTTP Request configuration" doc:id="eb70bc8f-85f8-44cb-96e1-cfb4b869ec60" >
+		<http:request-connection host="localhost" port="8001" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_riskLevel" doc:name="HTTP Request configuration" doc:id="a96ac519-68c0-40c9-bfdc-4b7b5c761d8f" >
+		<http:request-connection host="localhost" port="8013" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_getLoanAmount" doc:name="HTTP Request configuration" doc:id="447479ed-4956-4ccd-8f44-46fd0bec5520" >
+		<http:request-connection host="localhost" port="8008" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_GetDebt" doc:name="HTTP Request configuration" doc:id="2d5e042d-d759-4326-b0d5-45782cd13c4d" >
+		<http:request-connection host="localhost" port="8004" />
+	</http:request-config>
 	<flow name="listpendingapi-main">
         <http:listener config-ref="listpendingapi-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -114,7 +132,7 @@ output application/json
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
 http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="3b4e9dee-b1ea-4d41-892f-13a445a27f7f">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="c30d566f-c1d7-4a6e-831c-3cfd21dd0c9f">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -129,10 +147,50 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\manager\listPendingApp:listpendingapi-config">
-        <db:select doc:name="Select" doc:id="125a5c95-6c4c-488a-bf15-1e09d47f940c" config-ref="Database_manager" >
-			<db:sql >select * from loanapp2 where status = 'pending'</db:sql>
-		</db:select>
-		<ee:transform doc:name="Transform Message" doc:id="7aa126db-1e87-4daf-9849-c3356ff0c21d" >
+		<http:request method="GET" doc:name="Request" doc:id="d97b4ab2-f16a-440e-b784-08d5ba919d7e" config-ref="HTTP_Request_configuration_getUserId" url="http://localhost:8050/api/pending"/>
+		<set-variable value="#[payload.uid]" doc:name="userId" doc:id="071ec894-bdfb-48b5-8aee-73a50954a520" variableName="vUserId"/>
+		<set-variable value="#[payload.loanAmount as Number]" doc:name="loanAmount" doc:id="e678c570-ee07-4237-9d0b-64f2f3fedc00" variableName="vLoanAmount"/>
+		<set-variable value="#[payload.income as Number]" doc:name="income" doc:id="88afad2e-51c0-4e7d-bcb2-126e9387e1fc" variableName="vIncome"/>
+		<http:request method="GET" doc:name="Request Name" doc:id="bc53f780-7e19-46e7-91ae-cc38df75db00" config-ref="HTTP_Request_configuration_getName" url="http://localhost:8001/api/{id}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	id : vars.vUserId
+}]]]></http:uri-params>
+		</http:request>
+		<set-variable value="#[payload.name]" doc:name="User Name" doc:id="5598d133-50a2-4719-b368-3c640c775d6d" variableName="vUserName"/>
+		<http:request method="GET" doc:name="Request_getCreditScore" doc:id="44acf4b4-a944-4424-9a1a-5f20eac11cd7" config-ref="HTTP_Request_configuration_getUserId" url="http://localhost:8005/api/getCreditScore?customer-id={id}">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	id : vUserId
+}]]]></http:query-params>
+		</http:request>
+		<set-variable value="#[payload.credit_score as Number]" doc:name="Credit Score" doc:id="5409b7b6-86b5-4878-bdf8-d6cd7f1b0529" variableName="vCreditScore"/>
+		<http:request method="POST" doc:name="Get Risk Level" doc:id="b7c87314-2f40-4532-a18e-13b7b482d3d9" config-ref="HTTP_Request_configuration_riskLevel" url="http://localhost:8013/api/risk">
+			<http:body ><![CDATA[#[{
+  "borrower": {
+    "credit-score": vCreditScore,
+    "loan-amt": vLoanAmount,
+    "loan-dur": 24,
+    "curr-income": vIncome
+  }
+}]]]></http:body>
+		</http:request>
+		<set-variable value="#[payload.risklevel as Number]" doc:name="Risk Level" doc:id="c634ab0c-c0b1-4d85-bdc1-314b9ff99c1b" variableName="vRisk"/>
+		<http:request method="GET" doc:name="Request_Debt" doc:id="10dc6df5-1f5a-4552-bc11-f7e20d5a7876" config-ref="HTTP_Request_configuration_GetDebt" url="http://localhost:8004/api/getcreditcards/{id}"/>
+		<set-variable value="#[payload.balance as Number]" doc:name="Debt" doc:id="3fa462f3-6790-42a1-9715-5efd5c2193fd" variableName="vDebt"/>
+		<http:request method="POST" doc:name="Request_Max_LoanAmout" doc:id="2230ca06-7f67-42c2-a5a4-702818e9fc6a" config-ref="HTTP_Request_configuration_getLoanAmount" url="http://localhost:8008/api/dtir">
+			<http:body ><![CDATA[#[{
+	"applicant-info": {
+		"salary": vars.vIncome,
+		"debt": vars.vDebt
+	}
+}]]]></http:body>
+		</http:request>
+		<set-variable value="#[payload.loanamount as Number]" doc:name="Max Loan Amount" doc:id="64151576-0446-4a96-84d8-63b7eedb9805" variableName="vMaxLoan"/>
+		<set-variable value="5" doc:name="test" doc:id="8aeacae0-ecd8-4557-bbde-333a426cc1da" variableName="vFive"/>
+		<ee:transform doc:name="Transform Message" doc:id="8aedf718-ec08-4c8a-92a3-8da97c223558" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -149,7 +207,7 @@ output application/json
     </flow>
     <flow name="post:\manager\getPendingAppById\id\(id):listpendingapi-config">
         <logger level="INFO" message="post:\manager\getPendingAppById\id\(id):listpendingapi-config" />
-		<db:select doc:name="Select" doc:id="ccf13c44-79f0-4ff8-bb58-3a4b50ea2246" config-ref="Database_manager">
+		<db:select doc:name="Select" doc:id="abcb6145-ad15-47c1-a221-d1752df1bb9c" config-ref="Database_manager">
 			<db:sql >select * from loanapp where loan_id = :id</db:sql>
 			<db:input-parameters ><![CDATA[#[%dw 2.0
 output application/java
@@ -158,7 +216,7 @@ output application/java
    id: attributes.uriParams.id
 }]]]></db:input-parameters>
 		</db:select>
-        <ee:transform doc:name="Transform Message" doc:id="0042cc70-a2e2-4525-a699-254fccf89bbd" >
+        <ee:transform doc:name="Transform Message" doc:id="458c6f56-434c-423f-a5d4-f11538ecb1e0" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
