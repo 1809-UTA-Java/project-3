@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+    <http:listener-config name="payment-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8181" />
+    </http:listener-config>
+    <apikit:config name="payment-config" raml="payment.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="02e4d179-df72-4526-ad80-d9a8e1ea5b8e" >
+		<db:oracle-connection host="192.168.56.105" user="ndadmin" password="password" serviceName="xe" />
+	</db:config>
+	<flow name="payment-main">
+        <http:listener config-ref="payment-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="payment-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="payment-console">
+        <http:listener config-ref="payment-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="payment-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="post:\payment\accountid:payment-config">
+		<logger level="INFO" doc:name="Logger" doc:id="9fdac9b2-194e-4b35-a887-8623fc39a990" message="get:\payment\cardNumber\(cNumber):payment-config"/>
+		<set-variable value="#[%dw 2.0
+output application/java
+---
+payload.accountid as String]" doc:name="accountID" doc:id="260ab6b4-2eb1-4186-ba1b-7be23df0b2a8" variableName="accountID"/>
+		<db:select doc:id="a0f49329-a841-43a6-b2a7-bbb0f770be27" config-ref="Database_Config">
+			<db:sql >select * from transactions where card_number=:accountid</db:sql>
+			<db:input-parameters ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	accountid: vars.accountid
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="5005075f-49ec-4746-87f3-97b93d86b18d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+    </flow>
+    <flow name="get:\payment:payment-config">
+        <logger level="INFO" doc:name="Logger" doc:id="8926fb2f-60d7-4400-9313-99aef71a8e83" message="get:\payment:payment-config"/>
+		<db:select doc:name="Select" doc:id="430d2b2c-89a3-47c2-9a42-3fe612d3f623" config-ref="Database_Config">
+			<db:sql >select * from transactions</db:sql>
+		</db:select>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="155f460e-47f4-4fb3-b4d8-d86143b0fe2a">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\payment:payment-config">
+        <logger level="INFO" doc:name="Logger" doc:id="9911cf7e-a3c1-4a30-b499-c4cf63d3ab3d" message="post:\payment:payment-config"/>
+		<set-variable value="#[%dw 2.0
+output application/java
+---
+payload.transactionID as Number]" doc:name="transaction_id" doc:id="dab1f143-ab33-4fdc-9484-d158da9eadd7" variableName="transaction_id"/>
+		<set-variable value="#[%dw 2.0
+output application/java
+---
+payload.date as Date]" doc:name="transaction_date" doc:id="38abe65c-9c65-457f-ad2a-f1515889e894" variableName="transaction_date"/>
+		<set-variable value="#[%dw 2.0
+output application/java
+---
+payload.amount as Number]" doc:name="amount" doc:id="a1615c50-c6c1-402a-a6f0-e093effb67c2" variableName="amount"/>
+		<set-variable value="#[%dw 2.0
+output application/java
+---
+payload.cardnumber]" doc:name="card_number" doc:id="0d2f4644-769e-444f-b60a-54c2bd0ca226" variableName="card_number"/>
+		<set-variable value="#[%dw 2.0
+output application/java
+---
+payload.source]" doc:name="trans_source" doc:id="3fbaa8be-9fd5-44d1-bb7d-3a1e1ceed0b6" variableName="trans_source"/>
+		<set-variable value="#[%dw 2.0
+output application/java
+---
+payload.description]" doc:name="trans_description" doc:id="d899a68f-d89d-40fa-9ed6-76201e004f36" variableName="trans_description"/>
+		<set-variable value="#[%dw 2.0
+output application/java
+---
+payload.status]" doc:name="status" doc:id="b48cec6b-25de-430f-9b30-e1e5e04e240d" variableName="status"/>
+		<set-variable value='#[%dw 2.0
+output application/java
+---
+payload."type"]' doc:name="trans_type" doc:id="0a9a88bf-e02a-403d-b0a7-ba53e0ce95ae" variableName="trans_type"/>
+		<db:insert doc:name="Insert" doc:id="2b6a3683-5a59-4a71-bcd1-d186ed5d86e8" config-ref="Database_Config">
+			<db:sql>insert into transactions (transaction_id, transaction_date, amount, card_number, trans_source, trans_description, status, trans_type) values (:id, :tdate, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
+			<db:input-parameters><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+	id: vars.transaction_id,
+	tdate: vars.transaction_date,
+	amount: vars.amount,
+	card_number: vars.card_number,
+	trans_source: vars.trans_source,
+	trans_description: vars.trans_description,
+	status: vars.status,
+	trans_type: vars.trans_type
+}]]]></db:input-parameters>
+		</db:insert>
+    </flow>
+</mule>
