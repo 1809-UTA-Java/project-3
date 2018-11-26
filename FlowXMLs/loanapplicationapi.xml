@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="loanapplicationapi-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="loanapplicationapi-config" raml="loanapplicationapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="0cc4ae89-dd5c-4078-87cd-3eedf2ac79ee">
+        <db:oracle-connection host="192.168.56.101" user="CUSTOMER" password="p4ssw0rd" instance="xe" />
+    </db:config>
+    <http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="745c0125-79c6-4a17-8076-6c1104c88e7e">
+        <http:request-connection host="localhost" port="8081" />
+    </http:request-config>
+    <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="4ac8d452-9867-4d9e-bba2-20464f26e58a">
+        <http:listener-connection host="0.0.0.0" port="9087" />
+    </http:listener-config>
+    <flow name="loanapplicationapi-main">
+        <http:listener config-ref="loanapplicationapi-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="loanapplicationapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Bad request"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Method not allowed"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not acceptable"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Unsupported media type"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Not Implemented"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="loanapplicationapi-console">
+        <http:listener config-ref="loanapplicationapi-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="loanapplicationapi-config" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="delete:\pending\(id):loanapplicationapi-config">
+        <db:delete doc:name="Delete" doc:id="fe384848-665e-45ba-9f36-0c2007898e67" config-ref="Database_Config">
+            <db:sql>DELETE FROM PENDING_LOANS WHERE PENDING_ID = :ID</db:sql>
+            <db:input-parameters><![CDATA[#[{ID:attributes.uriParams.id}]]]></db:input-parameters>
+        </db:delete>
+        <ee:transform doc:name="Transform Message" doc:id="b033b279-52e4-4b70-ae04-33aad3e7f858" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" message="delete:\pending\(id):loanapplicationapi-config" />
+    </flow>
+    <flow name="get:\pending:loanapplicationapi-config">
+        <db:select doc:name="Select" doc:id="0dba252d-7012-4c0c-a2e5-b0e5bd377986" config-ref="Database_Config">
+            <db:sql>SELECT * FROM PENDING_LOANS</db:sql>
+        </db:select>
+        <ee:transform doc:name="Transform Message" doc:id="48cb8e9d-d139-41c3-a21e-64c3cf4692e2">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	income: payload01.INCOME default 0,
+	principle: payload01.PRINCIPLE default 0,
+	"loan-type": payload01.TYPE default "",
+	"user-id": payload01.USER_ID default "",
+	"pending-id": payload01.PENDING_ID
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <logger level="INFO" message="get:\pending:loanapplicationapi-config" />
+    </flow>
+    <flow name="get:\pending\(id):loanapplicationapi-config">
+        <db:select doc:name="Select" doc:id="4bf795ac-bf1e-4c03-9de9-576fc2ae11a6" config-ref="Database_Config">
+            <db:sql>SELECT * FROM PENDING_LOANS WHERE PENDING_ID = :ID</db:sql>
+            <db:input-parameters><![CDATA[#[{ID:attributes.uriParams.id}]]]></db:input-parameters>
+        </db:select>
+        <ee:transform doc:name="Transform Message" doc:id="c71ed734-700b-4d93-8959-a230c92c6f53" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" message="get:\pending\(id):loanapplicationapi-config" />
+    </flow>
+    <flow name="post:\pending:loanapplicationapi-config">
+        <logger level="INFO" message="post:\pending:loanapplicationapi-config" />
+    </flow>
+    <flow name="post:\pending:application\json:loanapplicationapi-config">
+		<logger level="INFO" doc:name="Logger" doc:id="40a78d91-6b6e-499a-89f8-28c8655ff31a" />
+		<db:insert doc:name="Insert" doc:id="941dbf51-cde0-4980-bb6f-b6a1f4f8d89d" config-ref="Database_Config">
+            <db:sql>INSERT INTO PENDING_LOANS (USER_ID, PRINCIPLE, TYPEOF, INCOME) VALUES (:USER, :PRINCIPLE, :TYPEOF, :INCOME)</db:sql>
+            <db:input-parameters><![CDATA[#[output application/json
+---
+{
+	USER: payload."user-id",
+	PRINCIPLE: payload.principle,
+	TYPEOF: payload."loan-type",
+	INCOME: payload.income
+}]]]></db:input-parameters>
+        </db:insert>
+		<logger level="INFO" message="post:\pending:application\json:loanapplicationapi-config" />
+    </flow>
+</mule>

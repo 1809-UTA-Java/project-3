@@ -1,0 +1,7 @@
+{
+	"pending-id": "integer",
+	"user-id": "string",
+	"principle": "number",
+	"loan-type": "string",
+	"income": "integer"
+}
