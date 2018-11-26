@@ -11,45 +11,45 @@ baseUri: https://mocksvc.mulesoft.com/mocks/72ed4649-0332-468e-8e02-f52d3b22d147
               description: a GET to retrieve an object from the transactions table.
               type: object
               properties:
-                id:
+                TRANSACTION_ID:
                   required: true
                   example: eas12ejjn123v1hj2gv412
                   description: Transaction number.
                   type: string
-                date:
+                TRANSACTION_DATE:
                   required: true
                   example: '2018-11-12'
                   description: Time of transaction
                   type: string
-                amount:
+                AMOUNT:
                   required: true
                   format: double
                   example: 100.52
                   description: Property description
                   type: number
-                cardNumber:
+                CARD_NUMBER:
                   required: true
                   pattern: '\d{4} \d{4} \d{4} \d{4}'
                   example: 1234 1234 1234 1238
                   description: 'Credit Card Number: must be sets of 4 digits separated by spaces.'
                   type: string
-                source:
+                TRANS_SOURCE:
                   required: true
                   example: Some Company
                   description: States who is requesting the payment
                   type: string
-                description:
+                TRANS_DESCRIPTION:
                   required: false
                   example: This can be paragraph describing the transaction or left blank
                   description: Property description
                   type: string
-                status:
+                STATUS:
                   required: true
                   pattern: pending|complete|denied
                   example: complete
                   description: pending | complete | denied
                   type: string
-                transaction:
+                TRANS_TYPE:
                   required: true
                   pattern: payment|charge
                   example: payment
@@ -71,45 +71,45 @@ baseUri: https://mocksvc.mulesoft.com/mocks/72ed4649-0332-468e-8e02-f52d3b22d147
             description: a GET to retrieve an object from the transactions table.
             type: object
             properties:
-              id:
+              TRANSACTION_ID:
                 required: true
                 example: eas12ejjn123v1hj2gv412
                 description: Transaction number.
                 type: string
-              date:
+              TRANSACTION_DATE:
                 required: true
                 example: '2018-11-12'
                 description: Time of transaction
                 type: string
-              amount:
+              AMOUNT:
                 required: true
                 format: double
                 example: 100.52
                 description: Property description
                 type: number
-              cardNumber:
+              CARD_NUMBER:
                 required: true
                 pattern: '\d{4} \d{4} \d{4} \d{4}'
                 example: 1234 1234 1234 1238
                 description: 'Credit Card Number: must be sets of 4 digits separated by spaces.'
                 type: string
-              source:
+              TRANS_SOURCE:
                 required: true
                 example: Some Company
                 description: States who is requesting the payment
                 type: string
-              description:
+              TRANS_DESCRIPTION:
                 required: false
                 example: This can be paragraph describing the transaction or left blank
                 description: Property description
                 type: string
-              status:
+              STATUS:
                 required: true
                 pattern: pending|complete|denied
                 example: complete
                 description: pending | complete | denied
                 type: string
-              transaction:
+              TRANS_TYPE:
                 required: true
                 pattern: payment|charge
                 example: payment
@@ -130,12 +130,12 @@ baseUri: https://mocksvc.mulesoft.com/mocks/72ed4649-0332-468e-8e02-f52d3b22d147
           application/json:
             type: object
             properties:
-              id:
+              TRANSACTION_ID:
                 required: true
                 example: Example
                 description: Transaction ID
                 type: string
-              status:
+              STATUS:
                 required: true
                 pattern: pending|complete|denied
                 example: denied
