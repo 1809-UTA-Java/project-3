@@ -1,9 +1,10 @@
 const formBox = () => {
     $('#body').html(`
-        <div class = 'formBox'></div>
+        <div class = 'formBox pure-form pure-form-aligned'></div>
     `);
     let container = () => {
         return (`
+        <fieldset>
             <div>
                 ${
             state.login.display === 'username' ?
@@ -15,13 +16,14 @@ const formBox = () => {
             <div>
                 ${
             state.login.display === 'username' ?
-                `<input class = 'btnPassword' type = 'button' name ='btnEnterPassword' value ='Enter Password' />` :
-                `<input class = 'btnUsername' type = 'button' name = 'btnEnterUsername' value ='Back' />
+                `<input class = 'btnPassword pure-button' type = 'button' name ='btnEnterPassword' value ='Enter Password' />` :
+                `<input class = 'btnUsername pure-button' type = 'button' name = 'btnEnterUsername' value ='Back' />
                     <input class = 'btnLogin' type = 'button' name ='btnLogin' value = 'Login'/>`
 
 
             }
             </div>
+        </fieldset>
         `);
     }
     return container();

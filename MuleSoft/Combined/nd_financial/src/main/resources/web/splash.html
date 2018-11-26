@@ -4,20 +4,34 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Login</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="grid.css">    
+    <link rel="stylesheet" type="text/css" href="styles.css"> 
 
 </head>
 
 <body>
-    <div id="header">
-        <div>Welcome to ND Financials</div>
+    <header>
+        <div id="header">
+            <div class="header-left">
+                <img src="img/icons8-museum-80.png" class="logo" width="58" height="58" />
+                <a href="#default" class="company-name">Welcome to ND Financials</a>
+            </div>
+        </div>
+    </header>
+
+    <section style="margin-top: 150px; min-width: 500px; max-width: 500px; margin: 100px auto; padding: 10px 15px; background-color: #FCFCFC; box-shadow: 0px 2px 13px #b1b1b1;">
         <div>Make a Selection:</div>
-        <input type='button' value='New User' name='btnRegister' />
-        <input type='button' value='Login Now' name='btnLogin' />
-    </div>
-    <div id="leftColumn"></div>
-    <div id="body">
+        <input type='button' value='New User' name='btnRegister' class="pure-button"/>
+        <input type='button' value='Login Now' name='btnLogin' class="pure-button"/>
+
+        <div id="leftColumn"></div>
+        <div id="body">
+    </section>
 
 
     </div>
