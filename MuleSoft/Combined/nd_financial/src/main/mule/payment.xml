@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+<mule xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd">
     <http:listener-config name="payment-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8010" />
     </http:listener-config>
@@ -162,10 +163,12 @@ payload]]></ee:set-payload>
         </ee:transform>
     </flow>
     <flow name="post:\payment:payment-config">
-        <logger level="INFO" doc:name="Logger" doc:id="9672a9ba-194c-432a-86a3-332d839a6f24" message="post:\payment:payment-config" />
+        <amqp:listener doc:name="Listener" doc:id="16a6e1be-47b4-44b0-a0d4-231908164220" config-ref="AMQP_Config" queueName="test"/>
+		<logger level="INFO" doc:name="Logger" doc:id="9672a9ba-194c-432a-86a3-332d839a6f24" message="post:\payment:payment-config" />
         <set-variable value="#[payload.cardnumber]" doc:name="Card Number" doc:id="34f84b7e-b368-4361-94aa-3238397878fc" variableName="CardNumber" />
         <set-variable value='#[payload.amount]' doc:name="ammount" doc:id="29873578-2715-4822-8419-7c61d5eac6a5" variableName="ammount" />
-        <db:insert doc:name="Insert" doc:id="7c90d002-3bfd-42f7-beef-c9d9c6e127e5" config-ref="Database_ndadmin">
+        <logger level="INFO" doc:name="Logger" doc:id="9cbdb8af-ff76-4507-8639-1d75453d541d" message="#[payload]"/>
+		<db:insert doc:name="Insert" doc:id="7c90d002-3bfd-42f7-beef-c9d9c6e127e5" config-ref="Database_ndadmin">
             <db:sql>insert into transactions (transaction_id, transaction_date, amount, card_number, trans_source, trans_description, status, trans_type) values (transaction_sequence.nextval, :tdate, :amount, :card_number, :trans_source, :trans_description, :status, :trans_type)</db:sql>
             <db:input-parameters><![CDATA[#[%dw 2.0
 output application/java
@@ -186,47 +189,5 @@ output application/java
   "balance": vars.ammount
 }]]]></http:body>
         </http:request>
-    </flow>
-    <flow name="post:\payment\accountid:application\json:payment-config">
-        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  data: {
-    transactionalID: "1",
-    date: "2018-10-15",
-    amount: "100.26",
-    cardnumber: "1111 2222 3333 4444",
-    source: "Amazon",
-    description: "A payment of \$100.26 to credit card 1111 2222 3333 4444",
-    status: "approved",
-    "type": "payment"
-  }
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow>
-    <flow name="post:\payment:application\json:payment-config">
-        <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  data: {
-    transactionalID: "1",
-    date: "2018-10-15",
-    amount: "100.26",
-    cardnumber: "1111 2222 3333 4444",
-    source: "Amazon",
-    description: "A payment of \$100.26 to credit card 1111 2222 3333 4444",
-    status: "approved",
-    "type": "payment"
-  }
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
     </flow>
 </mule>

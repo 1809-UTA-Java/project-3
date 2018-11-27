@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+<mule xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd">
     <http:listener-config name="rewards-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8011" />
     </http:listener-config>
@@ -12,6 +13,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	</http:request-config>
 	
 	
+	<amqp:config name="AMQP_Config" doc:name="AMQP Config" doc:id="b3afc79e-e8ba-4fef-9efd-623358382e91" >
+		<amqp:connection host="localhost" port="5672" username="guest" password="guest" />
+	</amqp:config>
 	<flow name="rewards-main">
         <http:listener config-ref="rewards-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -132,7 +136,7 @@ output application/json
         </error-handler>
     </flow>
     <flow name="put:\rewards:application\json:rewards-config">
-		<logger level="INFO" message="put:\rewards:application\json:rewards-config" />
+		<logger level="INFO" message="In update rewards (Put)" />
 		<db:update doc:name="Update" doc:id="7d84a3f1-b3e5-498d-a906-cd925fe612ba" config-ref="Database_ndadmin">
 			<db:sql >UPDATE credit_cards SET rewards = :rewards WHERE card_number = :cc</db:sql>
 			<db:input-parameters ><![CDATA[#[{rewards : payload.reward, cc : payload.cardNumber}]]]></db:input-parameters>
@@ -170,18 +174,20 @@ output application/json
 		</http:request>
 		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="dd861f4c-816d-4864-ac46-f64da35f96c9" />
 		<logger level="INFO" doc:name="Logger" doc:id="4b396e84-df0e-4b70-8f7b-ec528cb7d0a7" message="#[payload]"/>
-		<http:request method="POST" doc:name="Request" doc:id="cecd0620-6306-4095-88d8-71110f198fbb" path="/api/payment" config-ref="HTTP_Request_configuration3">
-			<http:body ><![CDATA[#[{
-	"date" : "2018-11-16",
+		<amqp:publish doc:name="Publish" doc:id="59d1dee1-85e7-4abb-812b-a15ffa739428" config-ref="AMQP_Config" exchangeName="amq.topic" deliveryMode="PERSISTENT">
+			<amqp:message >
+				<amqp:body ><![CDATA[#[{
+	"date" : "2018-11-21",
 	"amount" : payload.reward[0],
 	"cardnumber" : payload.cardNumber[0],
 	"source" : "rewards",
 	"description" : "Payment from rewards",
 	"status" : "approved",
 	"Type" : "payment"
-}]]]></http:body>
-		</http:request>
-		<logger level="INFO" doc:name="Logger" doc:id="eec9b35e-3573-4b05-9cee-15da5d78c5af" message="Payment Applied"/>
+}]]]></amqp:body>
+			</amqp:message>
+		</amqp:publish>
+		<logger level="INFO" doc:name="Logger" doc:id="eec9b35e-3573-4b05-9cee-15da5d78c5af" message="Payment sent to Queue"/>
 		<http:request method="PUT" doc:name="Request" doc:id="446415ee-d4d2-4890-89c8-a2b497fa9a78" path="/api/rewards" config-ref="HTTP_Request_configuration4">
 			<http:body ><![CDATA[#[{
 	"cardNumber": vars.accountNum,
@@ -214,4 +220,5 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
+
 </mule>
